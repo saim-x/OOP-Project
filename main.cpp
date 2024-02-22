@@ -14,6 +14,9 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "2D Space Game");
 
     Rectangle player = {screenWidth / 2 - 20, screenHeight / 2 - 20, 40, 40};
+    Vector2 playerVelocity = {0.0f, 0.0f};
+    float acceleration = 0.2f;
+    float deceleration = 0.1f;
 
     Camera2D camera = {0};
     camera.target = (Vector2){player.x + 20.0f, player.y + 20.0f};
@@ -41,25 +44,39 @@ int main(void)
         float targetTiltAngle = 0.0f;
         if (IsKeyDown(KEY_RIGHT))
         {
-            player.x += speed;
-            targetTiltAngle = -15.0f; // Tilt right
+            playerVelocity.x += acceleration;
+            targetTiltAngle = -20.0f; // Tilt right
         }
         else if (IsKeyDown(KEY_LEFT))
         {
-            player.x -= speed;
-            targetTiltAngle = 15.0f; // Tilt left
+            playerVelocity.x -= acceleration;
+            targetTiltAngle = 20.0f; // Tilt left
+        }
+        else
+        {
+            // Deceleration when no keys are pressed
+            playerVelocity.x *= deceleration;
         }
 
         if (IsKeyDown(KEY_DOWN))
-            player.y += speed;
+        {
+            playerVelocity.y += acceleration;
+            targetTiltAngle = -20.0f; // Tilt down
+        }
         else if (IsKeyDown(KEY_UP))
         {
-            player.y -= speed;
-
-            // Tilt from the top only when both top and left or top and right keys are pressed
-            if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT))
-                targetTiltAngle = -15.0f;
+            playerVelocity.y -= acceleration;
+            targetTiltAngle = 20.0f; // Tilt up
         }
+        else
+        {
+            // Deceleration when no keys are pressed
+            playerVelocity.y *= deceleration;
+        }
+
+        // Update player position based on velocity
+        player.x += playerVelocity.x;
+        player.y += playerVelocity.y;
 
         // Check if the spacecraft reached the screen edge, and reset position to the origin
         if (player.x > screenWidth || player.x < 0 || player.y > screenHeight || player.y < 0)
@@ -67,6 +84,7 @@ int main(void)
             // Reset spacecraft position to the center (origin)
             player.x = screenWidth / 2 - 20;
             player.y = screenHeight / 2 - 20;
+            playerVelocity = {0.0f, 0.0f};
         }
 
         // Smoothly interpolate tilt angle
