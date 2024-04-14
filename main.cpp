@@ -1,13 +1,36 @@
 #include "include/raylib.h"
 #include <cmath>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
+// Define the Enemy structure
+struct Enemy
+{
+    Vector2 position;
+    Texture2D texture;
+    float speed;
+};
+
+// Function to initialize an enemy character at a random position within the boundaries
+Enemy InitEnemy(const Rectangle &boundary)
+{
+    Enemy enemy;
+    enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
+    enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
+    // Randomly choose between enemy1 and enemy2 textures
+    if (GetRandomValue(0, 1) == 0) {
+        enemy.texture = LoadTexture("media/enemy1.png");
+    } else {
+        enemy.texture = LoadTexture("media/enemy2.png");
+    }
+    enemy.speed = 2.0f;                             // Set enemy speed
+    return enemy;
+}
+
 int main(void)
 {
     // Initialization
-    //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 800;
 
@@ -35,98 +58,141 @@ int main(void)
     // Load the spacecraft image
     Texture2D spacecraftTexture = LoadTexture("media/spacecraft.png");
 
-    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+    // Seed the random number generator
+    srand(time(NULL));
 
-    // Main game loop
+    // Initialize vector to store enemies
+    std::vector<Enemy> enemies;
+
+    bool gameOver = false;
+
+    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // Player movement
-        float targetSpeedX = 0.0f;
-        float targetSpeedY = 0.0f;
+        if (!gameOver) // Only update the game if it's not over
+        {
+            // Update player movement
+            float targetSpeedX = 0.0f;
+            float targetSpeedY = 0.0f;
 
-        if (IsKeyDown(KEY_RIGHT) && player.x < boundaryRight)
-        {
-            targetSpeedX += acceleration;
-        }
-        else if (IsKeyDown(KEY_LEFT) && player.x > boundaryLeft)
-        {
-            targetSpeedX -= acceleration;
-        }
+            if (IsKeyDown(KEY_RIGHT) && player.x < boundaryRight)
+            {
+                targetSpeedX += acceleration;
+            }
+            else if (IsKeyDown(KEY_LEFT) && player.x > boundaryLeft)
+            {
+                targetSpeedX -= acceleration;
+            }
 
-        if (IsKeyDown(KEY_DOWN) && player.y < boundaryBottom)
-        {
-            targetSpeedY += acceleration;
-        }
-        else if (IsKeyDown(KEY_UP) && player.y > boundaryTop)
-        {
-            targetSpeedY -= acceleration;
-        }
+            if (IsKeyDown(KEY_DOWN) && player.y < boundaryBottom)
+            {
+                targetSpeedY += acceleration;
+            }
+            else if (IsKeyDown(KEY_UP) && player.y > boundaryTop)
+            {
+                targetSpeedY -= acceleration;
+            }
 
-        // Smoothly accelerate/decelerate towards target speed
-        if (targetSpeedX > playerVelocity.x)
-        {
-            playerVelocity.x = fminf(playerVelocity.x + acceleration, maxSpeed);
-        }
-        else if (targetSpeedX < playerVelocity.x)
-        {
-            playerVelocity.x = fmaxf(playerVelocity.x - acceleration, -maxSpeed);
-        }
-        else
-        {
-            playerVelocity.x *= deceleration;
-        }
+            // Smoothly accelerate/decelerate towards target speed
+            if (targetSpeedX > playerVelocity.x)
+            {
+                playerVelocity.x = fminf(playerVelocity.x + acceleration, maxSpeed);
+            }
+            else if (targetSpeedX < playerVelocity.x)
+            {
+                playerVelocity.x = fmaxf(playerVelocity.x - acceleration, -maxSpeed);
+            }
+            else
+            {
+                playerVelocity.x *= deceleration;
+            }
 
-        if (targetSpeedY > playerVelocity.y)
-        {
-            playerVelocity.y = fminf(playerVelocity.y + acceleration, maxSpeed);
-        }
-        else if (targetSpeedY < playerVelocity.y)
-        {
-            playerVelocity.y = fmaxf(playerVelocity.y - acceleration, -maxSpeed);
-        }
-        else
-        {
-            playerVelocity.y *= deceleration;
-        }
+            if (targetSpeedY > playerVelocity.y)
+            {
+                playerVelocity.y = fminf(playerVelocity.y + acceleration, maxSpeed);
+            }
+            else if (targetSpeedY < playerVelocity.y)
+            {
+                playerVelocity.y = fmaxf(playerVelocity.y - acceleration, -maxSpeed);
+            }
+            else
+            {
+                playerVelocity.y *= deceleration;
+            }
 
-        // Update player position based on velocity
-        player.x += playerVelocity.x;
-        player.y += playerVelocity.y;
+            // Update player position based on velocity
+            player.x += playerVelocity.x;
+            player.y += playerVelocity.y;
+
+            // Spawn enemies randomly and limit the number of enemies
+            if (GetRandomValue(0, 100) < 2 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
+            {
+                enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}));
+            }
+
+            // Update enemy positions
+            for (size_t i = 0; i < enemies.size(); i++)
+            {
+                // Move enemies towards the player (You can update this logic as per your requirement)
+                Vector2 direction = {player.x - enemies[i].position.x, player.y - enemies[i].position.y};
+                float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
+                direction.x /= distance;
+                direction.y /= distance;
+                enemies[i].position.x += direction.x * enemies[i].speed;
+                enemies[i].position.y += direction.y * enemies[i].speed;
+
+                // Check for collision with player
+                Rectangle playerRect = {player.x, player.y, player.width, player.height};
+                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y, enemies[i].texture.width, enemies[i].texture.height};
+                if (CheckCollisionRecs(playerRect, enemyRect))
+                {
+                    gameOver = true; // Game over if collision detected
+                    break;
+                }
+            }
+        }
 
         // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
-
-        ClearBackground(RAYWHITE); // Clear the background to white
+        ClearBackground(RAYWHITE);
 
         BeginMode2D(camera);
-
-        // Draw the space background
         DrawTexture(spaceBackground, -screenWidth / 2 - camera.target.x, -screenHeight / 2 - camera.target.y, WHITE);
-
-        // Draw the spacecraft image at the player's position
         DrawTextureEx(spacecraftTexture, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+
+        // Draw enemies
+        for (const auto &enemy : enemies)
+        {
+            DrawTextureEx(enemy.texture, enemy.position, 0.0f, 1.0f, WHITE);
+        }
 
         EndMode2D();
 
         DrawText("Space Shooter", 10, 10, 20, RED);
-
-        DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
+        if (gameOver)
+        {
+            DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
+            DrawText("Press ESC to Exit", screenWidth / 2 - MeasureText("Press ESC to Exit", 20) / 2, screenHeight / 2 + 20, 20, WHITE);
+        }
+        else
+        {
+            DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
+        }
 
         EndDrawing();
-        //----------------------------------------------------------------------------------
+
+        if (gameOver && IsKeyDown(KEY_ESCAPE))
+        {
+            break; // Exit game loop if game over and ESC key pressed
+        }
     }
 
-    // Unload the spacecraft image
+    // Unload textures
+    UnloadTexture(spaceBackground);
     UnloadTexture(spacecraftTexture);
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow(); // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    CloseWindow();
 
     return 0;
 }
