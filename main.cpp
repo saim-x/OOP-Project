@@ -19,12 +19,15 @@ Enemy InitEnemy(const Rectangle &boundary)
     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
     // Randomly choose between enemy1 and enemy2 textures
-    if (GetRandomValue(0, 1) == 0) {
+    if (GetRandomValue(0, 1) == 0)
+    {
         enemy.texture = LoadTexture("media/enemy1.png");
-    } else {
+    }
+    else
+    {
         enemy.texture = LoadTexture("media/enemy2.png");
     }
-    enemy.speed = 2.0f;                             // Set enemy speed
+    enemy.speed = 2.0f; // Set enemy speed
     return enemy;
 }
 
@@ -56,7 +59,7 @@ int main(void)
     Texture2D spaceBackground = LoadTexture("media/space.png");
 
     // Load the spacecraft image
-    Texture2D spacecraftTexture = LoadTexture("media/spacecraft.png");
+    Texture2D spacecraftTexture = LoadTexture("media/spacecraft23.png");
 
     // Seed the random number generator
     srand(time(NULL));
@@ -65,6 +68,8 @@ int main(void)
     std::vector<Enemy> enemies;
 
     bool gameOver = false;
+    bool restartRequested = false; // Flag to track if restart has been requested
+    float gameTime = 0.0f;         // Variable to track elapsed game time
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
 
@@ -72,6 +77,8 @@ int main(void)
     {
         if (!gameOver) // Only update the game if it's not over
         {
+            gameTime += GetFrameTime(); // Update game time
+
             // Update player movement
             float targetSpeedX = 0.0f;
             float targetSpeedY = 0.0f;
@@ -126,7 +133,7 @@ int main(void)
             player.y += playerVelocity.y;
 
             // Spawn enemies randomly and limit the number of enemies
-            if (GetRandomValue(0, 100) < 2 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
+            if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
             {
                 enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}));
             }
@@ -144,7 +151,7 @@ int main(void)
 
                 // Check for collision with player
                 Rectangle playerRect = {player.x, player.y, player.width, player.height};
-                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y, enemies[i].texture.width, enemies[i].texture.height};
+                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
                 if (CheckCollisionRecs(playerRect, enemyRect))
                 {
                     gameOver = true; // Game over if collision detected
@@ -173,7 +180,10 @@ int main(void)
         if (gameOver)
         {
             DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
-            DrawText("Press ESC to Exit", screenWidth / 2 - MeasureText("Press ESC to Exit", 20) / 2, screenHeight / 2 + 20, 20, WHITE);
+            DrawText("Your Score: ", screenWidth / 2 - MeasureText("Your Score: ", 20) / 2, (screenHeight / 2)+40, 20, WHITE);
+            DrawText(TextFormat("%.2f seconds", gameTime), screenWidth / 2 - MeasureText(TextFormat("%.2f seconds", gameTime), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
+
+            DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart", 20) / 2, (screenHeight / 2 )+ 120, 26, WHITE);
         }
         else
         {
@@ -181,6 +191,25 @@ int main(void)
         }
 
         EndDrawing();
+
+        if (gameOver)
+        {
+            if (IsKeyDown(KEY_SPACE))
+            {
+                // Reset game variables for restart
+                player = {0, 0, 40, 40};
+                playerVelocity = {0.0f, 0.0f};
+                enemies.clear();
+                gameOver = false;
+                restartRequested = true;
+                gameTime = 0.0f; // Reset game time
+            }
+        }
+
+        if (restartRequested && !IsKeyDown(KEY_SPACE))
+        {
+            restartRequested = false;
+        }
 
         if (gameOver && IsKeyDown(KEY_ESCAPE))
         {
