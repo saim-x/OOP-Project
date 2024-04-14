@@ -15,7 +15,7 @@ int main(void)
 
     Rectangle player = {screenWidth / 2 - 20, screenHeight / 2 - 20, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
-    const float maxSpeed = 26.0f; // Adjusted maximum speed
+    const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
 
@@ -92,6 +92,41 @@ int main(void)
         player.x += playerVelocity.x;
         player.y += playerVelocity.y;
 
+        // Regenerate background image if player is close to the edge
+        // const float regenerationThreshold = 200.0f;
+        // if (player.x + screenWidth / 2 + regenerationThreshold > spaceBackground.width)
+        // {
+        //     UnloadTexture(spaceBackground);
+        //     spaceBackground = LoadTexture("media/space.png");
+        // }
+        // else if (player.x - screenWidth / 2 - regenerationThreshold < 0)
+        // {
+        //     UnloadTexture(spaceBackground);
+        //     spaceBackground = LoadTexture("media/space.png");
+        // }
+
+        // if (player.y + screenHeight / 2 + regenerationThreshold > spaceBackground.height)
+        // {
+        //     UnloadTexture(spaceBackground);
+        //     spaceBackground = LoadTexture("media/space.png");
+        // }
+        // else if (player.y - screenHeight / 2 - regenerationThreshold < 0)
+        // {
+        //     UnloadTexture(spaceBackground);
+        //     spaceBackground = LoadTexture("media/space.png");
+        // }
+        // Check if the player reached the end of the background image
+        const float regenerationThreshold = 1.0f;
+        if (player.x + screenWidth / 2 + regenerationThreshold > spaceBackground.width ||
+            player.x - screenWidth / 2 - regenerationThreshold < 0 ||
+            player.y + screenHeight / 2 + regenerationThreshold > spaceBackground.height ||
+            player.y - screenHeight / 2 - regenerationThreshold < 0)
+        {
+            // Regenerate the background image
+            UnloadTexture(spaceBackground);
+            spaceBackground = LoadTexture("media/space.png");
+        }
+
         // Update camera target based on player movement
         camera.target.x += playerVelocity.x;
         camera.target.y += playerVelocity.y;
@@ -105,30 +140,22 @@ int main(void)
         BeginMode2D(camera);
 
         // Draw the space background
-        // We draw it multiple times to cover the whole screen seamlessly
-        for (int y = -screenHeight; y < screenHeight * 2; y += spaceBackground.height)
-        {
-            for (int x = -screenWidth; x < screenWidth * 2; x += spaceBackground.width)
-            {
-                DrawTexture(spaceBackground, x, y, WHITE);
-            }
-        }
+        DrawTexture(spaceBackground, -screenWidth / 2 - camera.target.x, -screenHeight / 2 - camera.target.y, WHITE);
 
         // Draw the spacecraft image at the player's position
-        DrawTextureEx(spacecraftTexture, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        DrawTextureEx(spacecraftTexture, (Vector2){screenWidth / 2, screenHeight / 2}, 0.0f, 1.0f, WHITE);
 
         EndMode2D();
 
-        DrawText("2D Space Game", 10, 10, 20, RED);
+        DrawText("Space Shooter Game", 10, 10, 20, RED);
 
-        DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
+        DrawText("Developed By: Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
 
-    // Unload the space background image and spacecraft image
-    UnloadTexture(spaceBackground);
+    // Unload the spacecraft image
     UnloadTexture(spacecraftTexture);
 
     // De-Initialization
