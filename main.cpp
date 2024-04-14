@@ -15,8 +15,9 @@ int main(void)
 
     Rectangle player = {screenWidth / 2 - 20, screenHeight / 2 - 20, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
-    float acceleration = 0.2f;
-    float deceleration = 0.1f;
+    const float maxSpeed = 26.0f; // Adjusted maximum speed
+    const float acceleration = 3.0f; // Adjusted acceleration
+    const float deceleration = 1.0f;
 
     Camera2D camera = {0};
     camera.target = (Vector2){player.x + 20.0f, player.y + 20.0f};
@@ -39,38 +40,51 @@ int main(void)
         // Update
         //----------------------------------------------------------------------------------
         // Player movement
-        float speed = 2.0f;
+        float targetSpeedX = 0.0f;
+        float targetSpeedY = 0.0f;
 
-        float targetTiltAngle = 0.0f;
         if (IsKeyDown(KEY_RIGHT))
         {
-            playerVelocity.x += acceleration;
-            targetTiltAngle = -20.0f; // Tilt right
+            targetSpeedX += acceleration;
         }
         else if (IsKeyDown(KEY_LEFT))
         {
-            playerVelocity.x -= acceleration;
-            targetTiltAngle = 20.0f; // Tilt left
-        }
-        else
-        {
-            // Deceleration when no keys are pressed
-            playerVelocity.x *= deceleration;
+            targetSpeedX -= acceleration;
         }
 
         if (IsKeyDown(KEY_DOWN))
         {
-            playerVelocity.y += acceleration;
-            targetTiltAngle = -20.0f; // Tilt down
+            targetSpeedY += acceleration;
         }
         else if (IsKeyDown(KEY_UP))
         {
-            playerVelocity.y -= acceleration;
-            targetTiltAngle = 20.0f; // Tilt up
+            targetSpeedY -= acceleration;
+        }
+
+        // Smoothly accelerate/decelerate towards target speed
+        if (targetSpeedX > playerVelocity.x)
+        {
+            playerVelocity.x = fminf(playerVelocity.x + acceleration, maxSpeed);
+        }
+        else if (targetSpeedX < playerVelocity.x)
+        {
+            playerVelocity.x = fmaxf(playerVelocity.x - acceleration, -maxSpeed);
         }
         else
         {
-            // Deceleration when no keys are pressed
+            playerVelocity.x *= deceleration;
+        }
+
+        if (targetSpeedY > playerVelocity.y)
+        {
+            playerVelocity.y = fminf(playerVelocity.y + acceleration, maxSpeed);
+        }
+        else if (targetSpeedY < playerVelocity.y)
+        {
+            playerVelocity.y = fmaxf(playerVelocity.y - acceleration, -maxSpeed);
+        }
+        else
+        {
             playerVelocity.y *= deceleration;
         }
 
@@ -78,21 +92,9 @@ int main(void)
         player.x += playerVelocity.x;
         player.y += playerVelocity.y;
 
-        // Check if the spacecraft reached the screen edge, and reset position to the origin
-        if (player.x > screenWidth || player.x < 0 || player.y > screenHeight || player.y < 0)
-        {
-            // Reset spacecraft position to the center (origin)
-            player.x = screenWidth / 2 - 20;
-            player.y = screenHeight / 2 - 20;
-            playerVelocity = {0.0f, 0.0f};
-        }
-
-        // Smoothly interpolate tilt angle
-        float tiltInterpolation = 0.1f;
-        camera.rotation += (targetTiltAngle - camera.rotation) * tiltInterpolation;
-
-        // Camera target follows player
-        camera.target = (Vector2){player.x + 20, player.y + 20};
+        // Update camera target based on player movement
+        camera.target.x += playerVelocity.x;
+        camera.target.y += playerVelocity.y;
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -102,11 +104,18 @@ int main(void)
 
         BeginMode2D(camera);
 
-        // Draw the space background without tilt
-        DrawTexture(spaceBackground, -screenWidth / 2 - camera.target.x, -screenHeight / 2 - camera.target.y, WHITE);
+        // Draw the space background
+        // We draw it multiple times to cover the whole screen seamlessly
+        for (int y = -screenHeight; y < screenHeight * 2; y += spaceBackground.height)
+        {
+            for (int x = -screenWidth; x < screenWidth * 2; x += spaceBackground.width)
+            {
+                DrawTexture(spaceBackground, x, y, WHITE);
+            }
+        }
 
-        // Draw the spacecraft image with smooth tilt effect
-        DrawTextureEx(spacecraftTexture, (Vector2){player.x, player.y}, camera.rotation, 1.0f, WHITE);
+        // Draw the spacecraft image at the player's position
+        DrawTextureEx(spacecraftTexture, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
 
         EndMode2D();
 
