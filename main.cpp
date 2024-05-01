@@ -38,7 +38,7 @@ int main(void)
     const int screenHeight = 800;
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
-
+    InitAudioDevice();
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
@@ -61,6 +61,9 @@ int main(void)
     // Load the spacecraft image
     Texture2D spacecraftTexture = LoadTexture("media/spacecraft23.png");
 
+    // Load the background music
+    Sound bgMusic = LoadSound("resources/Music.wav");
+
     // Seed the random number generator
     srand(time(NULL));
 
@@ -70,6 +73,9 @@ int main(void)
     bool gameOver = false;
     bool restartRequested = false; // Flag to track if restart has been requested
     float gameTime = 0.0f;         // Variable to track elapsed game time
+
+    // Play background music
+    PlaySound(bgMusic);
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
 
@@ -180,10 +186,10 @@ int main(void)
         if (gameOver)
         {
             DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
-            DrawText("Your Score: ", screenWidth / 2 - MeasureText("Your Score: ", 20) / 2, (screenHeight / 2)+40, 20, WHITE);
+            DrawText("Your Score: ", screenWidth / 2 - MeasureText("Your Score: ", 20) / 2, (screenHeight / 2) + 40, 20, WHITE);
             DrawText(TextFormat("%.2f seconds", gameTime), screenWidth / 2 - MeasureText(TextFormat("%.2f seconds", gameTime), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
 
-            DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart", 20) / 2, (screenHeight / 2 )+ 120, 26, WHITE);
+            DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart", 20) / 2, (screenHeight / 2) + 120, 26, WHITE);
         }
         else
         {
@@ -202,7 +208,8 @@ int main(void)
                 enemies.clear();
                 gameOver = false;
                 restartRequested = true;
-                gameTime = 0.0f; // Reset game time
+                gameTime = 0.0f;    // Reset game time
+                PlaySound(bgMusic); // Play background music again
             }
         }
 
@@ -217,7 +224,8 @@ int main(void)
         }
     }
 
-    // Unload textures
+    // Unload sound and textures
+    UnloadSound(bgMusic);
     UnloadTexture(spaceBackground);
     UnloadTexture(spacecraftTexture);
 
