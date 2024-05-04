@@ -11,6 +11,12 @@ struct Enemy
     Texture2D texture;
     float speed;
 };
+struct Bullet
+{
+    Vector2 position;
+    Vector2 velocity;
+    bool active;
+};
 
 // Function to initialize an enemy character at a random position within the boundaries
 Enemy InitEnemy(const Rectangle &boundary)
@@ -30,7 +36,14 @@ Enemy InitEnemy(const Rectangle &boundary)
     enemy.speed = 2.0f; // Set enemy speed
     return enemy;
 }
-
+Bullet InitBullet(Vector2 position, Vector2 velocity)
+{
+    Bullet bullet;
+    bullet.position = position;
+    bullet.velocity = velocity;
+    bullet.active = true;
+    return bullet;
+}
 int main(void)
 {
     // Initialization
@@ -66,9 +79,10 @@ int main(void)
 
     // Seed the random number generator
     srand(time(NULL));
-
-    // Initialize vector to store enemies
     std::vector<Enemy> enemies;
+
+    // Initialize vector to store bullets
+    std::vector<Bullet> bullets;
 
     bool gameOver = false;
     bool restartRequested = false; // Flag to track if restart has been requested
@@ -163,6 +177,28 @@ int main(void)
                     gameOver = true; // Game over if collision detected
                     break;
                 }
+            }
+            // Update and draw bullets
+            for (size_t i = 0; i < bullets.size(); i++)
+            {
+                if (bullets[i].active)
+                {
+                    // Update bullet position
+                    bullets[i].position.x += bullets[i].velocity.x;
+                    bullets[i].position.y += bullets[i].velocity.y;
+
+                    // Check bullet collision with enemies
+                    // Existing collision detection code...
+
+                    // Draw bullet
+                    DrawRectangle(bullets[i].position.x, bullets[i].position.y, 4, 4, RED);
+                }
+            }
+            // Fire bullets when 'F' key is pressed
+            if (IsKeyDown(KEY_F))
+            {
+                Vector2 bulletVelocity = {0.0f, -10.0f}; // Adjust bullet speed as needed
+                bullets.push_back(InitBullet({player.x + player.width / 2, player.y}, bulletVelocity));
             }
         }
 
