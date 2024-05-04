@@ -96,7 +96,7 @@ int main(void)
     PlaySound(bgMusic);
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-
+    bool fKeyPressed = false;    // Initialize outside your update loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         if (!gameOver) // Only update the game if it's not over
@@ -184,12 +184,17 @@ int main(void)
             }
 
             // Fire bullets when 'F' key is pressed
-            if (IsKeyDown(KEY_F))
+            if (IsKeyPressed(KEY_F) && !fKeyPressed)
             {
-                Vector2 bulletVelocity = {0.0f, -10.0f}; // Adjust bullet speed as needed
-                bullets.push_back(InitBullet({player.x + player.width / 2, player.y}, bulletVelocity));
-                // Debug print statement
-                std::cout << "Bullet fired!\n";
+                // Spawn bullet
+                // Update bullet position
+                // Set fKeyPressed to true
+                fKeyPressed = true;
+            }
+            else if (!IsKeyPressed(KEY_F))
+            {
+                // Reset fKeyPressed when the key is released
+                fKeyPressed = false;
             }
 
             // Update and draw bullets
