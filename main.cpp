@@ -48,7 +48,8 @@ Bullet InitBullet(Vector2 position, Vector2 velocity)
     return bullet;
 }
 
-int main(void)
+// Function to run the game loop
+void RunGame()
 {
     // Initialization
     const int screenWidth = 800;
@@ -97,6 +98,7 @@ int main(void)
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     bool fKeyPressed = false;    // Initialize outside your update loop
+
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         if (!gameOver) // Only update the game if it's not over
@@ -279,6 +281,53 @@ int main(void)
     UnloadTexture(spacecraftTexture);
 
     CloseWindow();
+}
+
+// Function to display the main menu screen
+void ShowMainMenu()
+{
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+
+    InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
+
+    Rectangle playButton = {(float)(screenWidth / 2 - 50), (float)(screenHeight / 2 - 25), 100, 50};
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        // Draw play button
+        DrawRectangleRec(playButton, BLUE);
+        DrawText("Play", (int)playButton.x + 30, (int)playButton.y + 15, 20, WHITE);
+
+        // Check if the mouse is hovering over the play button
+        if (CheckCollisionPointRec(GetMousePosition(), playButton))
+        {
+            DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Start the game
+                CloseWindow(); // Close the main screen window
+                RunGame();     // Start the game loop
+            }
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
+
+int main(void)
+{
+    ShowMainMenu();
 
     return 0;
 }
