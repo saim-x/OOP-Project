@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 using namespace std;
-// Define the Enemy 
+// Define the Enemy
 struct Enemy
 {
     Vector2 position;
@@ -27,13 +27,18 @@ Enemy InitEnemy(const Rectangle &boundary)
     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
     // Randomly choose between enemy1 and enemy2 textures
-    if (GetRandomValue(0, 1) == 0)
+    if (GetRandomValue(0, 2) == 0)
     {
         enemy.texture = LoadTexture("media/enemy1.png");
     }
-    else
+    else if (GetRandomValue(0, 2) == 1)
     {
         enemy.texture = LoadTexture("media/enemy2.png");
+    }
+    else
+    {
+        enemy.texture = LoadTexture("media/enemy3.png");
+    
     }
     enemy.speed = 2.0f; // Set enemy speed
     return enemy;
@@ -169,16 +174,28 @@ void RunGame()
             for (size_t i = 0; i < enemies.size(); i++)
             {
                 // Move enemies towards the player (You can update this logic as per your requirement)
-                Vector2 direction = {player.x - enemies[i].position.x, player.y - enemies[i].position.y};
+                float randomFloat = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 100.0f;
+                Vector2 direction = {player.x - enemies[i].position.x + randomFloat, player.y - enemies[i].position.y};
                 float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
                 direction.x /= distance;
                 direction.y /= distance;
-                enemies[i].position.x += direction.x * enemies[i].speed;
-                enemies[i].position.y += direction.y * enemies[i].speed;
+                if (i < enemies.size() - 1)
+                {
+                    Rectangle enemyRectbysaimedition = {enemies[i].position.x - 10, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
+                    Rectangle enemyRectbysaimeditionsecond = {enemies[i + 1].position.x - 10, enemies[i + 1].position.y + 20, static_cast<float>(enemies[i + 1].texture.width), static_cast<float>(enemies[i + 1].texture.height)};
+                    if (CheckCollisionRecs(enemyRectbysaimedition, enemyRectbysaimeditionsecond))
+                    {
+                        enemies[i].position.x += 30;
+                        enemies[i].position.y += 30;
+                    }
+                }
+
+                enemies[i].position.x += (direction.x) * enemies[i].speed;
+                enemies[i].position.y += (direction.y) * enemies[i].speed;
 
                 // Check for collision with player
-                Rectangle playerRect = {player.x+40, player.y+30, player.width-35, player.height+25};
-                Rectangle enemyRect = {enemies[i].position.x-10, enemies[i].position.y+20, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
+                Rectangle playerRect = {player.x + 40, player.y + 30, player.width - 35, player.height + 25};
+                Rectangle enemyRect = {enemies[i].position.x - 10, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
                 if (CheckCollisionRecs(playerRect, enemyRect))
                 {
                     gameOver = true; // Game over if collision detected
@@ -238,9 +255,9 @@ void RunGame()
         if (gameOver)
         {
             DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
-            DrawText(TextFormat("Your Score: %.2f",score), screenWidth / 2 - MeasureText("Your Score: xxxxxx", 20) / 2, (screenHeight / 2) + 55, 26, WHITE);
+            DrawText(TextFormat("Your Score: %.2f", score), screenWidth / 2 - MeasureText("Your Score: xxxxxx", 20) / 2, (screenHeight / 2) + 55, 26, WHITE);
             DrawText(TextFormat("Time: %.2f seconds", gameTime), screenWidth / 2 - MeasureText(TextFormat("Time: %.2f seconds", gameTime), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
-            DrawText(TextFormat("Score: %.2f ", score),screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 40, 20, WHITE);
+            DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 40, 20, WHITE);
             DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart xxx", 20) / 2, (screenHeight / 2) + 120, 26, WHITE);
         }
         else
