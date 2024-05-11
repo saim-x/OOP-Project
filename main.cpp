@@ -47,7 +47,7 @@ Bullet InitBullet(Vector2 position, Vector2 velocity)
     bullet.active = true;
     return bullet;
 }
-
+float score = 0.0f;
 // Function to run the game loop
 void RunGame()
 {
@@ -96,14 +96,15 @@ void RunGame()
     // Play background music
     PlaySound(bgMusic);
 
-    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-    bool fKeyPressed = false;    // Initialize outside your update loop
+    SetTargetFPS(60);         // Set our game to run at 60 frames-per-second
+    bool fKeyPressed = false; // Initialize outside your update loop
 
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         if (!gameOver) // Only update the game if it's not over
         {
             gameTime += GetFrameTime(); // Update game time
+            score = score + (2 * GetFrameTime());
 
             // Update player movement
             float targetSpeedX = 0.0f;
@@ -239,11 +240,12 @@ void RunGame()
             DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
             DrawText("Your Score: ", screenWidth / 2 - MeasureText("Your Score: ", 20) / 2, (screenHeight / 2) + 40, 20, WHITE);
             DrawText(TextFormat("%.2f seconds", gameTime), screenWidth / 2 - MeasureText(TextFormat("%.2f seconds", gameTime), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
-
+            DrawText(TextFormat("Score: %.2f ", score),screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 40, 20, WHITE);
             DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart", 20) / 2, (screenHeight / 2) + 120, 26, WHITE);
         }
         else
         {
+            DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
             DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
         }
 
@@ -254,6 +256,7 @@ void RunGame()
             if (IsKeyDown(KEY_SPACE))
             {
                 // Reset game variables for restart
+
                 player = {0, 0, 40, 40};
                 playerVelocity = {0.0f, 0.0f};
                 enemies.clear();
@@ -261,6 +264,7 @@ void RunGame()
                 restartRequested = true;
                 gameTime = 0.0f;    // Reset game time
                 PlaySound(bgMusic); // Play background music again
+                score = 0.0f;
             }
         }
 
@@ -354,7 +358,6 @@ void ShowMainMenu()
 
     CloseWindow();
 }
-
 
 int main(void)
 {
