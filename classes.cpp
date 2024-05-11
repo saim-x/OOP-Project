@@ -43,11 +43,13 @@
     };
 
     class Player:public Game{
+        protected:
+        float score;
         public:
 
     };
 
     class Enemy:public Game{
         public:
-        
+
     };
