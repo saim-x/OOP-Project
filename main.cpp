@@ -16,6 +16,7 @@ struct Enemy
     float speed;
 };
 
+
 struct Bullet
 {
     Vector2 position;
