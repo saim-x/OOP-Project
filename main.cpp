@@ -1,5 +1,6 @@
 #include "include/raylib.h"
 #include <cmath>
+#include <string>
 #include <vector>
 #include <ctime>
 #include <cstdlib>
@@ -149,7 +150,6 @@ Bullet InitBullet(Vector2 position, Vector2 velocity)
 }
 float score = 0.0f;
 
-
 void SaveToFile(float score)
 {
     ofstream outputFile("scores.txt", ios::app); // Open the file in append mode
@@ -157,13 +157,40 @@ void SaveToFile(float score)
     if (outputFile.is_open())
     {
         outputFile << score << endl; // Write the score to the file on a new line
-        outputFile.close();           // Close the file
+        outputFile.close();          // Close the file
     }
     else
     {
         cout << "Failed to open the file for writing." << endl;
     }
 }
+
+void ShowHighScore()
+{
+    // Initialization
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
+
+    InitWindow(screenWidth, screenHeight, "2D Space Game");
+    ifstream inputFile("scores.txt"); // Open the file for reading
+
+    if (inputFile.is_open())
+    {
+        string score;
+        while (getline(inputFile, score)) // Read each line from the file
+        {
+            // Display the score on a different screen
+            // Example: cout << score << endl;
+        }
+
+        inputFile.close(); // Close the file
+    }
+    else
+    {
+        cout << "Failed to open the file for reading." << endl;
+    }
+}
+
 // Function to run the game loop
 void RunGame()
 {
@@ -484,7 +511,7 @@ void RunGame()
         }
     }
 
-    //Unload sound and textures
+    // Unload sound and textures
     UnloadSound(bgMusic);
     UnloadTexture(spaceBackground);
     UnloadTexture(spacecraftTexture);
@@ -543,6 +570,18 @@ void ShowMainMenu()
                 // Start the game
                 CloseWindow(); // Close the main screen window
                 RunGame();     // Start the game loop
+            }
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+        {
+            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Display high score (for now, just print a message)
+                CloseWindow();   // Close the main screen window
+                ShowHighScore(); // Show the high score screen
             }
         }
         // Check if the mouse is hovering over the high score button
