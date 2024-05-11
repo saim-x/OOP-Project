@@ -223,7 +223,7 @@ void RunGame()
         ClearBackground(RAYWHITE);
 
         BeginMode2D(camera);
-        DrawTexture(spaceBackground, -screenWidth / 2 - camera.target.x, -screenHeight / 2 - camera.target.y, WHITE);
+        DrawTexture(spaceBackground, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(spacecraftTexture, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
 
         // Draw enemies
