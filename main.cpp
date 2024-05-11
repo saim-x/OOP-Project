@@ -244,10 +244,10 @@ void RunGame()
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
 
-    const float boundaryLeft = -815.0f;
-    const float boundaryRight = 715.0f;
-    const float boundaryTop = -429.0f;
-    const float boundaryBottom = 332.0f;
+    const float boundaryLeft = -670.0f;
+    const float boundaryRight = 600.0f;
+    const float boundaryTop = -300.0f;
+    const float boundaryBottom = 250.0f;
 
     Camera2D camera = {0};
     camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
