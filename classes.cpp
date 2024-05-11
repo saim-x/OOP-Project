@@ -46,7 +46,7 @@
         protected:
         float score;
         public:
-
+        
     };
 
     class Enemy:public Game{
