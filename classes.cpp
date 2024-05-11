@@ -44,6 +44,7 @@
         virtual void setpos(float x, float y)=0;
         float getx(){return player.x;}
         float gety(){return player.y;}
+        Rectangle getrect(){return player;}
     };
 
     class Player:public Game{
