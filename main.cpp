@@ -334,51 +334,19 @@ void RunGame()
             // static float keyPressTimer = 0.0f;
             // const float keyPressDuration = 0.1f;
 
-            // if (IsKeyDown(KEY_F))
-            // {
-            //     keyPressTimer += GetFrameTime();
-
-            //     if (keyPressTimer <= keyPressDuration)
-            //     {
-            //         // Toggle BOOSTERS
-            //         boostersActivated = true;
-            //         PlaySound(sfx5);
-
-            //         targetSpeedX *= 25.0f;
-            //         targetSpeedY *= 25.0f;
-            //         PlaySound(sfx5);
-            //         SetSoundVolume(sfx5, 3.9f);
-            //     }
-            // }
-            // else
-            // {
-            //     boostersActivated = false;
-            //     keyPressTimer = 0.0f;
-            // }
-
-            // Define a constant for the delay before boosters can be activated again
-            const float BOOSTER_ACTIVATION_DELAY = 2.0f;
-            float keyPressTimer = 0.0f; // Initialize the timer
-            bool boostersActivated = false;
-            bool boosterKeyPressed = false; // Initialize the flag
-
-            if (IsKeyPressed(KEY_F))
+            if (IsKeyDown(KEY_F))
             {
-                cout << "F key pressed\n";
-                // Check if enough time has passed since the last booster activation
-                if (!boosterKeyPressed)
+                keyPressTimer += GetFrameTime();
+
+                if (keyPressTimer <= keyPressDuration)
                 {
-                    cout << "Booster activated\n";
                     // Toggle BOOSTERS
                     boostersActivated = true;
                     PlaySound(sfx5);
+
                     targetSpeedX *= 25.0f;
                     targetSpeedY *= 25.0f;
                     SetSoundVolume(sfx5, 3.9f);
-
-                    // Set the flag to true and start counting down
-                    boosterKeyPressed = true;
-                    keyPressTimer = 0.0f;
                 }
             }
             else
@@ -386,22 +354,6 @@ void RunGame()
                 // If the key is not pressed, reset the flag
                 boosterKeyPressed = false;
             }
-
-            // If the booster key was pressed within the last 2 seconds, update the timer
-            if (boosterKeyPressed)
-            {
-                keyPressTimer += GetFrameTime();
-
-                // If enough time has passed, reset the flag
-                if (keyPressTimer >= BOOSTER_ACTIVATION_DELAY)
-                {
-                    keyPressTimer = 0.0f;
-                    boosterKeyPressed = false;
-                }
-            }
-
-            // Update boostersActivated based on the flag
-            boostersActivated = boosterKeyPressed;
 
             // Smoothly accelerate/decelerate towards target speed
             if (targetSpeedX > playerVelocity.x)
