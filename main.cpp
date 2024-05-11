@@ -32,14 +32,8 @@ Enemy InitEnemy(const Rectangle &boundary)
     // Load the boss enemy sfx
     Sound sfx1 = LoadSound("resources/sfx1edited.wav");
     Sound sfx2 = LoadSound("resources/poinkwav.wav");
-
-    // Randomly choose between enemy1 and enemy2 textures
-    if (GetRandomValue(0, 1) == 0)
-    {
-        enemy.texture = LoadTexture("media/enemy1.png");
-        PlaySound(sfx2);
-    }
-    else if (GetRandomValue(0, 1) == 1 && flag == 0)
+    //BOSS HAVE TO SPAWN ONCE LOGIC
+    if (flag == 0)
     {
         flag = 1;
         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
@@ -47,6 +41,13 @@ Enemy InitEnemy(const Rectangle &boundary)
         PlaySound(sfx1);
         enemy.speed = 3.0f; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
+    // Randomly choose between enemy1 and enemy2 textures
+    if (GetRandomValue(0, 1) == 0)
+    {
+        enemy.texture = LoadTexture("media/enemy1.png");
+        PlaySound(sfx2);
+    }
+
     else
     {
         enemy.texture = LoadTexture("media/enemy3.png");
