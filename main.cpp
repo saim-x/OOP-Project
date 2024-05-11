@@ -172,15 +172,22 @@ void ShowHighScore()
     const int screenHeight = 850;
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
+    Camera2D camera = {0};
+    camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+
     ifstream inputFile("scores.txt"); // Open the file for reading
+
+    string highScores; // String to store the high scores
 
     if (inputFile.is_open())
     {
         string score;
         while (getline(inputFile, score)) // Read each line from the file
         {
-            // Display the score on a different screen
-            // Example: cout << score << endl;
+            highScores += score + "\n\n\n\n"; // Append the score to the highScores string
         }
 
         inputFile.close(); // Close the file
@@ -189,6 +196,36 @@ void ShowHighScore()
     {
         cout << "Failed to open the file for reading." << endl;
     }
+
+    // Load the background image
+
+    Texture2D spaceBackground = LoadTexture("media/bgimage.png");
+
+    while (!WindowShouldClose())
+    {
+        // Close window by pressing ESC key
+        if (IsKeyDown(KEY_ESCAPE))
+            break;
+
+        BeginDrawing();
+
+        // Draw the background image
+        DrawTexture(spaceBackground, 0, 0, WHITE);
+
+        ClearBackground(RAYWHITE);
+
+        // Display the high scores on the screen
+        DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, RED);
+
+        // Draw the high scores below the heading
+        DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 26) / 2, 150, 44, BLACK);
+        EndDrawing();
+    }
+
+    CloseWindow(); // Close the window after the loop
+
+    // Unload the background image
+    UnloadTexture(spaceBackground);
 }
 
 // Function to run the game loop
