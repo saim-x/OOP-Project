@@ -26,19 +26,21 @@ Enemy InitEnemy(const Rectangle &boundary)
     Enemy enemy;
     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
+    int flag = 0;
     // Randomly choose between enemy1 and enemy2 textures
-    if (GetRandomValue(0, 2) == 0)
+    if (GetRandomValue(0, 1) == 0)
     {
         enemy.texture = LoadTexture("media/enemy1.png");
     }
-    else if (GetRandomValue(0, 2) == 1)
+    else if (GetRandomValue(0, 1) == 1 && flag == 0)
     {
-        enemy.texture = LoadTexture("media/enemy2.png");
+        flag = 1;
+        //BOSS ENEMY WILL SPAWN ONLY ONCE :D
+        enemy.texture = LoadTexture("media/enemy3.1.png");
     }
     else
     {
         enemy.texture = LoadTexture("media/enemy3.png");
-    
     }
     enemy.speed = 2.0f; // Set enemy speed
     return enemy;
