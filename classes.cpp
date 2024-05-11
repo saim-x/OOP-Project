@@ -8,59 +8,29 @@
     const int screenWidth = 1600;
     const int screenHeight = 850;
 
-    // InitWindow(screenWidth, screenHeight, "2D Space Game");
-    // InitAudioDevice();
-    // Rectangle player = {0, 0, 40, 40};
-    // Vector2 playerVelocity = {0.0f, 0.0f};
-    // const float maxSpeed = 26.0f;    // Adjusted maximum speed
-    // const float acceleration = 3.0f; // Adjusted acceleration
-    // const float deceleration = 1.0f;
-
-    // const float boundaryLeft = -815.0f;
-    // const float boundaryRight = 715.0f;
-    // const float boundaryTop = -429.0f;
-    // const float boundaryBottom = 332.0f;
-
-    // Camera2D camera = {0};
-    // camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
-    // camera.rotation = 0.0f;
-    // camera.zoom = 1.0f;
-
-    // // Load the initial space background image
-    // Texture2D spaceBackground = LoadTexture("media/space.png");
-
-    // // Load the spacecraft image
-    // Texture2D spacecraftTexture = LoadTexture("media/spacecraft23.png");
-
-    // // Load the background music
-    // Sound bgMusic = LoadSound("resources/random.wav");
-
-    // // Seed the random number generator
-    // srand(time(NULL));
-    // std::vector<Enemy> enemies;
-
-    // // Initialize vector to store bullets
-    // std::vector<Bullet> bullets;
-
-    // bool gameOver = false;
-    // bool restartRequested = false; // Flag to track if restart has been requested
-    // float gameTime = 0.0f;         // Variable to track elapsed game time
-
-    // // Play background music
-    // PlaySound(bgMusic);
-
-
-
     class Game{
         Rectangle player;
         char* texture;
         Texture2D textureobject;
+        Vector2 playervelocity;
+        const float maxSpeed = 26.0f;    // Adjusted maximum speed
+        const float acceleration = 3.0f; // Adjusted acceleration
+        const float deceleration = 1.0f;
+        char* music;
+        Sound bgMusic;
         public:
-        Game(char* texture):texture(texture){
+        Game(char* texture, char* music):texture(texture),music(music){
+            playervelocity.x=0.0f;
+            playervelocity.y=0.0f;
             player.x=0;
             player.y=0;
             player.width=40;
             player.height=40;
             textureobject=LoadTexture(texture);
+            bgMusic= LoadSound(music);
+        }
+        ~Game(){
+            UnloadTexture(textureobject);
+            UnloadSound(bgMusic);
         }
     };
