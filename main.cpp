@@ -19,6 +19,7 @@ struct Bullet
     Vector2 velocity;
     bool active;
 };
+int flag = 0; // flag to check if boss enemy is spawned or not
 
 // Function to initialize an enemy character at a random position within the boundaries
 Enemy InitEnemy(const Rectangle &boundary)
@@ -26,7 +27,9 @@ Enemy InitEnemy(const Rectangle &boundary)
     Enemy enemy;
     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
-    int flag = 0;
+    // Load the boss enemy sfx
+    Sound sfx1 = LoadSound("resources/sfx1edited.wav");
+
     // Randomly choose between enemy1 and enemy2 textures
     if (GetRandomValue(0, 1) == 0)
     {
@@ -35,8 +38,9 @@ Enemy InitEnemy(const Rectangle &boundary)
     else if (GetRandomValue(0, 1) == 1 && flag == 0)
     {
         flag = 1;
-        //BOSS ENEMY WILL SPAWN ONLY ONCE :D
+        // BOSS ENEMY WILL SPAWN ONLY ONCE :D
         enemy.texture = LoadTexture("media/enemy3.1.png");
+        PlaySound(sfx1);
     }
     else
     {
