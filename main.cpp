@@ -52,8 +52,8 @@ float score = 0.0f;
 void RunGame()
 {
     // Initialization
-    const int screenWidth = 800;
-    const int screenHeight = 800;
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
     InitAudioDevice();
@@ -63,10 +63,10 @@ void RunGame()
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
 
-    const float boundaryLeft = -440.0f;
-    const float boundaryRight = 310.0f;
-    const float boundaryTop = -410.0f;
-    const float boundaryBottom = 350.0f;
+    const float boundaryLeft = -815.0f;
+    const float boundaryRight = 715.0f;
+    const float boundaryTop = -429.0f;
+    const float boundaryBottom = 332.0f;
 
     Camera2D camera = {0};
     camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
