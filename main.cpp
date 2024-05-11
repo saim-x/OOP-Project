@@ -199,7 +199,7 @@ void ShowHighScore()
 
     // Load the background image
 
-    Texture2D spaceBackground = LoadTexture("media/bgimage.png");
+    Texture2D spaceBackground = LoadTexture("media/pookie.png");
 
     while (!WindowShouldClose())
     {
