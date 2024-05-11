@@ -28,6 +28,7 @@ struct HealthBar
     Color outerColor;
     Color innerColor;
     int currentHealth;
+    Texture2D heartTexture;
 };
 
 HealthBar CreateHealthBar(float x, float y, float width, float height, Color outerColor, Color innerColor, int startingHealth)
@@ -38,20 +39,36 @@ HealthBar CreateHealthBar(float x, float y, float width, float height, Color out
     bar.outerColor = outerColor;
     bar.innerColor = innerColor;
     bar.currentHealth = startingHealth;
+    bar.heartTexture = LoadTexture("media/heart.png");
     return bar;
 }
 
 void DrawHealthBar(HealthBar bar)
 {
-    // Draw outer rectangle
-    DrawRectangleRec(bar.outerRect, bar.outerColor);
+    // SIMPLE DRAWING OF HEALTH BAR
+    //  // Draw outer rectangle
+    //  DrawRectangleRec(bar.outerRect, bar.outerColor);
+
+    // // Calculate inner rectangle width based on current health
+    // float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
+    // bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
+
+    // // Draw inner rectangle
+    // DrawRectangleRec(bar.innerRect, bar.innerColor);
+
+    DrawRectangleRounded(bar.outerRect, 0.5, 1, bar.outerColor);
 
     // Calculate inner rectangle width based on current health
     float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
     bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
 
-    // Draw inner rectangle
-    DrawRectangleRec(bar.innerRect, bar.innerColor);
+    // Draw inner rectangle with rounded corners
+    DrawRectangleRounded(bar.innerRect, 0.2, 1, bar.innerColor);
+
+    // Draw heart texture at the center of the health bar
+    Vector2 heartPos = {bar.outerRect.x + (bar.outerRect.width - bar.heartTexture.width) / 2,
+                        bar.outerRect.y + (bar.outerRect.height - bar.heartTexture.height) / 2};
+    DrawTexture(bar.heartTexture, (int)heartPos.x, (int)heartPos.y, WHITE);
 }
 
 // Function to initialize an enemy character at a random position within the boundaries
@@ -137,7 +154,7 @@ void RunGame()
     const int screenHeight = 850;
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
-    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, GREEN, RED, maxHealth);
+    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
     InitAudioDevice();
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
@@ -157,22 +174,29 @@ void RunGame()
 
     // Load the initial space background image
     Texture2D spaceBackground;
-    int ran = GetRandomValue(0, 1); // Generate a random number between 0 and 1 for variety background
+    // Random Background DEPRECATED
+    //  int ran = GetRandomValue(0, 1); // Generate a random number between 0 and 1 for variety background
 
-    if (ran == 0)
-    {
-        spaceBackground = LoadTexture("media/space3.png");
-    }
-    else
-    {
-        spaceBackground = LoadTexture("media/space2.png");
-    }
+    // if (ran == 0)
+    // {
+    //     spaceBackground = LoadTexture("media/space3.png");
+    // }
+    // else
+    // {
+    //     spaceBackground = LoadTexture("media/space2.png");
+    // }
+    // FIX BACKGROUND NOW
+    spaceBackground = LoadTexture("media/space2.png");
+    bool boostersActivated;
 
     // Load the spacecraft image
     Texture2D spacecraftTexture = LoadTexture("media/spacecraft23.png");
 
     // Load the background music
     Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
+    Sound sfx4 = LoadSound("resources/StopIt.wav");
+    Sound sfx5 = LoadSound("resources/woosh.wav");
+    Sound gameover = LoadSound("resources/GameOver.wav");
 
     // Seed the random number generator
     srand(time(NULL));
@@ -187,6 +211,7 @@ void RunGame()
 
     // Play background music
     PlaySound(bgMusic);
+    SetSoundVolume(bgMusic, 0.5f);
 
     SetTargetFPS(60);         // Set our game to run at 60 frames-per-second
     bool fKeyPressed = false; // Initialize outside your update loop
@@ -218,6 +243,16 @@ void RunGame()
             else if (IsKeyDown(KEY_UP) && player.y > boundaryTop)
             {
                 targetSpeedY -= acceleration;
+            }
+
+            if (IsKeyDown(KEY_F) && !boostersActivated)
+            {
+                // Activating BOOSTERS
+                targetSpeedX *= 12;
+
+                boostersActivated = true; // Set the flag to true to indicate boosters are activated
+                PlaySound(sfx5);
+                SetSoundVolume(sfx5, 3.9f);
             }
 
             // Smoothly accelerate/decelerate towards target speed
@@ -286,6 +321,8 @@ void RunGame()
                 Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(playerRect, enemyRect))
                 {
+                    PlaySound(gameover);
+
                     gameOver = true; // Game over if collision detected
                     break;
                 }
@@ -321,6 +358,11 @@ void RunGame()
                     DrawRectangle(bullets[i].position.x, bullets[i].position.y, 4, 4, RED);
                 }
             }
+            // SFX FOR ENEMIES
+            if (GetRandomValue(0, 200) < 1)
+            {
+                PlaySound(sfx4);
+            }
         }
 
         // Draw
@@ -342,6 +384,8 @@ void RunGame()
         DrawText("Space Shooter", 10, 10, 20, RED);
         if (gameOver)
         {
+
+            StopSound(bgMusic);
             DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
             DrawText(TextFormat("Your Score: %.2f", score), screenWidth / 2 - MeasureText("Your Score: xxxxxx", 20) / 2, (screenHeight / 2) + 55, 26, WHITE);
             DrawText(TextFormat("Time: %.2f seconds", gameTime), screenWidth / 2 - MeasureText(TextFormat("Time: %.2f seconds", gameTime), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
@@ -376,6 +420,7 @@ void RunGame()
                 Sound sfx3 = LoadSound("resources/gamerestart.mp3");
                 PlaySound(sfx3);
                 healthBar.currentHealth = 0;
+                boostersActivated = false;
             }
         }
 
