@@ -41,10 +41,7 @@
             UnloadTexture(textureobject);
             UnloadSound(bgMusic);
         }
-        void setpos(float x, float y){
-            player.x=x;
-            player.y=y;
-        }
+        virtual void setpos(float x, float y)=0;
         float getx(){return player.x;}
         float gety(){return player.y;}
     };
@@ -59,8 +56,13 @@
     };
 
     class Enemy:public Game{
+        float speed;
         public:
             Enemy(float x, float y, char* texture, char* music):Game(texture,music){
-
+                speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
             }
+            void setpos(float x, float y){
+            player.x=x;
+            player.y=y;
+        }
     };
