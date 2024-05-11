@@ -177,8 +177,8 @@ void RunGame()
                 enemies[i].position.y += direction.y * enemies[i].speed;
 
                 // Check for collision with player
-                Rectangle playerRect = {player.x, player.y, player.width, player.height};
-                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
+                Rectangle playerRect = {player.x+40, player.y+30, player.width-35, player.height+25};
+                Rectangle enemyRect = {enemies[i].position.x-10, enemies[i].position.y+20, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
                 if (CheckCollisionRecs(playerRect, enemyRect))
                 {
                     gameOver = true; // Game over if collision detected
