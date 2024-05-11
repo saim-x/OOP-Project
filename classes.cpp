@@ -10,6 +10,7 @@ const int screenHeight = 850;
 
 class Game
 {
+    // We can add boundary class here to show aggregation.
 protected:
     Rectangle player;
     char *texture;
@@ -64,6 +65,7 @@ public:
     }
     void setpos(float x, float y)
     {
+        // We can try operator overloading here.
         player.x += x;
         player.y += y;
     }
