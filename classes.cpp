@@ -30,8 +30,12 @@
             textureobject=LoadTexture(texture);
             bgMusic= LoadSound(music);
         }
-        Game(char* texture, char* music):texture(texture),music(music){
-            
+        Game(float x, float y, char* texture, char* music):texture(texture),music(music){
+            player.x=x;
+            player.y=y;
+            textureobject=LoadTexture(texture);
+            player.height=textureobject.height;
+            player.width=textureobject.width;
         }
         ~Game(){
             UnloadTexture(textureobject);
@@ -50,13 +54,13 @@
         float score;
         public:
         Player(char* texture, char* music):Game(texture,music){
-
+            score=0;
         }
     };
 
     class Enemy:public Game{
         public:
             Enemy(float x, float y, char* texture, char* music):Game(texture,music){
-                
+
             }
     };
