@@ -159,9 +159,12 @@ void RunGame()
     Texture2D spaceBackground;
     int ran = GetRandomValue(0, 1); // Generate a random number between 0 and 1 for variety background
 
-    if (ran == 0) {
+    if (ran == 0)
+    {
         spaceBackground = LoadTexture("media/space3.png");
-    } else {
+    }
+    else
+    {
         spaceBackground = LoadTexture("media/space2.png");
     }
 
@@ -280,7 +283,7 @@ void RunGame()
 
                 // Check for collision with player
                 Rectangle playerRect = {player.x + 40, player.y + 30, player.width - 35, player.height + 30};
-                Rectangle enemyRect = {enemies[i].position.x , enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width)-25, static_cast<float>(enemies[i].texture.height)-10};
+                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(playerRect, enemyRect))
                 {
                     gameOver = true; // Game over if collision detected
@@ -314,7 +317,7 @@ void RunGame()
                     // Debug print statement
                     printf("Bullet position: (%.2f, %.2f)\n", bullets[i].position.x, bullets[i].position.y);
 
-                    //Draw bullet
+                    // Draw bullet
                     DrawRectangle(bullets[i].position.x, bullets[i].position.y, 4, 4, RED);
                 }
             }
@@ -350,8 +353,8 @@ void RunGame()
             DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
             DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
         }
-        // Update and draw health bar
-        healthBar.currentHealth -= 1; // Simulate health decrease
+        // Update and draw health bar or enemy counter
+        healthBar.currentHealth = enemies.size() * 20;
         DrawHealthBar(healthBar);
         EndDrawing();
 
@@ -372,6 +375,7 @@ void RunGame()
                 score = 0.0f;
                 Sound sfx3 = LoadSound("resources/gamerestart.mp3");
                 PlaySound(sfx3);
+                healthBar.currentHealth = 0;
             }
         }
 
@@ -394,7 +398,7 @@ void RunGame()
     CloseWindow();
 }
 
-// Function to display the main menu screen 
+// Function to display the main menu screen
 void ShowMainMenu()
 {
     const int screenWidth = 800;
@@ -467,6 +471,7 @@ void ShowMainMenu()
 
 int main(void)
 {
+
     ShowMainMenu();
 
     return 0;
