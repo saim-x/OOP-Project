@@ -4,6 +4,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+
 using namespace std;
 // Define the Enemy
 struct Enemy
@@ -146,6 +148,22 @@ Bullet InitBullet(Vector2 position, Vector2 velocity)
     return bullet;
 }
 float score = 0.0f;
+
+
+void SaveToFile(float score)
+{
+    ofstream outputFile("scores.txt"); // Open the file for writing
+
+    if (outputFile.is_open())
+    {
+        outputFile << score; // Write the score to the file
+        outputFile.close();  // Close the file
+    }
+    else
+    {
+        cout << "Failed to open the file for writing." << std::endl;
+    }
+}
 // Function to run the game loop
 void RunGame()
 {
@@ -343,6 +361,7 @@ void RunGame()
                     PlaySound(gameover);
 
                     gameOver = true; // Game over if collision detected
+                    SaveToFile(score);
                     break;
                 }
             }
