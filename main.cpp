@@ -16,7 +16,6 @@ struct Enemy
     float speed;
 };
 
-
 struct Bullet
 {
     Vector2 position;
@@ -542,7 +541,7 @@ void RunGame()
 
         if (gameOver && IsKeyDown(KEY_ESCAPE))
         {
-            break; //Exit game loop if game over and ESC key pressed
+            break; // Exit game loop if game over and ESC key pressed
         }
     }
 
