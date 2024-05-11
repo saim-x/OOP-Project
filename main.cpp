@@ -19,7 +19,40 @@ struct Bullet
     Vector2 velocity;
     bool active;
 };
-int flag = 0; // flag to check if boss enemy is spawned or not
+int flag = 0;        // flag to check if boss enemy is spawned or not
+int maxHealth = 100; // Maximum health of the player
+struct HealthBar
+{
+    Rectangle outerRect;
+    Rectangle innerRect;
+    Color outerColor;
+    Color innerColor;
+    int currentHealth;
+};
+
+HealthBar CreateHealthBar(float x, float y, float width, float height, Color outerColor, Color innerColor, int startingHealth)
+{
+    HealthBar bar;
+    bar.outerRect = {x, y, width, height};
+    bar.innerRect = {x + 2, y + 2, width - 4, height - 4};
+    bar.outerColor = outerColor;
+    bar.innerColor = innerColor;
+    bar.currentHealth = startingHealth;
+    return bar;
+}
+
+void DrawHealthBar(HealthBar bar)
+{
+    // Draw outer rectangle
+    DrawRectangleRec(bar.outerRect, bar.outerColor);
+
+    // Calculate inner rectangle width based on current health
+    float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
+    bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
+
+    // Draw inner rectangle
+    DrawRectangleRec(bar.innerRect, bar.innerColor);
+}
 
 // Function to initialize an enemy character at a random position within the boundaries
 Enemy InitEnemy(const Rectangle &boundary, const Rectangle &player)
@@ -27,20 +60,38 @@ Enemy InitEnemy(const Rectangle &boundary, const Rectangle &player)
     Enemy enemy;
     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
+    // Logic to prevent enemies from overlapping the player by moving them apart by 50 units
     if (abs(enemy.position.x - player.x) <= 50 && abs(enemy.position.y - player.y) <= 50)
     {
-        // Change enemy coordinates 50 units away from the player
+        // Calculate the new enemy position 50 units away from the player
+        float newX = enemy.position.x;
+        float newY = enemy.position.y;
+
         if (enemy.position.x < player.x)
-            enemy.position.x -= 50;
+            newX -= 50;
         else
-            enemy.position.x += 50;
+            newX += 50;
 
         if (enemy.position.y < player.y)
-            enemy.position.y -= 50;
+            newY -= 50;
         else
-            enemy.position.y += 50;
-    }
+            newY += 50;
 
+        // Check if the new position is within the window boundaries
+        if (newX < boundary.x)
+            newX = boundary.x;
+        else if (newX > boundary.x + boundary.width)
+            newX = boundary.x + boundary.width;
+
+        if (newY < boundary.y)
+            newY = boundary.y;
+        else if (newY > boundary.y + boundary.height)
+            newY = boundary.y + boundary.height;
+
+        // Update the enemy position
+        enemy.position.x = newX;
+        enemy.position.y = newY;
+    }
     enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
 
     // Load the boss enemy sfx
@@ -56,7 +107,7 @@ Enemy InitEnemy(const Rectangle &boundary, const Rectangle &player)
         enemy.speed = 3.0f; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
     // Randomly choose between enemy1 and enemy2 textures
-    if (GetRandomValue(0, 1) == 0)
+    else if (GetRandomValue(0, 1) == 0)
     {
         enemy.texture = LoadTexture("media/enemy1.png");
         PlaySound(sfx2);
@@ -86,6 +137,7 @@ void RunGame()
     const int screenHeight = 850;
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
+    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, GREEN, RED, maxHealth);
     InitAudioDevice();
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
@@ -104,13 +156,20 @@ void RunGame()
     camera.zoom = 1.0f;
 
     // Load the initial space background image
-    Texture2D spaceBackground = LoadTexture("media/space.png");
+    Texture2D spaceBackground;
+    int randomNum = rand() % 2; // Generate a random number between 0 and 1 for variety background
+
+    if (randomNum == 0) {
+        spaceBackground = LoadTexture("media/space.png");
+    } else {
+        spaceBackground = LoadTexture("media/space2.png");
+    }
 
     // Load the spacecraft image
     Texture2D spacecraftTexture = LoadTexture("media/spacecraft23.png");
 
     // Load the background music
-    Sound bgMusic = LoadSound("resources/random.wav");
+    Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
 
     // Seed the random number generator
     srand(time(NULL));
@@ -291,7 +350,9 @@ void RunGame()
             DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
             DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
         }
-
+        // Update and draw health bar
+        healthBar.currentHealth -= 1; // Simulate health decrease
+        DrawHealthBar(healthBar);
         EndDrawing();
 
         if (gameOver)
@@ -309,6 +370,8 @@ void RunGame()
                 gameTime = 0.0f;    // Reset game time
                 PlaySound(bgMusic); // Play background music again
                 score = 0.0f;
+                Sound sfx3 = LoadSound("resources/gamerestart.mp3");
+                PlaySound(sfx3);
             }
         }
 
