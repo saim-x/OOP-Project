@@ -86,3 +86,28 @@ public:
         player.y += y * speed;
     }
 };
+
+class DefaultValues
+{
+private:
+public:
+    Rectangle player = {0, 0, 40, 40};
+    Vector2 playerVelocity = {0.0f, 0.0f};
+    const float maxSpeed = 26.0f;    // Adjusted maximum speed
+    const float acceleration = 3.0f; // Adjusted acceleration
+    const float deceleration = 1.0f;
+
+    const float boundaryLeft = -815.0f;
+    const float boundaryRight = 715.0f;
+    const float boundaryTop = -429.0f;
+    const float boundaryBottom = 332.0f;
+
+    Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
+    Sound sfx4 = LoadSound("resources/StopIt.wav");
+
+    Sound sfx5 = LoadSound("resources/woosh.wav");
+    Sound sfx6 = LoadSound("resources/randomsfx1.wav");
+    Sound sfx7 = LoadSound("resources/randomsfx2.wav");
+
+    Sound gameover = LoadSound("resources/GameOver.wav");
+};
