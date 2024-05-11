@@ -157,10 +157,10 @@ void RunGame()
 
     // Load the initial space background image
     Texture2D spaceBackground;
-    int randomNum = rand() % 2; // Generate a random number between 0 and 1 for variety background
+    int ran = GetRandomValue(0, 1); // Generate a random number between 0 and 1 for variety background
 
-    if (randomNum == 0) {
-        spaceBackground = LoadTexture("media/space.png");
+    if (ran == 0) {
+        spaceBackground = LoadTexture("media/space3.png");
     } else {
         spaceBackground = LoadTexture("media/space2.png");
     }
