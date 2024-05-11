@@ -444,7 +444,6 @@ void RunGame()
         else
         {
             DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
-            DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
         }
         // Update and draw health bar or enemy counter
         healthBar.currentHealth = enemies.size() * 20;
