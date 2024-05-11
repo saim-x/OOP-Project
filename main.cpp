@@ -331,28 +331,15 @@ void RunGame()
                 targetSpeedY -= acceleration;
             }
 
-            // static float keyPressTimer = 0.0f;
-            // const float keyPressDuration = 0.1f;
-
             if (IsKeyDown(KEY_F))
             {
-                keyPressTimer += GetFrameTime();
+                // Toggle BOOSTERS
+                boostersActivated = true;
+                PlaySound(sfx5);
 
-                if (keyPressTimer <= keyPressDuration)
-                {
-                    // Toggle BOOSTERS
-                    boostersActivated = true;
-                    PlaySound(sfx5);
-
-                    targetSpeedX *= 25.0f;
-                    targetSpeedY *= 25.0f;
-                    SetSoundVolume(sfx5, 3.9f);
-                }
-            }
-            else
-            {
-                // If the key is not pressed, reset the flag
-                boosterKeyPressed = false;
+                targetSpeedX *= 25.0f;
+                targetSpeedY *= 25.0f;
+                SetSoundVolume(sfx5, 3.9f);
             }
 
             // Smoothly accelerate/decelerate towards target speed
