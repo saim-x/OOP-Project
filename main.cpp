@@ -152,16 +152,16 @@ float score = 0.0f;
 
 void SaveToFile(float score)
 {
-    ofstream outputFile("scores.txt"); // Open the file for writing
+    ofstream outputFile("scores.txt", ios::app); // Open the file in append mode
 
     if (outputFile.is_open())
     {
-        outputFile << score; // Write the score to the file
-        outputFile.close();  // Close the file
+        outputFile << score << endl; // Write the score to the file on a new line
+        outputFile.close();           // Close the file
     }
     else
     {
-        cout << "Failed to open the file for writing." << std::endl;
+        cout << "Failed to open the file for writing." << endl;
     }
 }
 // Function to run the game loop
@@ -484,7 +484,7 @@ void RunGame()
         }
     }
 
-    // Unload sound and textures
+    //Unload sound and textures
     UnloadSound(bgMusic);
     UnloadTexture(spaceBackground);
     UnloadTexture(spacecraftTexture);
