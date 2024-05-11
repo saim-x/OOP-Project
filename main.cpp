@@ -19,6 +19,7 @@ struct Bullet
     Vector2 velocity;
     bool active;
 };
+int flag = 0; // flag to check if boss enemy is spawned or not
 
 // Function to initialize an enemy character at a random position within the boundaries
 Enemy InitEnemy(const Rectangle &boundary)
@@ -26,21 +27,29 @@ Enemy InitEnemy(const Rectangle &boundary)
     Enemy enemy;
     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
+    // Load the boss enemy sfx
+    Sound sfx1 = LoadSound("resources/sfx1edited.wav");
+    Sound sfx2 = LoadSound("resources/poinkwav.wav");
+
     // Randomly choose between enemy1 and enemy2 textures
-    if (GetRandomValue(0, 2) == 0)
+    if (GetRandomValue(0, 1) == 0)
     {
         enemy.texture = LoadTexture("media/enemy1.png");
+        PlaySound(sfx2);
     }
-    else if (GetRandomValue(0, 2) == 1)
+    else if (GetRandomValue(0, 1) == 1 && flag == 0)
     {
-        enemy.texture = LoadTexture("media/enemy2.png");
+        flag = 1;
+        // BOSS ENEMY WILL SPAWN ONLY ONCE :D
+        enemy.texture = LoadTexture("media/enemy3.1.png");
+        PlaySound(sfx1);
     }
     else
     {
         enemy.texture = LoadTexture("media/enemy3.png");
-    
+        PlaySound(sfx2);
     }
-    enemy.speed = 2.0f; // Set enemy speed
+    enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
     return enemy;
 }
 
@@ -174,21 +183,22 @@ void RunGame()
             for (size_t i = 0; i < enemies.size(); i++)
             {
                 // Move enemies towards the player (You can update this logic as per your requirement)
-                float randomFloat = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 100.0f;
-                Vector2 direction = {player.x - enemies[i].position.x + randomFloat, player.y - enemies[i].position.y};
+                // float randomFloat = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 100.0f;
+                Vector2 direction = {player.x - enemies[i].position.x, player.y - enemies[i].position.y};
                 float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
                 direction.x /= distance;
                 direction.y /= distance;
-                if (i < enemies.size() - 1)
-                {
-                    Rectangle enemyRectbysaimedition = {enemies[i].position.x - 10, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
-                    Rectangle enemyRectbysaimeditionsecond = {enemies[i + 1].position.x - 10, enemies[i + 1].position.y + 20, static_cast<float>(enemies[i + 1].texture.width), static_cast<float>(enemies[i + 1].texture.height)};
-                    if (CheckCollisionRecs(enemyRectbysaimedition, enemyRectbysaimeditionsecond))
-                    {
-                        enemies[i].position.x += 30;
-                        enemies[i].position.y += 30;
-                    }
-                }
+                // READ THISSSSSS: Logic to prevent enemies from overlapping by moving them apart by 30 units
+                // if (i < enemies.size() - 1)
+                // {
+                //     Rectangle enemyRectbysaimedition = {enemies[i].position.x - 10, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
+                //     Rectangle enemyRectbysaimeditionsecond = {enemies[i + 1].position.x - 10, enemies[i + 1].position.y + 20, static_cast<float>(enemies[i + 1].texture.width), static_cast<float>(enemies[i + 1].texture.height)};
+                //     if (CheckCollisionRecs(enemyRectbysaimedition, enemyRectbysaimeditionsecond))
+                //     {
+                //         enemies[i].position.x += 30;
+                //         enemies[i].position.y += 30;
+                //     }
+                // }
 
                 enemies[i].position.x += (direction.x) * enemies[i].speed;
                 enemies[i].position.y += (direction.y) * enemies[i].speed;
