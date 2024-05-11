@@ -317,7 +317,7 @@ void RunGame()
     CloseWindow();
 }
 
-// Function to display the main menu screen
+// Function to display the main menu screen ..
 void ShowMainMenu()
 {
     const int screenWidth = 800;
