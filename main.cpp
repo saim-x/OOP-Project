@@ -4,7 +4,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
-
+using namespace std;
 // Define the Enemy Struct
 struct Enemy
 {
@@ -84,10 +84,10 @@ void RunGame()
 
     // Seed the random number generator
     srand(time(NULL));
-    std::vector<Enemy> enemies;
+    vector<Enemy> enemies;
 
     // Initialize vector to store bullets
-    std::vector<Bullet> bullets;
+    vector<Bullet> bullets;
 
     bool gameOver = false;
     bool restartRequested = false; // Flag to track if restart has been requested
@@ -346,7 +346,7 @@ void ShowMainMenu()
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
                 // Display high score (for now, just print a message)
-                std::cout << "High Score button clicked!" << std::endl;
+                cout << "High Score button clicked!" << endl;
             }
         }
 
