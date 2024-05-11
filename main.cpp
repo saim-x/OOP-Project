@@ -27,6 +27,8 @@ Enemy InitEnemy(const Rectangle &boundary)
     Enemy enemy;
     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
+    enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
+
     // Load the boss enemy sfx
     Sound sfx1 = LoadSound("resources/sfx1edited.wav");
     Sound sfx2 = LoadSound("resources/poinkwav.wav");
@@ -43,13 +45,13 @@ Enemy InitEnemy(const Rectangle &boundary)
         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
         enemy.texture = LoadTexture("media/enemy3.1.png");
         PlaySound(sfx1);
+        enemy.speed = 3.0f; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
     else
     {
         enemy.texture = LoadTexture("media/enemy3.png");
         PlaySound(sfx2);
     }
-    enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
     return enemy;
 }
 
