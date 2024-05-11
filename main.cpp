@@ -211,7 +211,7 @@ void RunGame()
 
     // Play background music
     PlaySound(bgMusic);
-    SetSoundVolume(bgMusic, 0.5f);
+    SetSoundVolume(bgMusic, 0.6f);
 
     SetTargetFPS(60);         // Set our game to run at 60 frames-per-second
     bool fKeyPressed = false; // Initialize outside your update loop
@@ -245,14 +245,29 @@ void RunGame()
                 targetSpeedY -= acceleration;
             }
 
-            if (IsKeyDown(KEY_F) && !boostersActivated)
-            {
-                // Activating BOOSTERS
-                targetSpeedX *= 12;
+            static float keyPressTimer = 0.0f;
+            const float keyPressDuration = 0.1f;
 
-                boostersActivated = true; // Set the flag to true to indicate boosters are activated
-                PlaySound(sfx5);
-                SetSoundVolume(sfx5, 3.9f);
+            if (IsKeyDown(KEY_F))
+            {
+                keyPressTimer += GetFrameTime();
+
+                if (keyPressTimer <= keyPressDuration)
+                {
+                    // Toggle BOOSTERS
+                    boostersActivated = true;
+                    PlaySound(sfx5);
+
+                    targetSpeedX *= 25.0f;
+                    targetSpeedY *= 25.0f;
+                    PlaySound(sfx5);
+                    SetSoundVolume(sfx5, 3.9f);
+                }
+            }
+            else
+            {
+                boostersActivated = false;
+                keyPressTimer = 0.0f;
             }
 
             // Smoothly accelerate/decelerate towards target speed
@@ -329,35 +344,35 @@ void RunGame()
             }
 
             // Fire bullets when 'F' key is pressed
-            if (IsKeyPressed(KEY_F) && !fKeyPressed)
-            {
-                // Spawn bullet
-                // Update bullet position
-                // Set fKeyPressed to true
-                fKeyPressed = true;
-            }
-            else if (!IsKeyPressed(KEY_F))
-            {
-                // Reset fKeyPressed when the key is released
-                fKeyPressed = false;
-            }
+            // if (IsKeyPressed(KEY_F) && !fKeyPressed)
+            // {
+            //     // Spawn bullet
+            //     // Update bullet position
+            //     // Set fKeyPressed to true
+            //     fKeyPressed = true;
+            // }
+            // else if (!IsKeyPressed(KEY_F))
+            // {
+            //     // Reset fKeyPressed when the key is released
+            //     fKeyPressed = false;
+            // }
 
-            // Update and draw bullets
-            for (size_t i = 0; i < bullets.size(); i++)
-            {
-                if (bullets[i].active)
-                {
-                    // Update bullet position
-                    bullets[i].position.x += bullets[i].velocity.x;
-                    bullets[i].position.y += bullets[i].velocity.y;
+            // // Update and draw bullets
+            // for (size_t i = 0; i < bullets.size(); i++)
+            // {
+            //     if (bullets[i].active)
+            //     {
+            //         // Update bullet position
+            //         bullets[i].position.x += bullets[i].velocity.x;
+            //         bullets[i].position.y += bullets[i].velocity.y;
 
-                    // Debug print statement
-                    printf("Bullet position: (%.2f, %.2f)\n", bullets[i].position.x, bullets[i].position.y);
+            //         // Debug print statement
+            //         printf("Bullet position: (%.2f, %.2f)\n", bullets[i].position.x, bullets[i].position.y);
 
-                    // Draw bullet
-                    DrawRectangle(bullets[i].position.x, bullets[i].position.y, 4, 4, RED);
-                }
-            }
+            //         // Draw bullet
+            //         DrawRectangle(bullets[i].position.x, bullets[i].position.y, 4, 4, RED);
+            //     }
+            // }
             // SFX FOR ENEMIES
             if (GetRandomValue(0, 200) < 1)
             {
