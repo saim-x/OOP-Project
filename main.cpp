@@ -287,6 +287,7 @@ void RunGame()
                 // Reset game variables for restart
 
                 player = {0, 0, 40, 40};
+                flag = 0;
                 playerVelocity = {0.0f, 0.0f};
                 enemies.clear();
                 gameOver = false;
