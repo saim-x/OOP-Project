@@ -195,7 +195,11 @@ void RunGame()
     // Load the background music
     Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
     Sound sfx4 = LoadSound("resources/StopIt.wav");
+
     Sound sfx5 = LoadSound("resources/woosh.wav");
+    Sound sfx6 = LoadSound("resources/randomsfx1.wav");
+    Sound sfx7 = LoadSound("resources/randomsfx2.wav");
+
     Sound gameover = LoadSound("resources/GameOver.wav");
 
     // Seed the random number generator
@@ -378,6 +382,13 @@ void RunGame()
             {
                 PlaySound(sfx4);
                 SetSoundVolume(sfx4, 2.0f);
+            }else if (GetRandomValue(0, 200) < 1)
+            {
+                PlaySound(sfx6);
+                SetSoundVolume(sfx6, 2.0f);
+            }else if (GetRandomValue(0, 200) < 1){
+                PlaySound(sfx7);
+                SetSoundVolume(sfx7, 2.0f);
             }
         }
 
