@@ -314,7 +314,7 @@ void RunGame()
                     // Debug print statement
                     printf("Bullet position: (%.2f, %.2f)\n", bullets[i].position.x, bullets[i].position.y);
 
-                    // Draw bullet
+                    //Draw bullet
                     DrawRectangle(bullets[i].position.x, bullets[i].position.y, 4, 4, RED);
                 }
             }
