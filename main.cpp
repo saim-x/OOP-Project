@@ -493,8 +493,14 @@ void RunGame()
         }
         else
         {
+            
             DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
+            // Draw legend
+        DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
+        DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
         }
+            
+        
         // Update and draw health bar or enemy counter
         healthBar.currentHealth = enemies.size() * 20;
         DrawHealthBar(healthBar);
