@@ -462,7 +462,7 @@ void RunGame()
         }
     }
 
-    // Unload sound and textures
+    //Unload sound and textures
     UnloadSound(bgMusic);
     UnloadTexture(spaceBackground);
     UnloadTexture(spacecraftTexture);
