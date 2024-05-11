@@ -218,7 +218,7 @@ void ShowHighScore()
         DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, RED);
 
         // Draw the high scores below the heading
-        DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 26) / 2, 150, 44, BLACK);
+        DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 26) / 2, 150, 44, YELLOW);
         EndDrawing();
     }
 
