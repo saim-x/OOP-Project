@@ -9,6 +9,7 @@
     const int screenHeight = 850;
 
     class Game{
+        protected:
         Rectangle player;
         char* texture;
         Texture2D textureobject;
@@ -33,4 +34,22 @@
             UnloadTexture(textureobject);
             UnloadSound(bgMusic);
         }
+        void setpos(float x, float y){
+            player.x=x;
+            player.y=y;
+        }
+        float getx(){return player.x;}
+        float gety(){return player.y;}
+    };
+
+    class Player:public Game{
+        protected:
+        float score;
+        public:
+
+    };
+
+    class Enemy:public Game{
+        public:
+
     };
