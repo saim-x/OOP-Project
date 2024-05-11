@@ -4,6 +4,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+
 using namespace std;
 // Define the Enemy
 struct Enemy
@@ -146,6 +148,22 @@ Bullet InitBullet(Vector2 position, Vector2 velocity)
     return bullet;
 }
 float score = 0.0f;
+
+
+void SaveToFile(float score)
+{
+    ofstream outputFile("scores.txt"); // Open the file for writing
+
+    if (outputFile.is_open())
+    {
+        outputFile << score; // Write the score to the file
+        outputFile.close();  // Close the file
+    }
+    else
+    {
+        cout << "Failed to open the file for writing." << std::endl;
+    }
+}
 // Function to run the game loop
 void RunGame()
 {
@@ -343,6 +361,7 @@ void RunGame()
                     PlaySound(gameover);
 
                     gameOver = true; // Game over if collision detected
+                    SaveToFile(score);
                     break;
                 }
             }
@@ -378,17 +397,20 @@ void RunGame()
             //     }
             // }
             // SFX FOR ENEMIES
-            if (GetRandomValue(0, 200) < 1)
+            if (GetRandomValue(0, 300) < 1)
             {
                 PlaySound(sfx4);
                 SetSoundVolume(sfx4, 2.0f);
-            }else if (GetRandomValue(0, 200) < 1)
+            }
+            else if (GetRandomValue(0, 300) < 1)
             {
                 PlaySound(sfx6);
-                SetSoundVolume(sfx6, 2.0f);
-            }else if (GetRandomValue(0, 200) < 1){
+                SetSoundVolume(sfx6, 1.0f);
+            }
+            else if (GetRandomValue(0, 300) < 1)
+            {
                 PlaySound(sfx7);
-                SetSoundVolume(sfx7, 2.0f);
+                SetSoundVolume(sfx7, 1.0f);
             }
         }
 
@@ -473,13 +495,13 @@ void RunGame()
 // Function to display the main menu screen
 void ShowMainMenu()
 {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    const int screenWidth = 1600;
+    const int screenHeight = 900;
 
     InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
 
     // Load the background image
-    Texture2D backgroundImage = LoadTexture("media\\bgimagepngggg.png");
+    Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
 
     // Adjust the background image rectangle to cover the entire window
     Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
@@ -505,6 +527,10 @@ void ShowMainMenu()
         // Draw high score button
         DrawRectangleRec(highScoreButton, GREEN);
         DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
+
+        // Draw game name
+        DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
+        DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
 
         // Check if the mouse is hovering over the play button
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
