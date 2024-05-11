@@ -317,7 +317,7 @@ void RunGame()
                     // Debug print statement
                     printf("Bullet position: (%.2f, %.2f)\n", bullets[i].position.x, bullets[i].position.y);
 
-                    //Draw bullet
+                    // Draw bullet
                     DrawRectangle(bullets[i].position.x, bullets[i].position.y, 4, 4, RED);
                 }
             }
@@ -353,8 +353,8 @@ void RunGame()
             DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
             DrawText("Developed By Saim", screenWidth - 150, screenHeight - 30, 10, YELLOW);
         }
-        // Update and draw health bar
-        healthBar.currentHealth = enemies.size() * 20; // Simulate health decrease
+        // Update and draw health bar or enemy counter
+        healthBar.currentHealth = enemies.size() * 20;
         DrawHealthBar(healthBar);
         EndDrawing();
 
@@ -375,6 +375,7 @@ void RunGame()
                 score = 0.0f;
                 Sound sfx3 = LoadSound("resources/gamerestart.mp3");
                 PlaySound(sfx3);
+                healthBar.currentHealth = 0; 
             }
         }
 
