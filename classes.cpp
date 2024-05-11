@@ -53,6 +53,10 @@
         Player(char* texture, char* music):Game(texture,music){
             score=0;
         }
+        void setpos(float x, float y){
+            player.x+=x;
+            player.y+=y;
+        }
     };
 
     class Enemy:public Game{
@@ -62,7 +66,7 @@
                 speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
             }
             void setpos(float x, float y){
-            player.x=x;
-            player.y=y;
+            player.x+=x*speed;
+            player.y+=y*speed;
         }
     };
