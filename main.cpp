@@ -149,7 +149,6 @@ Bullet InitBullet(Vector2 position, Vector2 velocity)
 }
 float score = 0.0f;
 
-
 void SaveToFile(float score)
 {
     ofstream outputFile("scores.txt", ios::app); // Open the file in append mode
@@ -157,7 +156,7 @@ void SaveToFile(float score)
     if (outputFile.is_open())
     {
         outputFile << score << endl; // Write the score to the file on a new line
-        outputFile.close();           // Close the file
+        outputFile.close();          // Close the file
     }
     else
     {
@@ -273,17 +272,15 @@ void RunGame()
             if (IsKeyDown(KEY_F))
             {
                 keyPressTimer += GetFrameTime();
-
                 if (keyPressTimer <= keyPressDuration)
                 {
                     // Toggle BOOSTERS
                     boostersActivated = true;
-                    PlaySound(sfx5);
 
                     targetSpeedX *= 25.0f;
                     targetSpeedY *= 25.0f;
-                    PlaySound(sfx5);
                     SetSoundVolume(sfx5, 3.9f);
+                    PlaySound(sfx5);
                 }
             }
             else
@@ -484,7 +481,7 @@ void RunGame()
         }
     }
 
-    //Unload sound and textures
+    // Unload sound and textures
     UnloadSound(bgMusic);
     UnloadTexture(spaceBackground);
     UnloadTexture(spacecraftTexture);
