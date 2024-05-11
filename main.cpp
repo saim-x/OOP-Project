@@ -377,6 +377,7 @@ void RunGame()
             if (GetRandomValue(0, 200) < 1)
             {
                 PlaySound(sfx4);
+                SetSoundVolume(sfx4, 2.0f);
             }
         }
 
