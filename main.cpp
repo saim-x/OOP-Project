@@ -375,7 +375,7 @@ void RunGame()
                 score = 0.0f;
                 Sound sfx3 = LoadSound("resources/gamerestart.mp3");
                 PlaySound(sfx3);
-                healthBar.currentHealth = 0; 
+                healthBar.currentHealth = 0;
             }
         }
 
