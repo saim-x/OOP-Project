@@ -30,7 +30,7 @@
             textureobject=LoadTexture(texture);
             bgMusic= LoadSound(music);
         }
-        Game(float x, float y, char* texture, char* music):texture(texture),music(music){
+        Game(float x, float y, char* texture, char* music):texture(texture),music(music){//for enemy
             player.x=x;
             player.y=y;
             textureobject=LoadTexture(texture);
