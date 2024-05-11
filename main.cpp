@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 using namespace std;
-// Define the Enemy Struct
+// Define the Enemy 
 struct Enemy
 {
     Vector2 position;
