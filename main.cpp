@@ -80,7 +80,7 @@ void RunGame()
     Texture2D spacecraftTexture = LoadTexture("media/spacecraft23.png");
 
     // Load the background music
-    Sound bgMusic = LoadSound("resources/Music.wav");
+    Sound bgMusic = LoadSound("resources/afro.wav");
 
     // Seed the random number generator
     srand(time(NULL));
