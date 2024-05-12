@@ -578,7 +578,7 @@ void RunGame()
                 playerVelocity.y *= default.deceleration;
             }
 
-            // Update player position based on velocity
+            // Update player position based on velocityy
             player.setpos(playerVelocity.x, playerVelocity.y);
 
             // Spawn enemies randomly and limit the number of enemies
