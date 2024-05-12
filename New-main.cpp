@@ -197,6 +197,7 @@ class DefaultValues
 {
 private:
 public:
+    // Attributes
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
