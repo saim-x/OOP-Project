@@ -5,9 +5,11 @@
 #include <cstdlib>
 #include <iostream>
 
+// Global Variables
+int flag = 0;        // flag to check if boss enemy is spawned or not
+int maxHealth = 100; // Maximum health of the player
 const int screenWidth = 1600;
 const int screenHeight = 850;
-
 class Game
 {
 protected:
@@ -69,7 +71,6 @@ public:
     bool gameover() { return gameover; }
     Rectangle getrect() { return player; }
 };
-
 class Player : public Game
 {
 protected:
@@ -120,7 +121,6 @@ public:
     }
     std::vector<Bullet> bullets;
 };
-
 class Enemy : public Game
 {
 protected:
@@ -184,7 +184,6 @@ public:
     }
     bool getstatus() { return alive; }
 };
-
 class DefaultValues
 {
 private:
@@ -207,12 +206,15 @@ public:
 
     Sound gameover = LoadSound("resources/GameOver.wav");
 };
+<<<<<<< HEAD
 
 const float DefaultValues::boundaryLeft=-815.0f;
 const float DefaultValues::boundaryRight=715.0f;
 const float DefaultValues::boundaryTop=-429.0f;
 const float DefaultValues::boundaryBottom=332.0f;
 
+=======
+>>>>>>> b479bbbca531209fed9299220116ca04fbd74bd4
 class Bullet
 {
 private:
@@ -266,3 +268,57 @@ public:
         return;
     }
 };
+class HealthBar
+{
+private:
+public:
+    // Attributes
+    Rectangle outerRect;
+    Rectangle innerRect;
+    Color outerColor;
+    Color innerColor;
+    int currentHealth;
+    Texture2D heartTexture;
+};
+
+// Global Functions
+HealthBar CreateHealthBar(float x, float y, float width, float height, Color outerColor, Color innerColor, int startingHealth)
+{
+    HealthBar bar;
+    bar.outerRect = {x, y, width, height};
+    bar.innerRect = {x + 2, y + 2, width - 4, height - 4};
+    bar.outerColor = outerColor;
+    bar.innerColor = innerColor;
+    bar.currentHealth = startingHealth;
+    bar.heartTexture = LoadTexture("media/heart.png");
+    return bar;
+}
+void DrawHealthBar(HealthBar bar)
+{
+    /*-----------------------------------------Basic Health Bar-----------------------------------------*/
+    // SIMPLE DRAWING OF HEALTH BAR
+    //  // Draw outer rectangle
+    //  DrawRectangleRec(bar.outerRect, bar.outerColor);
+
+    // // Calculate inner rectangle width based on current health
+    // float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
+    // bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
+
+    // // Draw inner rectangle
+    // DrawRectangleRec(bar.innerRect, bar.innerColor);
+    /*---------------------------------------------------------------------------------------------*/
+
+    DrawRectangleRounded(bar.outerRect, 0.5, 1, bar.outerColor);
+
+    // Calculate inner rectangle width based on current health
+    float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
+    bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
+
+    // Draw inner rectangle with rounded corners
+    DrawRectangleRounded(bar.innerRect, 0.2, 1, bar.innerColor);
+
+    // Draw heart texture at the center of the health bar
+    Vector2 heartPos = {bar.outerRect.x + (bar.outerRect.width - bar.heartTexture.width) / 2,
+                        bar.outerRect.y + (bar.outerRect.height - bar.heartTexture.height) / 2};
+    DrawTexture(bar.heartTexture, (int)heartPos.x, (int)heartPos.y, WHITE);
+}
