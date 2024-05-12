@@ -55,9 +55,6 @@ public:
         textureobject = LoadTexture(texture);
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
-        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     Game(float x, float y, char *texture) : texture(texture)
     { // for enemy
@@ -68,6 +65,7 @@ public:
     ~Game()
     {
         UnloadTexture(textureobject);
+        UnloadTexture(backgroundtexture);
         UnloadSound(bgMusic);
     }
     virtual void setpos(float x, float y) = 0;
@@ -740,7 +738,7 @@ void ShowAboutDevInfo()
 void ShowMainMenu()
 {
     const int screenWidth = 1600;
-    const int screenHeight = 900;
+    const int screenHeight = 850;
 
     InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
 
