@@ -13,7 +13,7 @@ class Game
     // We can add boundary class here to show aggregation.
 protected:
     Camera2D camera = {0};
-    char* background;
+    char *background;
     Texture2D backgroundtexture;
     Rectangle player;
     char *texture;
@@ -26,12 +26,12 @@ protected:
     Sound bgMusic;
 
 public:
-    Game(char *texture, char *music, char* background) : texture(texture), music(music), background(background)
+    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
         camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
-        backgroundtexture= LoadTexture(background);
+        backgroundtexture = LoadTexture(background);
         playervelocity.x = 0.0f;
         playervelocity.y = 0.0f;
         player.x = 0;
@@ -51,15 +51,17 @@ public:
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
         player.width = textureobject.width;
-        DrawTextureEx(textureobject, (Vector2){player.x,player.y}, 0.0f, 1.0f, WHITE);
+        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
     }
-    void drawplayer(){
+    void drawplayer()
+    {
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
     }
-    void drawenemy(){
-        DrawTextureEx(textureobject, (Vector2){player.x,player.y}, 0.0f, 1.0f, WHITE);
+    void drawenemy()
+    {
+        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
     }
     ~Game()
     {
@@ -69,8 +71,8 @@ public:
     virtual void setpos(float x, float y) = 0;
     float getx() { return player.x; }
     float gety() { return player.y; }
-    float getwidth(){return player.height;}
-    float getheight(){return player.width;}
+    float getwidth() { return player.height; }
+    float getheight() { return player.width; }
     Rectangle getrect() { return player; }
 };
 
@@ -80,7 +82,7 @@ protected:
     float score;
 
 public:
-    Player(char *texture, char *music, char* background) : Game(texture, music, background)
+    Player(char *texture, char *music, char *background) : Game(texture, music, background)
     {
         score = 0;
     }
@@ -90,9 +92,10 @@ public:
         player.x += x;
         player.y += y;
     }
-    void gameover(){
-        player.x=0;
-        player.y=0;
+    void gameover()
+    {
+        player.x = 0;
+        player.y = 0;
     }
 };
 
@@ -148,16 +151,57 @@ private:
 
 public:
     // Attributes
-    bool active; // Variable to check if bullet is still within the game window.
+    bool active_; // Variable to check if bullet is still within the game window.
 
     //  Constructors
-    Bullet(const Vector2 position, const int speed) : position_(position), speed_(speed) {}
+    Bullet(const Vector2 position, const int speed) : position_(position), speed_(speed), active_(true) {}
 
     // Methods
 
     // Function to update the bullet's position.
-    void Update();
+    void Update()
+    {
+        if (IsKeyDown(KEY_W))
+        {
+            position_.y += speed_;
+        }
+        else if (IsKeyDown(KEY_A))
+        {
+            position_.x -= speed_;
+        }
+        else if (IsKeyDown(KEY_D))
+        {
+            position_.x += speed_;
+        }
+        else if (IsKeyDown(KEY_S))
+        {
+            position_.y -= speed_;
+        }
 
+        if (active_)
+        {
+            if (position_.y > GetScreenHeight() - 100 || position_.y < 25 || position_.x > GetScreenWidth() - 100 || position_.x < 25)
+            {
+                active_ = false;
+            }
+        }
+    }
     // Function to draw the bullet.
-    void Draw();
+    void Draw()
+    {
+        if (active_)
+        {
+            DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
+        }
+        return;
+    }
+    Rectangle getRect()
+    {
+        Rectangle rect;
+        rect.x = position_.x;
+        rect.y = position_.y;
+        rect.width = 4;
+        rect.height = 15;
+        return rect;
+    }
 };
