@@ -685,7 +685,7 @@ DrawText("Space Shooter", 10, 10, 20, RED);
             DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
         }
 
-            // Update and draw health bar or enemy counter
+            // Update and draw health bar or enemy counterr
             healthBar.currentHealth = enemies.size() * 20;
             DrawHealthBar(healthBar);
             EndDrawing();
