@@ -8,8 +8,15 @@
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
 int maxHealth = 100; // Maximum health of the player
+
 const int screenWidth = 1600;
 const int screenHeight = 850;
+
+const float boundaryLeft = -815.0f;
+const float boundaryRight = 715.0f;
+const float boundaryTop = -429.0f;
+const float boundaryBottom = 332.0f;
+
 class Game
 {
 protected:
@@ -130,8 +137,8 @@ public:
     Enemy(float x, float y, char *texture, bool boss) : Game(x, y, texture)
     {
         alive = true;
-        player.x = GetRandomValue(DefaultValues::boundaryLeft, DefaultValues::boundaryRight);
-        player.y = GetRandomValue(DefaultValues::boundaryTop, DefaultValues::boundaryBottom);
+        player.x = GetRandomValue(boundaryLeft, boundaryRight);
+        player.y = GetRandomValue(boundaryTop, boundaryBottom);
         if(boss)
         speed=3.0f;
         else
@@ -153,15 +160,15 @@ public:
                 newY += 50;
 
             // Check if the new position is within the window boundaries
-            if (newX < DefaultValues::boundaryRight)
-                newX = DefaultValues::boundaryRight;
-            else if (newX > DefaultValues::boundaryLeft)
-                newX = DefaultValues::boundaryLeft;
+            if (newX < boundaryRight)
+                newX = boundaryRight;
+            else if (newX > boundaryLeft)
+                newX = boundaryLeft;
 
-            if (newY < DefaultValues::boundaryBottom)
-                newY = DefaultValues::boundaryBottom;
-            else if (newY > DefaultValues::boundaryTop)
-                newY = DefaultValues::boundaryTop;
+            if (newY < boundaryBottom)
+                newY = boundaryBottom;
+            else if (newY > boundaryTop)
+                newY = boundaryTop;
 
             // Update the enemy position
             player.x = newX;
@@ -196,10 +203,6 @@ public:
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
 
-    static const float boundaryLeft;
-    static const float boundaryRight;
-    static const float boundaryTop;
-    static const float boundaryBottom;
 
     Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
     Sound sfx4 = LoadSound("resources/StopIt.wav");
@@ -210,10 +213,6 @@ public:
 
     Sound gameover = LoadSound("resources/GameOver.wav");
 };
-const float DefaultValues::boundaryLeft = -815.0f;
-const float DefaultValues::boundaryRight = 715.0f;
-const float DefaultValues::boundaryTop = -429.0f;
-const float DefaultValues::boundaryBottom = 332.0f;
 
 class Bullet
 {
