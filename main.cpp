@@ -220,7 +220,6 @@ void ShowHighScore()
 
     while (!WindowShouldClose())
     {
-
         // Close window by pressing ESC key
         if (IsKeyDown(KEY_ESCAPE))
         {
