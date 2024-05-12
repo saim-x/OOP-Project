@@ -112,7 +112,7 @@ public:
         DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     Game(float x, float y, char *texture) : texture(texture)
-    { //for enemy
+    { // for enemy
         player.x = x;
         player.y = y;
         textureobject = LoadTexture(texture);
@@ -176,6 +176,19 @@ public:
     {
         score += increase;
     }
+
+    // Return Music from Game Class
+    Sound get_bgMusic() const { return bgMusic; }
+    // Return GameOver from Game Class
+    bool get_gameover() const { return gameover; }
+    // Return x-coordinate of Player
+    float get_x() const { return player.x; }
+    // Return y-coordinate of Player
+    float get_y() const { return player.y; }
+    // Return Width of Player
+    float get_width() const { return player.width; }
+    // Return Height of Player
+    float get_height() const { return player.height; }
 
     // For Bullets
     std::vector<Bullet> bullets;
@@ -253,6 +266,13 @@ public:
         }
     }
     bool getstatus() { return alive; }
+
+    // Return x-coordinate of Enemy
+    float get_x() const { return player.x; }
+    // Return y-coordinate of Enemy
+    float get_y() const { return player.y; }
+    //  Return Speed of Enemy
+    float get_speed() const { return speed; }
 };
 class DefaultValues
 {
@@ -480,6 +500,128 @@ void RunGame()
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
+                                   // Play background music
+    PlaySound(player.get_bgMusic());
+    SetSoundVolume(player.get_bgMusic(), 0.6f);
+    SetTargetFPS(60);         // Set our game to run at 60 frames-per-second
+    bool fKeyPressed = false; // Initialize outside your update loop
+
+    DefaultValues default; // Object to call the default values.
+
+    while (!WindowShouldClose())
+    {
+        if (!player.get_gameover()) // Only update the game if it's not over
+        {
+            player.scoreinc(2 * GetFrameTime());
+            // Update player movement
+            float targetSpeedX = 0.0f;
+            float targetSpeedY = 0.0f;
+
+            if (IsKeyDown(KEY_RIGHT) && player.get_x() < boundaryRight)
+            {
+                targetSpeedX += default.acceleration;
+            }
+            else if (IsKeyDown(KEY_LEFT) && player.get_x() > boundaryLeft)
+            {
+                targetSpeedX -= default.acceleration;
+            }
+
+            if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
+            {
+                targetSpeedY += default.acceleration;
+            }
+            else if (IsKeyDown(KEY_UP) && player.get_y() > boundaryTop)
+            {
+                targetSpeedY -= default.acceleration;
+            }
+
+            if (IsKeyDown(KEY_F))
+            {
+                // Toggle BOOSTERS
+                // boostersActivated = true;
+                // PlaySound(sfx5);
+
+                // targetSpeedX *= 25.0f;
+                // targetSpeedY *= 25.0f;
+                // SetSoundVolume(sfx5, 3.9f);
+            }
+
+            // Smoothly accelerate/decelerate towards target speed
+            if (targetSpeedX > playerVelocity.x)
+            {
+                playerVelocity.x = fminf(playerVelocity.x + default.acceleration, default.maxSpeed);
+            }
+            else if (targetSpeedX < playerVelocity.x)
+            {
+                playerVelocity.x = fmaxf(playerVelocity.x - default.acceleration, -default.maxSpeed);
+            }
+            else
+            {
+                playerVelocity.x *= default.deceleration;
+            }
+
+            if (targetSpeedY > playerVelocity.y)
+            {
+                playerVelocity.y = fminf(playerVelocity.y + default.acceleration, default.maxSpeed);
+            }
+            else if (targetSpeedY < playerVelocity.y)
+            {
+                playerVelocity.y = fmaxf(playerVelocity.y - default.acceleration, -default.maxSpeed);
+            }
+            else
+            {
+                playerVelocity.y *= default.deceleration;
+            }
+
+            // Update player position based on velocity
+            player.setpos(playerVelocity.x, playerVelocity.y);
+
+            // Spawn enemies randomly and limit the number of enemies
+            if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
+            {
+                /* ! Need to resolve this ! */
+                // enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
+            }
+
+            // Update enemy positions
+            for (size_t i = 0; i < enemies.size(); i++)
+            {
+                // Move enemies towards the player (You can update this logic as per your requirement)
+                // float randomFloat = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 100.0f;
+                Vector2 direction = {player.get_x() - enemies[i].get_x(), player.get_y() - enemies[i].get_y()};
+                float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
+                direction.x /= distance;
+                direction.y /= distance;
+                // READ THISSSSSS: Logic to prevent enemies from overlapping by moving them apart by 30 units
+                // if (i < enemies.size() - 1)
+                // {
+                //     Rectangle enemyRectbysaimedition = {enemies[i].position.x - 10, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width), static_cast<float>(enemies[i].texture.height)};
+                //     Rectangle enemyRectbysaimeditionsecond = {enemies[i + 1].position.x - 10, enemies[i + 1].position.y + 20, static_cast<float>(enemies[i + 1].texture.width), static_cast<float>(enemies[i + 1].texture.height)};
+                //     if (CheckCollisionRecs(enemyRectbysaimedition, enemyRectbysaimeditionsecond))
+                //     {
+                //         enemies[i].position.x += 30;
+                //         enemies[i].position.y += 30;
+                //     }
+                // }
+
+                // enemies[i].position.x += (direction.x) * enemies[i].get_speed();
+                enemies[i].setpos(direction.x, direction.y);
+                // enemies[i].position.y += (direction.y) * enemies[i].get_speed();
+
+                // Check for collision with player
+                Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
+                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
+                if (CheckCollisionRecs(playerRect, enemyRect))
+                {
+                    PlaySound(gameover);
+
+                    gameOver = true; // Game over if collision detected
+                    SaveToFile(score);
+                    break;
+                }
+            }
+        }
+    }
 
     return;
 }
