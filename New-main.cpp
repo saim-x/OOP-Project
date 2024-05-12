@@ -325,7 +325,7 @@ Enemy InitEnemy(Player p)
     Enemy enemy(p.getx(), p.gety(), texture, boss);
     return enemy;
 }
-void SaveToFile(float score)
+static void SaveToFile(float score)
 {
     std::ofstream outputFile("scores.txt", std::ios::app); // Open the file in append mode
 
@@ -453,7 +453,7 @@ void RunGame()
 
     while (!WindowShouldClose())
     {
-        if (!player.get_gameover()) // Only update the game if it's not over
+        if (!player.get_gameover()) // Only update the game if it's not overr
         {
             player.scoreinc(2 * GetFrameTime());
             // Update player movement
