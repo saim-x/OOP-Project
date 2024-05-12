@@ -180,8 +180,15 @@ public:
     void draw()
     {
         if(alive)
-        {Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);}
+        {
+            Vector2 playingPosition_ = {player.x, player.y};
+            DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
+        }
+        else
+        {
+            player.x=2000.0f;
+            player.y=2000.0f;
+        }
     }
 };
 
