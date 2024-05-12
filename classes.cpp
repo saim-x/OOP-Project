@@ -72,14 +72,9 @@ public:
     virtual void setpos(float x, float y) = 0;
     float getx() { return player.x; }
     float gety() { return player.y; }
-<<<<<<< HEAD
     float getwidth(){return player.height;}
     float getheight(){return player.width;}
     bool gameover(){return gameover;}
-=======
-    float getwidth() { return player.height; }
-    float getheight() { return player.width; }
->>>>>>> cb2f5e87279ea1366e4a38be7b93f10103c29529
     Rectangle getrect() { return player; }
 };
 
