@@ -180,7 +180,8 @@ void ShowHighScore()
 
     ifstream inputFile("scores.txt"); // Open the file for reading
 
-    string highScores; // String to store the high scores
+    string highScores; // String to store all the high scores
+    int topScore = 0;  // Variable to store the top score
 
     if (inputFile.is_open())
     {
@@ -188,8 +189,19 @@ void ShowHighScore()
         while (getline(inputFile, score)) // Read each line from the file
         {
             highScores += score + "\n\n\n\n"; // Append the score to the highScores string
-        }
 
+            // Convert the score to an integer
+            int scoreValue = stoi(score);
+
+            cout << "Score: " << scoreValue << endl;
+
+            // Update the top score if necessary
+            if (scoreValue > topScore)
+            {
+                topScore = scoreValue;
+            }
+        }
+        cout << "Top Score: " << topScore << endl;
         inputFile.close(); // Close the file
     }
     else
@@ -199,7 +211,7 @@ void ShowHighScore()
 
     // Load the background image
 
-    Texture2D spaceBackground = LoadTexture("media/pookie.png");
+    Texture2D spaceBackground = LoadTexture("media/bgforhighscoretrue.png");
 
     while (!WindowShouldClose())
     {
@@ -215,10 +227,11 @@ void ShowHighScore()
         ClearBackground(RAYWHITE);
 
         // Display the high scores on the screen
-        DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, RED);
-
+        DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        // Drawing the topscore
+        DrawText(TextFormat("Top Score: %d", topScore), screenWidth / 2 - MeasureText(TextFormat("Top Score: %d", topScore), 66) / 2, 120, 66, WHITE);
         // Draw the high scores below the heading
-        DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 26) / 2, 150, 44, YELLOW);
+        DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
         EndDrawing();
     }
 
