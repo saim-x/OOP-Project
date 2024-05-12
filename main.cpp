@@ -173,7 +173,7 @@ void ShowHighScore()
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
     Camera2D camera = {0};
-    camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+    camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
@@ -250,7 +250,7 @@ void RunGame()
     const float boundaryBottom = 250.0f;
 
     Camera2D camera = {0};
-    camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+    camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -468,7 +468,7 @@ void RunGame()
 
         BeginMode2D(camera);
         DrawTexture(spaceBackground, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        DrawTextureEx(spacecraftTexture, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        DrawTextureEx(spacecraftTexture, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
 
         // Draw enemies
         for (const auto &enemy : enemies)
@@ -570,7 +570,7 @@ void ShowMainMenu()
         ClearBackground(RAYWHITE);
 
         // Draw the background image
-        DrawTexturePro(backgroundImage, (Rectangle){0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}, bgRec, (Vector2){0, 0}, 0.0f, WHITE);
+        DrawTexturePro(backgroundImage, Rectangle({0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}), bgRec, Vector2({0, 0}), 0.0f, WHITE);
 
         // Draw play button
         DrawRectangleRec(playButton, BLUE);
