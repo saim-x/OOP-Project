@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 // Define the Enemy
@@ -170,7 +171,6 @@ void ShowHighScore()
     // Initialization
     const int screenWidth = 1600;
     const int screenHeight = 850;
-    Sound bgmusicforhighscorescreen = LoadSound("resources/MusicForHighScore.wav");
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
     Camera2D camera = {0};
@@ -179,30 +179,31 @@ void ShowHighScore()
     camera.zoom = 1.0f;
     SetTargetFPS(60);                 // Set our game to run at 60 frames-per-second
     ifstream inputFile("scores.txt"); // Open the file for reading
-
-    string highScores; // String to store all the high scores
-    int topScore = 0;  // Variable to store the top score
-
+    vector<int> topScores;            // Vector to store the top scores
+    string highScores;                // String to store all the high scores
+    int topScore = 0;                 // Variable to store the top score
+    InitAudioDevice();
+    Sound bgmusicforhighscorescreen = LoadSound("resources/highscore.wav");
+    PlaySound(bgmusicforhighscorescreen);
+    SetSoundVolume(bgmusicforhighscorescreen, 2.6f);
     if (inputFile.is_open())
     {
+
         string score;
         while (getline(inputFile, score)) // Read each line from the file
         {
-            highScores += score + "\n\n\n\n"; // Append the score to the highScores string
-
             // Convert the score to an integer
             int scoreValue = stoi(score);
-
-            cout << "Score: " << scoreValue << endl;
-
-            // Update the top score if necessary
-            if (scoreValue > topScore)
-            {
-                topScore = scoreValue;
-            }
+            topScores.push_back(scoreValue);
         }
-        cout << "Top Score: " << topScore << endl;
         inputFile.close(); // Close the file
+
+        // Sort the scores in descending order
+        sort(topScores.begin(), topScores.end(), greater<int>());
+
+        // Resize the vector to contain only the top 10 scores
+        if (topScores.size() > 10)
+            topScores.resize(10);
     }
     else
     {
@@ -212,15 +213,16 @@ void ShowHighScore()
     // Load the background image
 
     Texture2D spaceBackground = LoadTexture("media/bgforhighscoretrue.png");
-    PlaySound(bgmusicforhighscorescreen);
 
     while (!WindowShouldClose())
     {
-        PlaySound(bgmusicforhighscorescreen);
 
         // Close window by pressing ESC key
         if (IsKeyDown(KEY_ESCAPE))
+        {
+            StopSound(bgmusicforhighscorescreen);
             break;
+        }
 
         BeginDrawing();
 
@@ -229,19 +231,25 @@ void ShowHighScore()
 
         ClearBackground(RAYWHITE);
 
+        // // Display the high scores on the screen
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        // // Drawing the topscore
+        // DrawText(TextFormat("Top Score: %d", topScore), screenWidth / 2 - MeasureText(TextFormat("Top Score: %d", topScore), 66) / 2, 120, 66, WHITE);
+        // // Draw the high scores below the heading
+        // DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
+        // EndDrawing();
         // Display the high scores on the screen
         DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
-        // Drawing the topscore
-        DrawText(TextFormat("Top Score: %d", topScore), screenWidth / 2 - MeasureText(TextFormat("Top Score: %d", topScore), 66) / 2, 120, 66, WHITE);
-        // Draw the high scores below the heading
-        DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
-        EndDrawing();
-        PlaySound(bgmusicforhighscorescreen);
-    }
-    StopSound(bgmusicforhighscorescreen);
-    UnloadSound(bgmusicforhighscorescreen);
-    CloseWindow(); // Close the window after the loop
 
+        // Draw the top 10 scores
+        for (size_t i = 0; i < topScores.size(); ++i)
+        {
+            DrawText(TextFormat("%d. %d", i + 1, topScores[i]), screenWidth / 2 - 200, 120 + i * 40, 36, WHITE);
+        }
+        EndDrawing();
+    }
+
+    CloseWindow(); // Close the window after the loop
     // Unload the background image
     UnloadTexture(spaceBackground);
 }
@@ -301,6 +309,8 @@ void RunGame()
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
 
     Sound gameover = LoadSound("resources/GameOver.wav");
+    // TESTING ONLY START HERE
+    // TESTING ENDS HERE
 
     // Seed the random number generator
     srand(time(NULL));
@@ -623,7 +633,8 @@ void ShowMainMenu()
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
                 // Display high score (for now, just print a message)
-                CloseWindow();   // Close the main screen window
+                CloseWindow();
+                // Close the main screen window
                 ShowHighScore(); // Show the high score screen
             }
         }
