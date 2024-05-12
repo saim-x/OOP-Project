@@ -198,8 +198,6 @@ class DefaultValues
 {
 private:
 public:
-    Rectangle player = {0, 0, 40, 40};
-    Vector2 playerVelocity = {0.0f, 0.0f};
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
