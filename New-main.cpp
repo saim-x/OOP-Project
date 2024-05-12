@@ -46,10 +46,10 @@ public:
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
-        playervelocity.x = 0.0f;
-        playervelocity.y = 0.0f;
-        player.x = 0;
-        player.y = 0;
+        playervelocity.x = 0;
+        playervelocity.y = 0;
+        player.x = screenWidth/2;
+        player.y = screenHeight/2;
         player.width = 40;
         player.height = 40;
         textureobject = LoadTexture(texture);
@@ -237,7 +237,7 @@ public:
     Bullet(){}
     Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
     {
-        bullettexture = LoadTexture("media/bulletbySufyan2");
+        bullettexture = LoadTexture("media/bulletbySuyan2.png");
         moving = false;
     }
 
@@ -527,7 +527,7 @@ void RunGame()
     HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
     InitAudioDevice();
     Vector2 playerVelocity = {0.0f, 0.0f};
-    char *obj="media/space23.png", *music="resources/bgmusicwav.wav", *bg="media/space2.png";
+    char *obj="media/spacecraft23.png", *music="resources/bgmusicwav.wav", *bg="media/space2.png";
     Player player(obj,music ,bg );
     player.draw();
     Bullet bullet(player.getpos(),0.6);
