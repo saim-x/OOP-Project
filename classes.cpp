@@ -69,7 +69,7 @@ public:
         UnloadSound(bgMusic);
     }
     virtual void setpos(float x, float y) = 0;
-    void draw(){}
+    void draw() {}
     float getx() { return player.x; }
     float gety() { return player.y; }
     float getwidth() { return player.height; }
@@ -85,6 +85,7 @@ protected:
 
     // For Bullets
     double lastFireTime_;
+    friend class Bullet;
 
 public:
     Player(char *texture, char *music, char *background) : Game(texture, music, background)
@@ -107,8 +108,7 @@ public:
     {
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
+        DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
     }
 
     // For Bullets
