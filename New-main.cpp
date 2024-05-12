@@ -155,6 +155,7 @@ public:
     {
         // We can try operator overloading here.
         gameTime_ += GetFrameTime();
+        score+= 2*GetFrameTime();
         player.x += x;
         player.y += y;
     }
@@ -176,6 +177,7 @@ public:
     {
         score += increase;
     }
+    float getscore(){return score;}
 
     // Return Music from Game Class
     Sound get_bgMusic() const { return bgMusic; }
@@ -504,7 +506,6 @@ void RunGame()
     PlaySound(player.get_bgMusic());
     SetSoundVolume(player.get_bgMusic(), 0.6f);
     SetTargetFPS(60);         // Set our game to run at 60 frames-per-second
-    bool fKeyPressed = false; // Initialize outside your update loop
 
     DefaultValues default; // Object to call the default values.
 
@@ -609,14 +610,14 @@ void RunGame()
                 // enemies[i].position.y += (direction.y) * enemies[i].get_speed();
 
                 // Check for collision with player
-                Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
-                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
-                if (CheckCollisionRecs(playerRect, enemyRect))
+            //   Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
+            //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
+                if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
                 {
-                    PlaySound(gameover);
+                    PlaySound(default.gameover);
 
-                    gameOver = true; // Game over if collision detected
-                    SaveToFile(score);
+                    player.Gameover(); // Game over if collision detected
+                    SaveToFile(player.getscore());
                     break;
                 }
             }
