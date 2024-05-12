@@ -584,8 +584,13 @@ void RunGame()
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
             {
+<<<<<<< HEAD
+                /* ! Need to resolve this ! */
+                enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
+=======
                 /* Fix: Initialize enemy object with correct constructor */
                 enemies.push_back(Enemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
+>>>>>>> 01e4eb01bbe1a9a23da8ffe23b8c10c0ccc3d1e1
             }
 
             // Update enemy positions
@@ -614,15 +619,9 @@ void RunGame()
                 // enemies[i].position.y += (direction.y) * enemies[i].get_speed();
 
                 // Check for collision with player
-<<<<<<< HEAD
             //   Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
             //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
-=======
-                Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.get_width() - 35, player.get_height() + 30};
-                Rectangle enemyRect = {enemies[i].get_x(), enemies[i].get_y() + 20, static_cast<float>(enemies[i].get_textureWidth()) - 25, static_cast<float>(enemies[i].get_textureHeight()) - 10};
-                if (CheckCollisionRecs(playerRect, enemyRect))
->>>>>>> 49ff3b308e27c436110d089b2f471129435929a3
                 {
                     PlaySound(default.gameover);
 
