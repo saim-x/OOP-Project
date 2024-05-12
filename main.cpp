@@ -415,7 +415,6 @@ void RunGame()
                     break;
                 }
             }
-
             // Fire bullets when 'F' key is pressed
             // if (IsKeyPressed(KEY_F) && !fKeyPressed)
             // {
@@ -463,8 +462,12 @@ void RunGame()
                 SetSoundVolume(sfx7, 1.0f);
             }
         }
+<<<<<<< HEAD
 
         // Draw draw
+=======
+        // Draw
+>>>>>>> a798a3145bf7e531d5ec0630e4875eed5f4b84c0
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -500,7 +503,6 @@ void RunGame()
         DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
         }
             
-        
         // Update and draw health bar or enemy counter
         healthBar.currentHealth = enemies.size() * 20;
         DrawHealthBar(healthBar);
