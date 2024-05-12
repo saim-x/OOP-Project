@@ -6,3 +6,4 @@ BeginMode2D() : Begins drawing wrt camera
 GetRandomValue() : Gives value randomly in the range provided in attributes
 IsKeyDown() : checks if it is down (can detect on hold)
 IsKeyPressed() : checks if the check gets pressed (woulnd't detect on hold)
+GetFrameTime() : gets current time in for the duration of game
