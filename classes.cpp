@@ -81,10 +81,14 @@ class Player : public Game
 protected:
     float score;
 
+    // For Bullets
+    double lastFireTime_;
+
 public:
     Player(char *texture, char *music, char *background) : Game(texture, music, background)
     {
         score = 0;
+        lastFireTime_ = 0.0;
     }
     void setpos(float x, float y)
     {
@@ -97,6 +101,17 @@ public:
         player.x = 0;
         player.y = 0;
     }
+
+    // For Bullets
+    void FireLaser()
+    {
+        if (GetTime() - lastFireTime_ >= 0.35)
+        {
+            bullets.push_back(Bullet({player.x, player.y}, -6));
+            lastFireTime_ = GetTime();
+        }
+    }
+    std::vector<Bullet> bullets;
 };
 
 class Enemy : public Game
@@ -119,8 +134,10 @@ class DefaultValues
 {
 private:
 public:
-    const int screenWidth = 1600;
-    const int screenHeight = 850;
+    // These values will be global.
+    //  const int screenWidth = 1600;
+    //  const int screenHeight = 850;
+
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
@@ -147,7 +164,7 @@ class Bullet
 private:
     // Attributes
     Vector2 position_;
-    int speed_;
+    const int speed_;
 
 public:
     // Attributes
@@ -161,19 +178,19 @@ public:
     // Function to update the bullet's position.
     void Update()
     {
-        if (IsKeyDown(KEY_W))
+        if (IsKeyPressed(KEY_W))
         {
             position_.y += speed_;
         }
-        else if (IsKeyDown(KEY_A))
+        else if (IsKeyPressed(KEY_A))
         {
             position_.x -= speed_;
         }
-        else if (IsKeyDown(KEY_D))
+        else if (IsKeyPressed(KEY_D))
         {
             position_.x += speed_;
         }
-        else if (IsKeyDown(KEY_S))
+        else if (IsKeyPressed(KEY_S))
         {
             position_.y -= speed_;
         }
