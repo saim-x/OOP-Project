@@ -8,10 +8,10 @@
 const int screenWidth = 1600;
 const int screenHeight = 850;
 
-    const float boundaryLeft = -815.0f;
-    const float boundaryRight = 715.0f;
-    const float boundaryTop = -429.0f;
-    const float boundaryBottom = 332.0f;
+const float boundaryLeft = -815.0f;
+const float boundaryRight = 715.0f;
+const float boundaryTop = -429.0f;
+const float boundaryBottom = 332.0f;
 
 class Game
 {
@@ -34,15 +34,9 @@ protected:
 public:
     Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
-<<<<<<< HEAD
         speed = 3.0f;
         gameover = false;
         camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
-=======
-        gameover = false;
-        Vector2 offSet_Camera = {screenWidth / 2.0f, screenHeight / 2.0f};
-        camera.offset = offSet_Camera;
->>>>>>> 82007d3af0c458c9d25662ffbd44260048112909
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
@@ -75,7 +69,7 @@ public:
         UnloadSound(bgMusic);
     }
     virtual void setpos(float x, float y) = 0;
-    void draw(){}
+    void draw() {}
     float getx() { return player.x; }
     float gety() { return player.y; }
     float getwidth() { return player.height; }
@@ -91,6 +85,7 @@ protected:
 
     // For Bullets
     double lastFireTime_;
+    friend class Bullet;
 
 public:
     Player(char *texture, char *music, char *background) : Game(texture, music, background)
@@ -113,8 +108,7 @@ public:
     {
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
+        DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
     }
 
     // For Bullets
@@ -131,12 +125,13 @@ public:
 
 class Enemy : public Game
 {
-    protected:
+protected:
     bool alive;
+
 public:
     Enemy(float x, float y, char *texture) : Game(x, y, texture)
     {
-        alive=true;
+        alive = true;
         player.x = GetRandomValue(boundaryLeft, boundaryRight);
         player.y = GetRandomValue(boundaryTop, boundaryBottom);
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
@@ -179,16 +174,23 @@ public:
     }
     void draw()
     {
+<<<<<<< HEAD
         if(alive)
+=======
+        if (alive)
+>>>>>>> be56d887c2b8a5ac8bd2f49064fcd3c6fd290609
         {
             Vector2 playingPosition_ = {player.x, player.y};
             DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
         }
+<<<<<<< HEAD
         else
         {
             player.x=2000.0f;
             player.y=2000.0f;
         }
+=======
+>>>>>>> be56d887c2b8a5ac8bd2f49064fcd3c6fd290609
     }
 };
 
