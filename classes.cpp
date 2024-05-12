@@ -34,9 +34,15 @@ protected:
 public:
     Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
+<<<<<<< HEAD
         gameover = false;
         Vector2 offSet_Camera = {screenWidth / 2.0f, screenHeight / 2.0f};
         camera.offset = offSet_Camera;
+=======
+        speed = 3.0f;
+        gameover = false;
+        camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
+>>>>>>> ae982ea0edfc40db65ba18ae143558b99f33f1e4
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
@@ -128,40 +134,40 @@ class Enemy : public Game
 public:
     Enemy(float x, float y, char *texture) : Game(x, y, texture)
     {
-        player.x=GetRandomValue(boundaryLeft, boundaryRight);
+        player.x = GetRandomValue(boundaryLeft, boundaryRight);
         player.y = GetRandomValue(boundaryTop, boundaryBottom);
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
         if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
-    {
-        // Calculate the new enemy position 50 units away from the player
-        float newX = player.x;
-        float newY = player.y;
+        {
+            // Calculate the new enemy position 50 units away from the player
+            float newX = player.x;
+            float newY = player.y;
 
-        if (player.x < x)
-            newX -= 50;
-        else
-            newX += 50;
+            if (player.x < x)
+                newX -= 50;
+            else
+                newX += 50;
 
-        if (player.y < y)
-            newY -= 50;
-        else
-            newY += 50;
+            if (player.y < y)
+                newY -= 50;
+            else
+                newY += 50;
 
-        // Check if the new position is within the window boundaries
-        if (newX < boundaryRight)
-            newX = boundaryRight;
-        else if (newX > boundaryLeft)
-            newX = boundaryLeft;
+            // Check if the new position is within the window boundaries
+            if (newX < boundaryRight)
+                newX = boundaryRight;
+            else if (newX > boundaryLeft)
+                newX = boundaryLeft;
 
-        if (newY < boundaryBottom)
-            newY = boundaryBottom;
-        else if (newY > boundaryTop)
-            newY = boundaryTop;
+            if (newY < boundaryBottom)
+                newY = boundaryBottom;
+            else if (newY > boundaryTop)
+                newY = boundaryTop;
 
-        // Update the enemy position
-        player.x = newX;
-        player.y = newY;
-    }
+            // Update the enemy position
+            player.x = newX;
+            player.y = newY;
+        }
     }
     void setpos(float x, float y)
     {
@@ -175,16 +181,10 @@ public:
     }
 };
 
-
-
 class DefaultValues
 {
 private:
 public:
-    // These values will be global.
-    //  const int screenWidth = 1600;
-    //  const int screenHeight = 850;
-
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
