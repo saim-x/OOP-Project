@@ -267,8 +267,13 @@ public:
             // Update the enemy position
             player.x = newX;
             player.y = newY;
+<<<<<<< HEAD
             // Vector2 playingPosition_ = {player.x, player.y};
             DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+=======
+            //Vector2 playingPosition_ = {player.x, player.y};
+            DrawTextureEx(textureobject, Vector2{player.x, player.y}, 0.0f, 1.0f, WHITE);
+>>>>>>> 6f3949abf5074e8afa4f367899dd9963c0cebe4a
         }
     }
     void setpos(float x, float y)
@@ -302,10 +307,11 @@ public:
     // Return Texture height of Enemy
     float get_textureHeight() const { return textureobject.height; }
 };
-class DefaultValues
+
+class dValues
 {
-private:
 public:
+    dValues(){}
     // Attributes
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
@@ -534,7 +540,7 @@ void RunGame()
     SetSoundVolume(player.get_bgMusic(), 0.6f);
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
 
-    DefaultValues default; // Object to call the default values.
+    dValues d; // Object to call the d values.
 
     while (!WindowShouldClose())
     {
@@ -547,20 +553,20 @@ void RunGame()
 
             if (IsKeyDown(KEY_RIGHT) && player.get_x() < boundaryRight)
             {
-                targetSpeedX += default.acceleration;
+                targetSpeedX += d.acceleration;
             }
             else if (IsKeyDown(KEY_LEFT) && player.get_x() > boundaryLeft)
             {
-                targetSpeedX -= default.acceleration;
+                targetSpeedX -= d.acceleration;
             }
 
             if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
             {
-                targetSpeedY += default.acceleration;
+                targetSpeedY += d.acceleration;
             }
             else if (IsKeyDown(KEY_UP) && player.get_y() > boundaryTop)
             {
-                targetSpeedY -= default.acceleration;
+                targetSpeedY -= d.acceleration;
             }
 
             if (IsKeyDown(KEY_F))
@@ -577,28 +583,28 @@ void RunGame()
             // Smoothly accelerate/decelerate towards target speed
             if (targetSpeedX > playerVelocity.x)
             {
-                playerVelocity.x = fminf(playerVelocity.x + default.acceleration, default.maxSpeed);
+                playerVelocity.x = fminf(playerVelocity.x + d.acceleration, d.maxSpeed);
             }
             else if (targetSpeedX < playerVelocity.x)
             {
-                playerVelocity.x = fmaxf(playerVelocity.x - default.acceleration, -default.maxSpeed);
+                playerVelocity.x = fmaxf(playerVelocity.x - d.acceleration, -d.maxSpeed);
             }
             else
             {
-                playerVelocity.x *= default.deceleration;
+                playerVelocity.x *= d.deceleration;
             }
 
             if (targetSpeedY > playerVelocity.y)
             {
-                playerVelocity.y = fminf(playerVelocity.y + default.acceleration, default.maxSpeed);
+                playerVelocity.y = fminf(playerVelocity.y + d.acceleration, d.maxSpeed);
             }
             else if (targetSpeedY < playerVelocity.y)
             {
-                playerVelocity.y = fmaxf(playerVelocity.y - default.acceleration, -default.maxSpeed);
+                playerVelocity.y = fmaxf(playerVelocity.y - d.acceleration, -d.maxSpeed);
             }
             else
             {
-                playerVelocity.y *= default.deceleration;
+                playerVelocity.y *= d.deceleration;
             }
 
             // Update player position based on velocityy
@@ -637,7 +643,7 @@ void RunGame()
                 //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
                 {
-                    PlaySound(default.gameover);
+                    PlaySound(d.gameover);
 
                     player.Gameover(); // Game over if collision detected
                     SaveToFile(player.getscore());
@@ -645,7 +651,7 @@ void RunGame()
                 }
                 if (CheckCollisionRecs(player.getbulletrect(), enemies[i].getrect()))
                 {
-                    PlaySound(default.killSound);
+                    PlaySound(d.killSound);
                     enemies[i].setstatus();
                     auto it = std::find(enemies.begin(), enemies.end(), i);
                     if (it != enemies.end())
