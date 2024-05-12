@@ -23,55 +23,79 @@ const float boundaryBottom = 332.0f;
 class Bullet
 {
 private:
+    Rectangle bullet;
     // Attributes
     Vector2 position_;
     const float speed_;
-
+    Texture2D bullettexture;
+    bool moving;
+    char key;
 public:
     // Attribute
     bool active_; // Variable to check if bullet is still within the game window.
 
     //  Constructors
-    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {}
+    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {
+        bullettexture=LoadTexture("media/bulletbySufyan2");
+        moving=false;
+    }
 
     // Methods
     // Function to update the bullet's position.
-    void Update()
+    void Update(Player p)
     {
         if (IsKeyPressed(KEY_W))
         {
-            position_.y += speed_;
+            moving=true;
+            key='W';
         }
         else if (IsKeyPressed(KEY_A))
         {
-            position_.x -= speed_;
+            moving=true;
+            key='A';
         }
         else if (IsKeyPressed(KEY_D))
         {
-            position_.x += speed_;
+            moving=true;
+            key='D';
         }
         else if (IsKeyPressed(KEY_S))
         {
-            position_.y -= speed_;
+            moving=true;
+            key='S';
         }
-
         if (active_)
         {
-            if (position_.y > GetScreenHeight() - 100 || position_.y < 25 || position_.x > GetScreenWidth() - 100 || position_.x < 25)
+            if(moving){
+                if(key=='W')
+                {
+                    position_.y-= speed_;
+                }
+                else if(key=='A'){
+                    position_.x -= speed_;
+                }
+                else if(key=='D'){
+                    position_.x += speed_;
+                }
+                else if(key=='S'){
+                    position_.y += speed_;
+                }   
+            }
+            if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
             {
                 active_ = false;
+                moving = false;
             }
+            DrawTextureEx(bullettexture,position_,0.0f, 1.0f, WHITE);
+        }
+        else{
+            position_.x=p.player.x;
+            position_.y=p.player.y;
+            moving=false;
         }
     }
     // Function to draw the bullet.
-    void Draw()
-    {
-        if (active_)
-        {
-            DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
-        }
-        return;
-    }
+    Rectangle getbullet(){return bullet;}
 };
 class Game
 {
@@ -139,10 +163,10 @@ protected:
 
     // For Bullets
     double lastFireTime_;
-    friend class Bullet;
-
+    Bullet bullet;
 public:
-    Player(char *texture, char *music, char *background) : Game(texture, music, background)
+    friend class Bullet;
+    Player(char *texture, char *music, char *background) : Game(texture, music, background), bullet(Vector2{0,0}, 0.6)
     {
         score = 0;
         lastFireTime_ = 0.0;
@@ -188,16 +212,8 @@ public:
     // Return Height of Player
     float get_height() const { return player.height; }
 
-    // For Bullets
-    std::vector<Bullet> bullets;
-    void FireLaser()
-    {
-        if (GetTime() - lastFireTime_ >= 0.35)
-        {
-            bullets.push_back(Bullet(Vector2({player.x, player.y}), -6.0));
-            lastFireTime_ = GetTime();
-        }
-    }
+    Rectangle getbulletrect(){return bullet.getbullet();}
+
 };
 class Enemy : public Game
 {
@@ -616,6 +632,9 @@ void RunGame()
                     player.Gameover(); // Game over if collision detected
                     SaveToFile(player.getscore());
                     break;
+                }
+                if(CheckCollisionRecs(player.getbulletrect(),enemies[i].getrect())){
+                    
                 }
             }
         }
