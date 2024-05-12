@@ -21,6 +21,7 @@ const float boundaryRight = 715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 332.0f;
 
+
 class Game
 {
 protected:
@@ -226,7 +227,7 @@ private:
     Rectangle bullet;
     // Attributes
     Vector2 position_;
-    const float speed_;
+    float speed_;
     Texture2D bullettexture;
     bool moving;
     char key;
@@ -236,6 +237,7 @@ public:
     bool active_; // Variable to check if bullet is still within the game window.
 
     //  Constructors
+    Bullet(){}
     Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
     {
         bullettexture = LoadTexture("media/bulletbySufyan2");
