@@ -573,7 +573,7 @@ void ShowMainMenu()
         DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
         DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
 
-        // Check if the mouse is hovering over the play button
+        //Check if the mouse is hovering over the play button
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
         {
             DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
