@@ -156,7 +156,7 @@ public:
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
     if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
     {
-        //Calculate the new enemy position 50 units away from the player
+        //Calculate the new enemy position 50 units away from the playerr
         float newX = player.x;
         float newY = player.y;
 
