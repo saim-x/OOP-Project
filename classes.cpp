@@ -181,7 +181,6 @@ public:
     Bullet(const Vector2 position, const int speed) : position_(position), speed_(speed), active_(true) {}
 
     // Methods
-
     // Function to update the bullet's position.
     void Update()
     {
@@ -218,14 +217,5 @@ public:
             DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
         }
         return;
-    }
-    Rectangle getRect()
-    {
-        Rectangle rect;
-        rect.x = position_.x;
-        rect.y = position_.y;
-        rect.width = 4;
-        rect.height = 15;
-        return rect;
     }
 };
