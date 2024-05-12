@@ -4,6 +4,9 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <algorithm>
 
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
@@ -17,6 +20,59 @@ const float boundaryRight = 715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 332.0f;
 
+class Bullet
+{
+private:
+    // Attributes
+    Vector2 position_;
+    const float speed_;
+
+public:
+    // Attribute
+    bool active_; // Variable to check if bullet is still within the game window.
+
+    //  Constructors
+    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {}
+
+    // Methods
+    // Function to update the bullet's position.
+    void Update()
+    {
+        if (IsKeyPressed(KEY_W))
+        {
+            position_.y += speed_;
+        }
+        else if (IsKeyPressed(KEY_A))
+        {
+            position_.x -= speed_;
+        }
+        else if (IsKeyPressed(KEY_D))
+        {
+            position_.x += speed_;
+        }
+        else if (IsKeyPressed(KEY_S))
+        {
+            position_.y -= speed_;
+        }
+
+        if (active_)
+        {
+            if (position_.y > GetScreenHeight() - 100 || position_.y < 25 || position_.x > GetScreenWidth() - 100 || position_.x < 25)
+            {
+                active_ = false;
+            }
+        }
+    }
+    // Function to draw the bullet.
+    void Draw()
+    {
+        if (active_)
+        {
+            DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
+        }
+        return;
+    }
+};
 class Game
 {
 protected:
@@ -75,7 +131,7 @@ public:
     float gety() { return player.y; }
     float getwidth() { return player.height; }
     float getheight() { return player.width; }
-    bool gameover() { return gameover; }
+    bool GetGameover() { return gameover; }
     Rectangle getrect() { return player; }
 };
 class Player : public Game
@@ -118,15 +174,15 @@ public:
     }
 
     // For Bullets
+    std::vector<Bullet> bullets;
     void FireLaser()
     {
         if (GetTime() - lastFireTime_ >= 0.35)
         {
-            bullets.push_back(Bullet({player.x, player.y}, -6));
+            bullets.push_back(Bullet(Vector2({player.x, player.y}), -6.0));
             lastFireTime_ = GetTime();
         }
     }
-    std::vector<Bullet> bullets;
 };
 class Enemy : public Game
 {
@@ -213,59 +269,6 @@ public:
     Sound gameover = LoadSound("resources/GameOver.wav");
 };
 
-class Bullet
-{
-private:
-    // Attributes
-    Vector2 position_;
-    const int speed_;
-
-public:
-    // Attribute
-    bool active_; // Variable to check if bullet is still within the game window.
-
-    //  Constructors
-    Bullet(const Vector2 position, const int speed) : position_(position), speed_(speed), active_(true) {}
-
-    // Methods
-    // Function to update the bullet's position.
-    void Update()
-    {
-        if (IsKeyPressed(KEY_W))
-        {
-            position_.y += speed_;
-        }
-        else if (IsKeyPressed(KEY_A))
-        {
-            position_.x -= speed_;
-        }
-        else if (IsKeyPressed(KEY_D))
-        {
-            position_.x += speed_;
-        }
-        else if (IsKeyPressed(KEY_S))
-        {
-            position_.y -= speed_;
-        }
-
-        if (active_)
-        {
-            if (position_.y > GetScreenHeight() - 100 || position_.y < 25 || position_.x > GetScreenWidth() - 100 || position_.x < 25)
-            {
-                active_ = false;
-            }
-        }
-    }
-    // Function to draw the bullet.
-    void Draw()
-    {
-        if (active_)
-        {
-            DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
-        }
-        return;
-    }
-};
 class HealthBar
 {
 private:
@@ -333,23 +336,227 @@ Enemy InitEnemy(Player p)
     {
         flag = 1;
         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
-        texture = "media/enemy3.1.png";
+        texture = const_cast<char *>("media/enemy3.1.png");
         PlaySound(sfx1);
         boss == true; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
     // Randomly choose between enemy1 and enemy2 textures
     else if (GetRandomValue(0, 1) == 0)
     {
-        texture = "media/enemy1.png";
+        texture = const_cast<char *>("media/enemy1.png");
         PlaySound(sfx2);
         boss = false;
     }
     else
     {
-        texture = "media/enemy3.png";
+        texture = const_cast<char *>("media/enemy3.png");
         PlaySound(sfx2);
         boss = false;
     }
     Enemy enemy(p.getx(), p.gety(), texture, boss);
     return enemy;
+}
+void SaveToFile(float score)
+{
+    std::ofstream outputFile("scores.txt", std::ios::app); // Open the file in append mode
+
+    if (outputFile.is_open())
+    {
+        outputFile << score << std::endl; // Write the score to the file on a new line
+        outputFile.close();               // Close the file
+    }
+    else
+    {
+        std::cout << "Failed to open the file for writing." << std::endl;
+    }
+}
+
+void ShowHighScore()
+{
+    // Initialization
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
+
+    InitWindow(screenWidth, screenHeight, "2D Space Game");
+    Camera2D camera = {0};
+    camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+    SetTargetFPS(60);                      // Set our game to run at 60 frames-per-second
+    std::ifstream inputFile("scores.txt"); // Open the file for reading
+    std::vector<int> topScores;            // Vector to store the top scores
+    std::string highScores;                // String to store all the high scores
+    int topScore = 0;                      // Variable to store the top score
+    InitAudioDevice();
+    Sound bgmusicforhighscorescreen = LoadSound("resources/highscore.wav");
+    PlaySound(bgmusicforhighscorescreen);
+    SetSoundVolume(bgmusicforhighscorescreen, 2.6f);
+    if (inputFile.is_open())
+    {
+
+        std::string score;
+        while (std::getline(inputFile, score)) // Read each line from the file
+        {
+            // Convert the score to an integer
+            int scoreValue = std::stoi(score);
+            topScores.push_back(scoreValue);
+        }
+        inputFile.close(); // Close the file
+
+        // Sort the scores in descending order
+        sort(topScores.begin(), topScores.end(), std::greater<int>());
+
+        // Resize the vector to contain only the top 5 scores
+        int NumberOfScores = 5;
+
+        if (topScores.size() > NumberOfScores)
+        {
+            topScores.resize(NumberOfScores);
+        }
+    }
+    else
+    {
+        std::cout << "Failed to open the file for reading." << std::endl;
+    }
+
+    // Load the background image
+
+    Texture2D spaceBackground = LoadTexture("saim's related vault/leaderboardtemp.png");
+
+    while (!WindowShouldClose())
+    {
+
+        // Close window by pressing ESC key
+        if (IsKeyDown(KEY_ESCAPE))
+        {
+            StopSound(bgmusicforhighscorescreen);
+            break;
+        }
+
+        BeginDrawing();
+
+        // Draw the background image
+        DrawTexture(spaceBackground, 0, 0, WHITE);
+
+        ClearBackground(RAYWHITE);
+
+        /*-----------------------------------------Printing the complete file.-----------------------------------------*/
+        // // Display the high scores on the screen
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        // // Drawing the topscore
+        // DrawText(TextFormat("Top Score: %d", topScore), screenWidth / 2 - MeasureText(TextFormat("Top Score: %d", topScore), 66) / 2, 120, 66, WHITE);
+        // // Draw the high scores below the heading
+        // DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
+        // EndDrawing();
+        // Display the high scores on the screen
+        // FILHAL K LIYE
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        /*-------------------------------------------------------------------------------------------------------------*/
+
+        // Draw the top 5 scores with gaps
+        for (size_t i = 0; i < topScores.size(); ++i)
+        {
+            DrawText(TextFormat("%1d. %1d\n\n\n", i + 1, topScores[i]), screenWidth / 2 - 180, 220 + i * 124, 36, WHITE);
+        }
+        EndDrawing();
+    }
+
+    CloseWindow(); // Close the window after the loop
+    // Unload the background image
+    UnloadTexture(spaceBackground);
+}
+void RunGame()
+{
+    
+}
+
+void ShowMainMenu()
+{
+    const int screenWidth = 1600;
+    const int screenHeight = 900;
+
+    InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
+
+    // Load the background image
+    Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
+
+    // Adjust the background image rectangle to cover the entire window
+    Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
+
+    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 25), 100, 50};
+    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 25), 140, 50};
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        // Draw the background image
+        DrawTexturePro(backgroundImage, Rectangle({0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}), bgRec, Vector2({0, 0}), 0.0f, WHITE);
+
+        // Draw play button
+        DrawRectangleRec(playButton, BLUE);
+        DrawText("Play", (int)playButton.x + 30, (int)playButton.y + 15, 20, WHITE);
+
+        // Draw high score button
+        DrawRectangleRec(highScoreButton, GREEN);
+        DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
+
+        // Draw game name
+        DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
+        DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
+
+        // Check if the mouse is hovering over the play button
+        if (CheckCollisionPointRec(GetMousePosition(), playButton))
+        {
+            DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Start the game
+                CloseWindow(); // Close the main screen window
+                RunGame();     // Start the game loop
+            }
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+        {
+            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Display high score (for now, just print a message)
+                CloseWindow();
+                // Close the main screen window
+                ShowHighScore(); // Show the high score screen
+            }
+        }
+        // Check if the mouse is hovering over the high score button
+        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+        {
+            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Display high score (for now, just print a message)
+                cout << "High Score button clicked!" << endl;
+            }
+        }
+
+        EndDrawing();
+    }
+ // Unload the background image
+    UnloadTexture(backgroundImage);
+
+    CloseWindow();
+}
+
+int main()
+{
+    return 0;
 }
