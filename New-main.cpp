@@ -209,7 +209,7 @@ public:
     float get_y() const { return player.y; }
     // Return Width of Player
     float get_width() const { return player.width; }
-    // Return Height of Player
+    //Return Height of Player
     float get_height() const { return player.height; }
 
     Rectangle getbulletrect(){return bullet.getbullet();}
