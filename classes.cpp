@@ -29,8 +29,7 @@ public:
     Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
         gameover = false;
-        Vector2 offSet_Camera = {screenWidth / 2.0f, screenHeight / 2.0f};
-        camera.offset = offSet_Camera;
+        camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
@@ -141,10 +140,6 @@ class DefaultValues
 {
 private:
 public:
-    // These values will be global.
-    //  const int screenWidth = 1600;
-    //  const int screenHeight = 850;
-
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
