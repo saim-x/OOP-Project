@@ -43,7 +43,7 @@ public:
     }
 
     // Methods
-    // Function to update the bullet's position.
+    // Function to update the bullet's position
     void Update(Player p)
     {
         if (IsKeyPressed(KEY_W))
