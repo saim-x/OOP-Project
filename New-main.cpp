@@ -8,7 +8,6 @@
 #include <string>
 #include <algorithm>
 
-class Bullet;
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
 int maxHealth = 100; // Maximum health of the player
@@ -89,11 +88,10 @@ protected:
 
     // For Bullets
     double lastFireTime_;
-    Bullet bullet;
 
 public:
     friend class Bullet;
-    Player(char *texture, char *music, char *background) : Game(texture, music, background), bullet(Vector2{0, 0}, 0.6)
+    Player(char *texture, char *music, char *background) : Game(texture, music, background)
     {
         score = 0;
         lastFireTime_ = 0.0;
@@ -138,8 +136,9 @@ public:
     float get_width() const { return player.width; }
     // Return Height of Player
     float get_height() const { return player.height; }
-
-    Rectangle getbulletrect() { return bullet.getbullet(); }
+    Vector2 getpos(){
+        return Vector2{player.x,player.y};
+    }
 };
 
 class Enemy :public Game
@@ -531,6 +530,7 @@ void RunGame()
     InitAudioDevice();
     Vector2 playerVelocity = {0.0f, 0.0f};
     Player player("media/space23.png", "resources/bgmusicwav.wav", "media/space2.png");
+    Bullet bullet(player.getpos(),0.6);
 
     srand(time(NULL));
     std::vector<Enemy> enemies;
@@ -648,7 +648,7 @@ void RunGame()
                     SaveToFile(player.getscore());
                     break;
                 }
-                if (CheckCollisionRecs(player.getbulletrect(), enemies[i].getrect()))
+                if (CheckCollisionRecs(bullet.getbullet(), enemies[i].getrect()))
                 {
                     PlaySound(d.killSound);
                     enemies[i].setstatus();
@@ -656,6 +656,40 @@ void RunGame()
                     player.scoreinc(10);
                 }
             }
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+            player.draw();
+            for (int i=0;i<enemies.size();i++)
+            {
+            enemies[i].draw();
+            }
+            EndMode2D();
+
+DrawText("Space Shooter", 10, 10, 20, RED);
+        if (player.GetGameover())
+        {
+            StopSound(player.get_bgMusic());
+            DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
+            DrawText(TextFormat("Your Score: %.2f", score), screenWidth / 2 - MeasureText("Your Score: xxxxxx", 20) / 2, (screenHeight / 2) + 55, 26, WHITE);
+            DrawText(TextFormat("Time: %.2f seconds", gameTime), screenWidth / 2 - MeasureText(TextFormat("Time: %.2f seconds", gameTime), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
+            DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 40, 20, WHITE);
+            DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart xxx", 20) / 2, (screenHeight / 2) + 120, 26, WHITE);
+        }
+        else
+        {
+
+            DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
+            // Draw legend
+            DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
+            DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
+            DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
+        }
+
+            // Update and draw health bar or enemy counter
+            healthBar.currentHealth = enemies.size() * 20;
+            DrawHealthBar(healthBar);
+            EndDrawing();
+
         }
     }
 
