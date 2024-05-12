@@ -10,8 +10,8 @@ const int screenHeight = 850;
 
 class Game
 {
-    // We can add boundary class here to show aggregation.
 protected:
+    bool gameover;
     Camera2D camera = {0};
     char* background;
     Texture2D backgroundtexture;
@@ -28,6 +28,7 @@ protected:
 public:
     Game(char *texture, char *music, char* background) : texture(texture), music(music), background(background)
     { // for player
+        gameover=false;
         camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
@@ -71,6 +72,7 @@ public:
     float gety() { return player.y; }
     float getwidth(){return player.height;}
     float getheight(){return player.width;}
+    bool gameover(){return gameover;}
     Rectangle getrect() { return player; }
 };
 
@@ -101,7 +103,7 @@ class Enemy : public Game
     float speed;
 
 public:
-    Enemy(float x, float y, char *texture) : Game(texture)
+    Enemy(float x, float y, char *texture) : Game(x,y,texture)
     {
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
     }

@@ -1,0 +1,5 @@
+LoadTexture() : Loads Textures for background
+LoadSound() : Load music and sound effects
+DrawTexture() : Draws Texture for static objects such as the background
+DrawTextureEx() : Draws Textures for dynaic objects, somthing which can move like the player and enemy
+BeginMode2D() : Begins drawing wrt camera
