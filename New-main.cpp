@@ -157,6 +157,7 @@ public:
         gameTime_ += GetFrameTime();
         player.x += x;
         player.y += y;
+        
     }
     void Gameover()
     {
@@ -466,7 +467,7 @@ void ShowHighScore()
     }
 
     CloseWindow(); // Close the window after the loop
-    // Unload the background image
+    //Unload the background image
     UnloadTexture(spaceBackground);
 }
 void RunGame()
