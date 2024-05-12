@@ -16,7 +16,6 @@ struct Enemy
     float speed;
 };
 
-
 struct Bullet
 {
     Vector2 position;
@@ -245,10 +244,10 @@ void RunGame()
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
 
-    const float boundaryLeft = -815.0f;
-    const float boundaryRight = 715.0f;
-    const float boundaryTop = -429.0f;
-    const float boundaryBottom = 332.0f;
+    const float boundaryLeft = -670.0f;
+    const float boundaryRight = 600.0f;
+    const float boundaryTop = -300.0f;
+    const float boundaryBottom = 250.0f;
 
     Camera2D camera = {0};
     camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
@@ -332,29 +331,15 @@ void RunGame()
                 targetSpeedY -= acceleration;
             }
 
-            static float keyPressTimer = 0.0f;
-            const float keyPressDuration = 0.1f;
-
             if (IsKeyDown(KEY_F))
             {
-                keyPressTimer += GetFrameTime();
+                // Toggle BOOSTERS
+                boostersActivated = true;
+                PlaySound(sfx5);
 
-                if (keyPressTimer <= keyPressDuration)
-                {
-                    // Toggle BOOSTERS
-                    boostersActivated = true;
-                    PlaySound(sfx5);
-
-                    targetSpeedX *= 25.0f;
-                    targetSpeedY *= 25.0f;
-                    PlaySound(sfx5);
-                    SetSoundVolume(sfx5, 3.9f);
-                }
-            }
-            else
-            {
-                boostersActivated = false;
-                keyPressTimer = 0.0f;
+                targetSpeedX *= 25.0f;
+                targetSpeedY *= 25.0f;
+                SetSoundVolume(sfx5, 3.9f);
             }
 
             // Smoothly accelerate/decelerate towards target speed
@@ -508,8 +493,14 @@ void RunGame()
         }
         else
         {
+            
             DrawText(TextFormat("Score: %.2f ", score), screenWidth - MeasureText(TextFormat("%.2f seconds", score), 20) - 10, 10, 20, WHITE);
+            // Draw legend
+        DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
+        DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
         }
+            
+        
         // Update and draw health bar or enemy counter
         healthBar.currentHealth = enemies.size() * 20;
         DrawHealthBar(healthBar);
@@ -544,7 +535,7 @@ void RunGame()
 
         if (gameOver && IsKeyDown(KEY_ESCAPE))
         {
-            break; //Exit game loop if game over and ESC key pressed
+            break; // Exit game loop if game over and ESC key pressed
         }
     }
 
