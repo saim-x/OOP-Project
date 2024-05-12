@@ -394,7 +394,7 @@ Enemy InitEnemy(Player p)
         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
         texture = const_cast<char *>("media/enemy3.1.png");
         PlaySound(sfx1);
-        boss == true; // Set boss enemy speed to 3.0 which is max an enemy can have
+        boss = true; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
     // Randomly choose between enemy1 and enemy2 textures
     else if (GetRandomValue(0, 1) == 0)
