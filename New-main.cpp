@@ -24,18 +24,18 @@ const float boundaryBottom = 664.0f;
 class Game
 {
 protected:
-    bool gameover;
-    Camera2D camera = {0};
-    const char *background;
+    bool      gameover;
+    Camera2D  camera = {0};
+    const     char *background;
     Texture2D backgroundtexture;
     Rectangle player;
-    const char *texture;
+    const     char *texture;
     Texture2D textureobject;
-    Vector2 playervelocity;
-    float speed;
-    const char *music;
-    Sound bgMusic;
-    float gameTime_;
+    Vector2   playervelocity;
+    float     speed;
+    const     char *music;
+    Sound     bgMusic;
+    float     gameTime_;
 
 public:
     Game(const char *texture,const char *music,const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
@@ -161,7 +161,7 @@ public:
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
     if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
     {
-        //Calculate the new enemy position 50 units away from the player
+        //Calculate the new enemy position 50 units away from the playerr
         float newX = player.x;
         float newY = player.y;
 
@@ -542,6 +542,11 @@ void RunGame()
                 {
                     PlaySound(d.gameover);
                     player.Gameover(); // Game over if collision detected
+<<<<<<< HEAD
+=======
+                    PlaySound(d.gameover);
+                    std::cout << "File Saved" << std::endl;
+>>>>>>> 75a0c93d56a4001020f7b7c0e881b80972c917de
                     SaveToFile(player.getscore());
                     PlaySound(d.gameover);
                     break;
