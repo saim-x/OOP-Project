@@ -170,8 +170,8 @@ void ShowHighScore()
     // Initialization
     const int screenWidth = 1600;
     const int screenHeight = 850;
-    Sound bgmusicforhighscorescreen = LoadSound("resources/MusicForHighScore.wav");
-
+    Sound bgmusicforhighscorescreen = LoadSound("resources/highscore.wav");
+    PlaySound(bgmusicforhighscorescreen);
     InitWindow(screenWidth, screenHeight, "2D Space Game");
     Camera2D camera = {0};
     camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
@@ -212,11 +212,12 @@ void ShowHighScore()
     // Load the background image
 
     Texture2D spaceBackground = LoadTexture("media/bgforhighscoretrue.png");
+
     PlaySound(bgmusicforhighscorescreen);
+    SetSoundVolume(bgmusicforhighscorescreen, 2.6f);
 
     while (!WindowShouldClose())
     {
-        PlaySound(bgmusicforhighscorescreen);
 
         // Close window by pressing ESC key
         if (IsKeyDown(KEY_ESCAPE))
@@ -236,7 +237,6 @@ void ShowHighScore()
         // Draw the high scores below the heading
         DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
         EndDrawing();
-        PlaySound(bgmusicforhighscorescreen);
     }
     StopSound(bgmusicforhighscorescreen);
     UnloadSound(bgmusicforhighscorescreen);
@@ -301,6 +301,8 @@ void RunGame()
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
 
     Sound gameover = LoadSound("resources/GameOver.wav");
+    // TESTING ONLY START HERE
+    // TESTING ENDS HERE
 
     // Seed the random number generator
     srand(time(NULL));
