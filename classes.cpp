@@ -34,15 +34,9 @@ protected:
 public:
     Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
-<<<<<<< HEAD
-        speed = 3.0f;
-        gameover=false;
-        camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
-=======
         gameover = false;
         Vector2 offSet_Camera = {screenWidth / 2.0f, screenHeight / 2.0f};
         camera.offset = offSet_Camera;
->>>>>>> 7e3556d03d9aa6f67c7b043da94c98b805c25e57
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
@@ -69,24 +63,13 @@ public:
         Vector2 playingPosition_ = {player.x, player.y};
         DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
-    void drawplayer()
-    {
-        BeginMode2D(camera);
-        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
-    }
-    void drawenemy()
-    {
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
-    }
     ~Game()
     {
         UnloadTexture(textureobject);
         UnloadSound(bgMusic);
     }
     virtual void setpos(float x, float y) = 0;
+    void draw(){}
     float getx() { return player.x; }
     float gety() { return player.y; }
     float getwidth() { return player.height; }
@@ -119,6 +102,13 @@ public:
     {
         player.x = 0;
         player.y = 0;
+    }
+    void draw()
+    {
+        BeginMode2D(camera);
+        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
 
     // For Bullets
@@ -177,6 +167,11 @@ public:
     {
         player.x += x * speed;
         player.y += y * speed;
+    }
+    void draw()
+    {
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
 };
 
