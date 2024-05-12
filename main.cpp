@@ -464,7 +464,7 @@ void RunGame()
             }
         }
 
-        // Draw
+        // Draw draw
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
