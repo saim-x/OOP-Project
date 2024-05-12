@@ -16,9 +16,9 @@ const int screenWidth = 1600;
 const int screenHeight = 850;
 
 const float boundaryLeft = -815.0f;
-const float boundaryRight = 715.0f;
+const float boundaryRight = 1715.0f;
 const float boundaryTop = -429.0f;
-const float boundaryBottom = 332.0f;
+const float boundaryBottom = 664.0f;
 
 
 class Game
@@ -65,8 +65,6 @@ public:
     ~Game()
     {
         UnloadTexture(textureobject);
-        UnloadTexture(backgroundtexture);
-        UnloadSound(bgMusic);
     }
     void setgameover(bool val){gameover=val;}
     virtual void setpos(float x, float y) = 0;
@@ -84,12 +82,9 @@ class Player : public Game
 {
 protected:
     float score;
-
-    // For Bullets
     double lastFireTime_;
 
 public:
-    friend class Bullet;
     Player(const char *texture,const char *music,const char *background) : Game(texture, music, background)
     {
         score = 0;
@@ -113,6 +108,10 @@ public:
     {
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
+    }
+    ~Player(){
+        UnloadTexture(backgroundtexture);
+        UnloadSound(bgMusic);
     }
 
     template <typename T>
@@ -218,92 +217,6 @@ public:
     float get_textureHeight() const { return textureobject.height; }
 };
 
-class Bullet
-{
-private:
-    Rectangle bullet;
-    // Attributes
-    Vector2 position_;
-    float speed_;
-    Texture2D bullettexture;
-    bool moving;
-    char key;
-
-public:
-    // Attribute
-    bool active_; // Variable to check if bullet is still within the game window.
-
-    //  Constructors
-    Bullet(){}
-    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
-    {
-        bullettexture = LoadTexture("media/bulletbySuyan2.png");
-        moving = false;
-    }
-
-    // Methods
-    // Function to update the bullet's position.
-    void Update(Player pobj)
-    {
-        if (IsKeyPressed(KEY_W))
-        {
-            moving = true;
-            key = 'W';
-        }
-        else if (IsKeyPressed(KEY_A))
-        {
-            moving = true;
-            key = 'A';
-        }
-        else if (IsKeyPressed(KEY_D))
-        {
-            moving = true;
-            key = 'D';
-        }
-        else if (IsKeyPressed(KEY_S))
-        {
-            moving = true;
-            key = 'S';
-        }
-        if (active_)
-        {
-            if (moving)
-            {
-                if (key == 'W')
-                {
-                    position_.y -= speed_;
-                }
-                else if (key == 'A')
-                {
-                    position_.x -= speed_;
-                }
-                else if (key == 'D')
-                {
-                    position_.x += speed_;
-                }
-                else if (key == 'S')
-                {
-                    position_.y += speed_;
-                }
-            }
-            if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
-            {
-                active_ = false;
-                moving = false;
-            }
-            DrawTextureEx(bullettexture, position_, 0.0f, 1.0f, WHITE);
-        }
-        else
-        {
-            position_.x = pobj.player.x;
-            position_.y = pobj.player.y;
-            moving = false;
-        }
-    }
-    // Function to draw the bullet.
-    Rectangle getbullet() { return bullet; }
-};
-
 class dValues
 {
 public:
@@ -394,7 +307,7 @@ Enemy InitEnemy(Player p)
         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
         texture = const_cast<char *>("media/enemy3.1.png");
         PlaySound(sfx1);
-        boss == true; // Set boss enemy speed to 3.0 which is max an enemy can have
+        boss = true; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
     // Randomly choose between enemy1 and enemy2 textures
     else if (GetRandomValue(0, 1) == 0)
@@ -529,8 +442,6 @@ void RunGame()
     Vector2 playerVelocity = {0.0f, 0.0f};
     char *obj="media/spacecraft23.png", *music="resources/bgmusicwav.wav", *bg="media/space2.png";
     Player player(obj,music ,bg );
-    player.draw();
-    Bullet bullet(player.getpos(),0.6);
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
@@ -557,7 +468,6 @@ void RunGame()
             {
                 targetSpeedX -= d.acceleration;
             }
-
             if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
             {
                 targetSpeedY += d.acceleration;
@@ -635,10 +545,6 @@ void RunGame()
                 // }
 
                 enemies[i].setpos(direction.x, direction.y);
-
-                // Check for collision with player
-                //   Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
-                //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
                 {
                     PlaySound(d.gameover);
@@ -647,13 +553,6 @@ void RunGame()
                     PlaySound(d.gameover);
                     SaveToFile(player.getscore());
                     break;
-                }
-                if (CheckCollisionRecs(bullet.getbullet(), enemies[i].getrect()))
-                {
-                    PlaySound(d.killSound);
-                    enemies[i].setstatus();
-                    enemies.erase(enemies.begin() + i);
-                    player.scoreinc(10);
                 }
             }
             BeginDrawing();
@@ -707,7 +606,6 @@ void RunGame()
                 healthBar.currentHealth = 0;
             }
         }
-
         if (restartRequested && !IsKeyDown(KEY_SPACE))
         {
             restartRequested = false;
@@ -715,7 +613,8 @@ void RunGame()
 
         if (player.get_gameover() && IsKeyDown(KEY_ESCAPE))
         {
-            break; // Exit game loop if game over and ESC key pressed
+            restartRequested=true; // Exit game loop if game over and ESC key pressed
+            continue;
         }
     }
 
