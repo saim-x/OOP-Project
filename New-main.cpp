@@ -267,13 +267,8 @@ public:
             // Update the enemy position
             player.x = newX;
             player.y = newY;
-<<<<<<< HEAD
             // Vector2 playingPosition_ = {player.x, player.y};
-            DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
-=======
-            //Vector2 playingPosition_ = {player.x, player.y};
-            DrawTextureEx(textureobject, Vector2{player.x, player.y}, 0.0f, 1.0f, WHITE);
->>>>>>> 6f3949abf5074e8afa4f367899dd9963c0cebe4a
+            DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
         }
     }
     void setpos(float x, float y)
@@ -311,7 +306,7 @@ public:
 class dValues
 {
 public:
-    dValues(){}
+    dValues() {}
     // Attributes
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
