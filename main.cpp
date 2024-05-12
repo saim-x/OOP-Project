@@ -177,7 +177,7 @@ void ShowHighScore()
     camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
-    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);                 // Set our game to run at 60 frames-per-second
     ifstream inputFile("scores.txt"); // Open the file for reading
 
     string highScores; // String to store all the high scores
@@ -216,6 +216,8 @@ void ShowHighScore()
 
     while (!WindowShouldClose())
     {
+        PlaySound(bgmusicforhighscorescreen);
+
         // Close window by pressing ESC key
         if (IsKeyDown(KEY_ESCAPE))
             break;
@@ -234,8 +236,10 @@ void ShowHighScore()
         // Draw the high scores below the heading
         DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
         EndDrawing();
+        PlaySound(bgmusicforhighscorescreen);
     }
     StopSound(bgmusicforhighscorescreen);
+    UnloadSound(bgmusicforhighscorescreen);
     CloseWindow(); // Close the window after the loop
 
     // Unload the background image
