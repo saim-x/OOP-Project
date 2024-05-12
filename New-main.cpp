@@ -578,13 +578,20 @@ void RunGame()
                 playerVelocity.y *= default.deceleration;
             }
 
-            // Update player position based on velocity
+            // Update player position based on velocityy
             player.setpos(playerVelocity.x, playerVelocity.y);
 
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
             {
+<<<<<<< HEAD
+=======
+                //------------------------------------------------TALHA WALA CODE LINE--------------------------------------------------
+                // /* ! Need to resolve this ! */
+                // enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
+>>>>>>> 66f9e07f27288898a3234fd4939e3a566dcbae04
                 /* Fix: Initialize enemy object with correct constructor */
+                //-----------------------SAIM WALI LINE-----------------------------
                 enemies.push_back(Enemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
             }
 
