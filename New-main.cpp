@@ -24,18 +24,18 @@ const float boundaryBottom = 664.0f;
 class Game
 {
 protected:
-    bool gameover;
-    Camera2D camera = {0};
-    const char *background;
+    bool      gameover;
+    Camera2D  camera = {0};
+    const     char *background;
     Texture2D backgroundtexture;
     Rectangle player;
-    const char *texture;
+    const     char *texture;
     Texture2D textureobject;
-    Vector2 playervelocity;
-    float speed;
-    const char *music;
-    Sound bgMusic;
-    float gameTime_;
+    Vector2   playervelocity;
+    float     speed;
+    const     char *music;
+    Sound     bgMusic;
+    float     gameTime_;
 
 public:
     Game(const char *texture,const char *music,const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
@@ -551,6 +551,7 @@ void RunGame()
 
                     player.Gameover(); // Game over if collision detected
                     PlaySound(d.gameover);
+                    std::cout << "File Saved" << std::endl;
                     SaveToFile(player.getscore());
                     break;
                 }
