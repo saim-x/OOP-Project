@@ -10,12 +10,6 @@ int flag = 0;        // flag to check if boss enemy is spawned or not
 int maxHealth = 100; // Maximum health of the player
 const int screenWidth = 1600;
 const int screenHeight = 850;
-const float boundaryLeft = -815.0f;
-const float boundaryRight = 715.0f;
-const float boundaryTop = -429.0f;
-const float boundaryBottom = 332.0f;
-
-// Classes
 class Game
 {
 protected:
@@ -28,9 +22,6 @@ protected:
     Texture2D textureobject;
     Vector2 playervelocity;
     float speed;
-    const float maxSpeed = 26.0f;    // Adjusted maximum speed
-    const float acceleration = 3.0f; // Adjusted acceleration
-    const float deceleration = 1.0f;
     char *music;
     Sound bgMusic;
 
@@ -139,8 +130,8 @@ public:
     Enemy(float x, float y, char *texture) : Game(x, y, texture)
     {
         alive = true;
-        player.x = GetRandomValue(boundaryLeft, boundaryRight);
-        player.y = GetRandomValue(boundaryTop, boundaryBottom);
+        player.x = GetRandomValue(DefaultValues::boundaryLeft, DefaultValues::boundaryRight);
+        player.y = GetRandomValue(DefaultValues::boundaryTop, DefaultValues::boundaryBottom);
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
         if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
         {
@@ -159,15 +150,15 @@ public:
                 newY += 50;
 
             // Check if the new position is within the window boundaries
-            if (newX < boundaryRight)
-                newX = boundaryRight;
-            else if (newX > boundaryLeft)
-                newX = boundaryLeft;
+            if (newX < DefaultValues::boundaryRight)
+                newX = DefaultValues::boundaryRight;
+            else if (newX > DefaultValues::boundaryLeft)
+                newX = DefaultValues::boundaryLeft;
 
-            if (newY < boundaryBottom)
-                newY = boundaryBottom;
-            else if (newY > boundaryTop)
-                newY = boundaryTop;
+            if (newY < DefaultValues::boundaryBottom)
+                newY = DefaultValues::boundaryBottom;
+            else if (newY > DefaultValues::boundaryTop)
+                newY = DefaultValues::boundaryTop;
 
             // Update the enemy position
             player.x = newX;
@@ -197,14 +188,15 @@ class DefaultValues
 {
 private:
 public:
+    // Attributes
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
     const float deceleration = 1.0f;
 
-    const float boundaryLeft = -815.0f;
-    const float boundaryRight = 715.0f;
-    const float boundaryTop = -429.0f;
-    const float boundaryBottom = 332.0f;
+    static const float boundaryLeft;
+    static const float boundaryRight;
+    static const float boundaryTop;
+    static const float boundaryBottom;
 
     Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
     Sound sfx4 = LoadSound("resources/StopIt.wav");
@@ -215,6 +207,11 @@ public:
 
     Sound gameover = LoadSound("resources/GameOver.wav");
 };
+const float DefaultValues::boundaryLeft = -815.0f;
+const float DefaultValues::boundaryRight = 715.0f;
+const float DefaultValues::boundaryTop = -429.0f;
+const float DefaultValues::boundaryBottom = 332.0f;
+
 class Bullet
 {
 private:
@@ -295,7 +292,7 @@ HealthBar CreateHealthBar(float x, float y, float width, float height, Color out
 }
 void DrawHealthBar(HealthBar bar)
 {
-    /*----------------------------------------- Health Bar-----------------------------------------*/
+    /*-----------------------------------------Basic Health Bar-----------------------------------------*/
     // SIMPLE DRAWING OF HEALTH BAR
     //  // Draw outer rectangle
     //  DrawRectangleRec(bar.outerRect, bar.outerColor);
@@ -321,4 +318,70 @@ void DrawHealthBar(HealthBar bar)
     Vector2 heartPos = {bar.outerRect.x + (bar.outerRect.width - bar.heartTexture.width) / 2,
                         bar.outerRect.y + (bar.outerRect.height - bar.heartTexture.height) / 2};
     DrawTexture(bar.heartTexture, (int)heartPos.x, (int)heartPos.y, WHITE);
+}
+
+// Function to initialize an enemy character at a random position within the boundaries
+Enemy InitEnemy(const Rectangle &boundary, const Rectangle &player)
+{
+    Enemy enemy(GetRandomValue(boundary.x, boundary.x + boundary.width), GetRandomValue(boundary.y, boundary.y + boundary.height));
+    enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
+    enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
+    // Logic to prevent enemies from overlapping the player by moving them apart by 50 units
+    if (abs(enemy.position.x - player.x) <= 50 && abs(enemy.position.y - player.y) <= 50)
+    {
+        // Calculate the new enemy position 50 units away from the player
+        float newX = enemy.position.x;
+        float newY = enemy.position.y;
+
+        if (enemy.position.x < player.x)
+            newX -= 50;
+        else
+            newX += 50;
+
+        if (enemy.position.y < player.y)
+            newY -= 50;
+        else
+            newY += 50;
+
+        // Check if the new position is within the window boundaries
+        if (newX < boundary.x)
+            newX = boundary.x;
+        else if (newX > boundary.x + boundary.width)
+            newX = boundary.x + boundary.width;
+
+        if (newY < boundary.y)
+            newY = boundary.y;
+        else if (newY > boundary.y + boundary.height)
+            newY = boundary.y + boundary.height;
+
+        // Update the enemy position
+        enemy.position.x = newX;
+        enemy.position.y = newY;
+    }
+    enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
+
+    // Load the boss enemy sfx
+    Sound sfx1 = LoadSound("resources/sfx1edited.wav");
+    Sound sfx2 = LoadSound("resources/poinkwav.wav");
+    // BOSS HAVE TO SPAWN ONCE LOGIC
+    if (flag == 0)
+    {
+        flag = 1;
+        // BOSS ENEMY WILL SPAWN ONLY ONCE :D
+        enemy.texture = LoadTexture("media/enemy3.1.png");
+        PlaySound(sfx1);
+        enemy.speed = 3.0f; // Set boss enemy speed to 3.0 which is max an enemy can have
+    }
+    // Randomly choose between enemy1 and enemy2 textures
+    else if (GetRandomValue(0, 1) == 0)
+    {
+        enemy.texture = LoadTexture("media/enemy1.png");
+        PlaySound(sfx2);
+    }
+    else
+    {
+        enemy.texture = LoadTexture("media/enemy3.png");
+        PlaySound(sfx2);
+    }
+    return enemy;
 }
