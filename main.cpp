@@ -201,9 +201,13 @@ void ShowHighScore()
         // Sort the scores in descending order
         sort(topScores.begin(), topScores.end(), greater<int>());
 
-        // Resize the vector to contain only the top 10 scores
-        if (topScores.size() > 10)
-            topScores.resize(10);
+        // Resize the vector to contain only the top 5 scores
+        int NumberOfScores = 5;
+
+        if (topScores.size() > NumberOfScores)
+        {
+            topScores.resize(NumberOfScores);
+        }
     }
     else
     {
@@ -212,7 +216,7 @@ void ShowHighScore()
 
     // Load the background image
 
-    Texture2D spaceBackground = LoadTexture("media/bgforhighscoretrue.png");
+    Texture2D spaceBackground = LoadTexture("saim's related vault/leaderboardtemp.png");
 
     while (!WindowShouldClose())
     {
@@ -239,12 +243,13 @@ void ShowHighScore()
         // DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
         // EndDrawing();
         // Display the high scores on the screen
-        DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        //FILHAL K LIYE
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
 
-        // Draw the top 10 scores
+        // Draw the top 5 scores with gaps
         for (size_t i = 0; i < topScores.size(); ++i)
         {
-            DrawText(TextFormat("%d. %d", i + 1, topScores[i]), screenWidth / 2 - 200, 120 + i * 40, 36, WHITE);
+            DrawText(TextFormat("%1d. %1d\n\n\n", i + 1, topScores[i]), screenWidth / 2 - 180, 220 + i * 124, 36, WHITE);
         }
         EndDrawing();
     }
