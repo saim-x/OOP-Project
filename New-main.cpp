@@ -113,13 +113,9 @@ public:
     }
     Game(float x, float y, char *texture) : texture(texture)
     { // for enemy
-        player.x = x;
-        player.y = y;
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
         player.width = textureobject.width;
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     ~Game()
     {
@@ -248,6 +244,8 @@ public:
             // Update the enemy position
             player.x = newX;
             player.y = newY;
+            Vector2 playingPosition_ = {player.x, player.y};
+            DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
         }
     }
     void setpos(float x, float y)
