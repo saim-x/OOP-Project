@@ -451,6 +451,7 @@ void ShowHighScore()
         // Display the high scores on the screen
         // FILHAL K LIYE
         // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        /*-------------------------------------------------------------------------------------------------------------*/
 
         // Draw the top 5 scores with gaps
         for (size_t i = 0; i < topScores.size(); ++i)
@@ -459,11 +460,14 @@ void ShowHighScore()
         }
         EndDrawing();
     }
-    /*-------------------------------------------------------------------------------------------------------------*/
 
     CloseWindow(); // Close the window after the loop
     // Unload the background image
     UnloadTexture(spaceBackground);
+}
+void RunGame()
+{
+    return;
 }
 
 int main()
