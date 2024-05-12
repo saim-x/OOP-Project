@@ -586,7 +586,7 @@ void RunGame()
                 // enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
                 /* Fix: Initialize enemy object with correct constructor */
                 //-----------------------SAIM WALI LINE-----------------------------
-                enemies.push_back(Enemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
+                enemies.push_back(Enemy(InitEnemy(player)));
             }
             // Update enemy positions
             for (size_t i = 0; i < enemies.size(); i++)
