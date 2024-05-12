@@ -267,8 +267,8 @@ public:
             // Update the enemy position
             player.x = newX;
             player.y = newY;
-            Vector2 playingPosition_ = {player.x, player.y};
-            DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
+            //Vector2 playingPosition_ = {player.x, player.y};
+            DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
         }
     }
     void setpos(float x, float y)
@@ -289,6 +289,7 @@ public:
         }
     }
     bool getstatus() { return alive; }
+    void setstatus(){alive=false;}
 
     // Return x-coordinate of Enemy
     float get_x() const { return player.x; }
@@ -645,6 +646,7 @@ void RunGame()
                 if (CheckCollisionRecs(player.getbulletrect(), enemies[i].getrect()))
                 {
                     PlaySound(default.killSound);
+                    enemies[i].setstatus();
                     auto it = std::find(enemies.begin(), enemies.end(), i);
                     if (it != enemies.end())
                     {
