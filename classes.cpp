@@ -34,9 +34,15 @@ protected:
 public:
     Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
+<<<<<<< HEAD
         speed = 3.0f;
         gameover=false;
         camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+=======
+        gameover = false;
+        Vector2 offSet_Camera = {screenWidth / 2.0f, screenHeight / 2.0f};
+        camera.offset = offSet_Camera;
+>>>>>>> 7e3556d03d9aa6f67c7b043da94c98b805c25e57
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
@@ -50,7 +56,8 @@ public:
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     Game(float x, float y, char *texture) : texture(texture)
     { // for enemy
@@ -59,17 +66,20 @@ public:
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
         player.width = textureobject.width;
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     void drawplayer()
     {
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     void drawenemy()
     {
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     ~Game()
     {
@@ -79,9 +89,9 @@ public:
     virtual void setpos(float x, float y) = 0;
     float getx() { return player.x; }
     float gety() { return player.y; }
-    float getwidth(){return player.height;}
-    float getheight(){return player.width;}
-    bool gameover(){return gameover;}
+    float getwidth() { return player.height; }
+    float getheight() { return player.width; }
+    bool gameover() { return gameover; }
     Rectangle getrect() { return player; }
 };
 
@@ -90,10 +100,14 @@ class Player : public Game
 protected:
     float score;
 
+    // For Bullets
+    double lastFireTime_;
+
 public:
     Player(char *texture, char *music, char *background) : Game(texture, music, background)
     {
         score = 0;
+        lastFireTime_ = 0.0;
     }
     void setpos(float x, float y)
     {
@@ -106,12 +120,23 @@ public:
         player.x = 0;
         player.y = 0;
     }
+
+    // For Bullets
+    void FireLaser()
+    {
+        if (GetTime() - lastFireTime_ >= 0.35)
+        {
+            bullets.push_back(Bullet({player.x, player.y}, -6));
+            lastFireTime_ = GetTime();
+        }
+    }
+    std::vector<Bullet> bullets;
 };
 
 class Enemy : public Game
 {
 public:
-    Enemy(float x, float y, char *texture) : Game(x,y,texture)
+    Enemy(float x, float y, char *texture) : Game(x, y, texture)
     {
         player.x=GetRandomValue(boundaryLeft, boundaryRight);
         player.y = GetRandomValue(boundaryTop, boundaryBottom);
@@ -161,8 +186,10 @@ class DefaultValues
 {
 private:
 public:
-    const int screenWidth = 1600;
-    const int screenHeight = 850;
+    // These values will be global.
+    //  const int screenWidth = 1600;
+    //  const int screenHeight = 850;
+
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
@@ -189,7 +216,7 @@ class Bullet
 private:
     // Attributes
     Vector2 position_;
-    int speed_;
+    const int speed_;
 
 public:
     // Attributes
@@ -199,23 +226,22 @@ public:
     Bullet(const Vector2 position, const int speed) : position_(position), speed_(speed), active_(true) {}
 
     // Methods
-
     // Function to update the bullet's position.
     void Update()
     {
-        if (IsKeyDown(KEY_W))
+        if (IsKeyPressed(KEY_W))
         {
             position_.y += speed_;
         }
-        else if (IsKeyDown(KEY_A))
+        else if (IsKeyPressed(KEY_A))
         {
             position_.x -= speed_;
         }
-        else if (IsKeyDown(KEY_D))
+        else if (IsKeyPressed(KEY_D))
         {
             position_.x += speed_;
         }
-        else if (IsKeyDown(KEY_S))
+        else if (IsKeyPressed(KEY_S))
         {
             position_.y -= speed_;
         }
@@ -236,14 +262,5 @@ public:
             DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
         }
         return;
-    }
-    Rectangle getRect()
-    {
-        Rectangle rect;
-        rect.x = position_.x;
-        rect.y = position_.y;
-        rect.width = 4;
-        rect.height = 15;
-        return rect;
     }
 };
