@@ -87,9 +87,10 @@ protected:
     float speed;
     char *music;
     Sound bgMusic;
+    float gameTime_;
 
 public:
-    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
+    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
     { // for player
         speed = 3.0f;
         gameover = false;
@@ -133,6 +134,7 @@ public:
     float getheight() { return player.width; }
     bool GetGameover() { return gameover; }
     Rectangle getrect() { return player; }
+    float get_gameTime() const { return gameTime_; }
 };
 class Player : public Game
 {
@@ -152,11 +154,13 @@ public:
     void setpos(float x, float y)
     {
         // We can try operator overloading here.
+        gameTime_ += GetFrameTime();
         player.x += x;
         player.y += y;
     }
-    void gameover()
+    void Gameover()
     {
+        gameover = true;
         player.x = 0;
         player.y = 0;
     }
@@ -467,6 +471,17 @@ void ShowHighScore()
 }
 void RunGame()
 {
+    InitWindow(screenWidth, screenHeight, "2D Space Game");
+    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
+    InitAudioDevice();
+    Vector2 playerVelocity = {0.0f, 0.0f};
+    Player player("media/space23.png", "resources/bgmusicwav.wav", "media/space2.png");
+
+    srand(time(NULL));
+    std::vector<Enemy> enemies;
+    bool restartRequested = false; // Flag to track if restart has been requested.
+    float gameTime = 0.0f;         // Variable to track elapsed game time.
+
     return;
 }
 
