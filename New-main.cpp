@@ -21,93 +21,6 @@ const float boundaryRight = 715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 332.0f;
 
-<<<<<<< HEAD
-class Bullet
-{
-private:
-    Rectangle bullet;
-    // Attributes
-    Vector2 position_;
-    const float speed_;
-    Texture2D bullettexture;
-    bool moving;
-    char key;
-
-public:
-    // Attribute
-    bool active_; // Variable to check if bullet is still within the game window.
-
-    //  Constructors
-    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
-    {
-        bullettexture = LoadTexture("media/bulletbySufyan2");
-        moving = false;
-    }
-
-    // Methods
-    // Function to update the bullet's position
-    void Update(Player p)
-    {
-        if (IsKeyPressed(KEY_W))
-        {
-            moving = true;
-            key = 'W';
-        }
-        else if (IsKeyPressed(KEY_A))
-        {
-            moving = true;
-            key = 'A';
-        }
-        else if (IsKeyPressed(KEY_D))
-        {
-            moving = true;
-            key = 'D';
-        }
-        else if (IsKeyPressed(KEY_S))
-        {
-            moving = true;
-            key = 'S';
-        }
-        if (active_)
-        {
-            if (moving)
-            {
-                if (key == 'W')
-                {
-                    position_.y -= speed_;
-                }
-                else if (key == 'A')
-                {
-                    position_.x -= speed_;
-                }
-                else if (key == 'D')
-                {
-                    position_.x += speed_;
-                }
-                else if (key == 'S')
-                {
-                    position_.y += speed_;
-                }
-            }
-            if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
-            {
-                active_ = false;
-                moving = false;
-            }
-            DrawTextureEx(bullettexture, position_, 0.0f, 1.0f, WHITE);
-        }
-        else
-        {
-            position_.x = p.player.x;
-            position_.y = p.player.y;
-            moving = false;
-        }
-    }
-    // Function to draw the bullet.
-    Rectangle getbullet() { return bullet; }
-};
-=======
->>>>>>> 4eda5ce561fa89292cc96bc4effb397dc0743404
 class Game
 {
 protected:
@@ -227,6 +140,7 @@ public:
 
     Rectangle getbulletrect() { return bullet.getbullet(); }
 };
+
 class Enemy : public Game
 {
 protected:
@@ -234,46 +148,46 @@ protected:
 
 public:
     Enemy(float x, float y, char *texture, bool boss) : Game(x, y, texture)
-{
-    alive = true;
-    player.x = GetRandomValue(boundaryLeft, boundaryRight);
-    player.y = GetRandomValue(boundaryTop, boundaryBottom);
-    if (boss)
-        speed = 3.0f;
-    else
-        speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
-    if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
     {
-        //Calculate the new enemy position 50 units away from the player
-        float newX = player.x;
-        float newY = player.y;
-
-        if (player.x < x)
-            newX -= 50;
+        alive = true;
+        player.x = GetRandomValue(boundaryLeft, boundaryRight);
+        player.y = GetRandomValue(boundaryTop, boundaryBottom);
+        if (boss)
+            speed = 3.0f;
         else
-            newX += 50;
+            speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
+        if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
+        {
+            // Calculate the new enemy position 50 units away from the player
+            float newX = player.x;
+            float newY = player.y;
 
-        if (player.y < y)
-            newY -= 50;
-        else
-            newY += 50;
+            if (player.x < x)
+                newX -= 50;
+            else
+                newX += 50;
 
-        // Check if the new position is within the window boundaries
-        if (newX < boundaryRight)
-            newX = boundaryRight;
-        else if (newX > boundaryLeft)
-            newX = boundaryLeft;
+            if (player.y < y)
+                newY -= 50;
+            else
+                newY += 50;
 
-        if (newY < boundaryBottom)
-            newY = boundaryBottom;
-        else if (newY > boundaryTop)
-            newY = boundaryTop;
+            // Check if the new position is within the window boundaries
+            if (newX < boundaryRight)
+                newX = boundaryRight;
+            else if (newX > boundaryLeft)
+                newX = boundaryLeft;
 
-        // Update the enemy position
-        player.x = newX;
-        player.y = newY;
+            if (newY < boundaryBottom)
+                newY = boundaryBottom;
+            else if (newY > boundaryTop)
+                newY = boundaryTop;
+
+            // Update the enemy position
+            player.x = newX;
+            player.y = newY;
+        }
     }
-}
     void setpos(float x, float y)
     {
         player.x += x * speed;
@@ -312,7 +226,7 @@ private:
     Rectangle bullet;
     // Attributes
     Vector2 position_;
-    const float speed_;
+    float speed_;
     Texture2D bullettexture;
     bool moving;
     char key;
@@ -322,6 +236,7 @@ public:
     bool active_; // Variable to check if bullet is still within the game window.
 
     //  Constructors
+    Bullet() {}
     Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
     {
         bullettexture = LoadTexture("media/bulletbySufyan2");
