@@ -584,13 +584,12 @@ void RunGame()
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
             {
-<<<<<<< HEAD
-                /* ! Need to resolve this ! */
-                enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
-=======
+                //------------------------------------------------TALHA WALA CODE LINE--------------------------------------------------
+                // /* ! Need to resolve this ! */
+                // enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
                 /* Fix: Initialize enemy object with correct constructor */
+                //-----------------------SAIM WALI LINE-----------------------------
                 enemies.push_back(Enemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
->>>>>>> 01e4eb01bbe1a9a23da8ffe23b8c10c0ccc3d1e1
             }
 
             // Update enemy positions
