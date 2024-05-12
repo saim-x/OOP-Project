@@ -471,17 +471,6 @@ void ShowHighScore()
 }
 void RunGame()
 {
-    InitWindow(screenWidth, screenHeight, "2D Space Game");
-    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
-    InitAudioDevice();
-    Vector2 playerVelocity = {0.0f, 0.0f};
-    Player player("media/space23.png", "resources/bgmusicwav.wav", "media/space2.png");
-
-    srand(time(NULL));
-    std::vector<Enemy> enemies;
-    bool restartRequested = false; // Flag to track if restart has been requested.
-    float gameTime = 0.0f;         // Variable to track elapsed game time.
-
     return;
 }
 
