@@ -471,7 +471,104 @@ void ShowHighScore()
 }
 void RunGame()
 {
+    InitWindow(screenWidth, screenHeight, "2D Space Game");
+    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
+    InitAudioDevice();
+    Vector2 playerVelocity = {0.0f, 0.0f};
+    Player player("media/space23.png", "resources/bgmusicwav.wav", "media/space2.png");
+
+    srand(time(NULL));
+    std::vector<Enemy> enemies;
+    bool restartRequested = false; // Flag to track if restart has been requested.
+    float gameTime = 0.0f;         // Variable to track elapsed game time.
+
     return;
+}
+
+void ShowMainMenu()
+{
+    const int screenWidth = 1600;
+    const int screenHeight = 900;
+
+    InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
+
+    // Load the background image
+    Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
+
+    // Adjust the background image rectangle to cover the entire window
+    Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
+
+    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 25), 100, 50};
+    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 25), 140, 50};
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        // Draw the background image
+        DrawTexturePro(backgroundImage, Rectangle({0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}), bgRec, Vector2({0, 0}), 0.0f, WHITE);
+
+        // Draw play button
+        DrawRectangleRec(playButton, BLUE);
+        DrawText("Play", (int)playButton.x + 30, (int)playButton.y + 15, 20, WHITE);
+
+        // Draw high score button
+        DrawRectangleRec(highScoreButton, GREEN);
+        DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
+
+        // Draw game name
+        DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
+        DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
+
+        // Check if the mouse is hovering over the play button
+        if (CheckCollisionPointRec(GetMousePosition(), playButton))
+        {
+            DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Start the game
+                CloseWindow(); // Close the main screen window
+                RunGame();     // Start the game loop
+            }
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+        {
+            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Display high score (for now, just print a message)
+                CloseWindow();
+                // Close the main screen window
+                ShowHighScore(); // Show the high score screen
+            }
+        }
+        // Check if the mouse is hovering over the high score button
+        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+        {
+            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Display high score (for now, just print a message)
+                std::cout << "High Score button clicked!" << std::endl;
+            }
+        }
+
+        EndDrawing();
+    }
+    // Unload the background image
+    UnloadTexture(backgroundImage);
+
+    CloseWindow();
 }
 
 int main()
