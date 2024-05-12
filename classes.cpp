@@ -110,11 +110,12 @@ public:
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
     }
-    
+
     template<typename T>
     void scoreinc(T increase){
         score+=increase;
     }
+
     // For Bullets
     void FireLaser()
     {
@@ -189,6 +190,7 @@ public:
             player.y=2000.0f;
         }
     }
+    bool getstatus(){return alive;}
 };
 
 class DefaultValues
