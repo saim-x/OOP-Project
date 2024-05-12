@@ -113,13 +113,9 @@ public:
     }
     Game(float x, float y, char *texture) : texture(texture)
     { // for enemy
-        player.x = x;
-        player.y = y;
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
         player.width = textureobject.width;
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     ~Game()
     {
@@ -155,7 +151,7 @@ public:
     {
         // We can try operator overloading here.
         gameTime_ += GetFrameTime();
-        score+= 2*GetFrameTime();
+        score += 2 * GetFrameTime();
         player.x += x;
         player.y += y;
     }
@@ -177,7 +173,7 @@ public:
     {
         score += increase;
     }
-    float getscore(){return score;}
+    float getscore() { return score; }
 
     // Return Music from Game Class
     Sound get_bgMusic() const { return bgMusic; }
@@ -248,6 +244,8 @@ public:
             // Update the enemy position
             player.x = newX;
             player.y = newY;
+            Vector2 playingPosition_ = {player.x, player.y};
+            DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
         }
     }
     void setpos(float x, float y)
@@ -506,10 +504,9 @@ void RunGame()
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
-                                   // Play background music
     PlaySound(player.get_bgMusic());
     SetSoundVolume(player.get_bgMusic(), 0.6f);
-    SetTargetFPS(60);         // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
 
     DefaultValues default; // Object to call the default values.
 
@@ -584,14 +581,8 @@ void RunGame()
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
             {
-                //------------------------------------------------TALHA WALA CODE LINE--------------------------------------------------
-                // /* ! Need to resolve this ! */
-                // enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
-                /* Fix: Initialize enemy object with correct constructor */
-                //-----------------------SAIM WALI LINE-----------------------------
-                enemies.push_back(Enemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
+                enemies.push_back(Enemy(InitEnemy(player)));
             }
-
             // Update enemy positions
             for (size_t i = 0; i < enemies.size(); i++)
             {
@@ -613,13 +604,11 @@ void RunGame()
                 //     }
                 // }
 
-                // enemies[i].position.x += (direction.x) * enemies[i].get_speed();
                 enemies[i].setpos(direction.x, direction.y);
-                // enemies[i].position.y += (direction.y) * enemies[i].get_speed();
 
                 // Check for collision with player
-            //   Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
-            //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
+                //   Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
+                //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
                 {
                     PlaySound(default.gameover);
