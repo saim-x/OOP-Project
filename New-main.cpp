@@ -55,6 +55,7 @@ public:
         textureobject = LoadTexture(texture);
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
+        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
     }
     Game(float x, float y, char *texture) : texture(texture)
     { // for enemy
@@ -110,8 +111,6 @@ public:
     }
     void draw()
     {
-        BeginMode2D(camera);
-        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
     }
 
