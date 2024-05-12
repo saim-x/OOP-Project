@@ -69,7 +69,7 @@ public:
         UnloadSound(bgMusic);
     }
     virtual void setpos(float x, float y) = 0;
-    void draw() {}
+    virtual void draw() {}
     float getx() { return player.x; }
     float gety() { return player.y; }
     float getwidth() { return player.height; }
@@ -110,11 +110,13 @@ public:
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
     }
-    
-    template<typename T>
-    void scoreinc(T increase){
-        score+=increase;
+
+    template <typename T>
+    void scoreinc(T increase)
+    {
+        score += increase;
     }
+
     // For Bullets
     void FireLaser()
     {
@@ -178,17 +180,17 @@ public:
     }
     void draw()
     {
-        if(alive)
+        if (alive)
         {
-            Vector2 playingPosition_ = {player.x, player.y};
-            DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
+            DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
         }
         else
         {
-            player.x=2000.0f;
-            player.y=2000.0f;
+            player.x = 2000.0f;
+            player.y = 2000.0f;
         }
     }
+    bool getstatus() { return alive; }
 };
 
 class DefaultValues
@@ -224,7 +226,7 @@ private:
     const int speed_;
 
 public:
-    // Attributes
+    // Attribute
     bool active_; // Variable to check if bullet is still within the game window.
 
     //  Constructors
