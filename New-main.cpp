@@ -175,7 +175,7 @@ public:
     {
         // We can try operator overloading here.
         gameTime_ += GetFrameTime();
-        score += 2 * GetFrameTime();
+        scoreinc(2 * GetFrameTime());
         player.x += x;
         player.y += y;
     }
@@ -634,7 +634,7 @@ void RunGame()
                     break;
                 }
                 if(CheckCollisionRecs(player.getbulletrect(),enemies[i].getrect())){
-                    
+
                 }
             }
         }
