@@ -154,6 +154,7 @@ public:
         // We can try operator overloading here.
         player.x += x;
         player.y += y;
+        
     }
     void gameover()
     {
