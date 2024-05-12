@@ -127,11 +127,14 @@ protected:
     bool alive;
 
 public:
-    Enemy(float x, float y, char *texture) : Game(x, y, texture)
+    Enemy(float x, float y, char *texture, bool boss) : Game(x, y, texture)
     {
         alive = true;
         player.x = GetRandomValue(DefaultValues::boundaryLeft, DefaultValues::boundaryRight);
         player.y = GetRandomValue(DefaultValues::boundaryTop, DefaultValues::boundaryBottom);
+        if(boss)
+        speed=3.0f;
+        else
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
         if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
         {
@@ -321,67 +324,35 @@ void DrawHealthBar(HealthBar bar)
 }
 
 // Function to initialize an enemy character at a random position within the boundaries
-Enemy InitEnemy(const Rectangle &boundary, const Rectangle &player)
+Enemy InitEnemy(Player p)
 {
-    Enemy enemy(GetRandomValue(boundary.x, boundary.x + boundary.width), GetRandomValue(boundary.y, boundary.y + boundary.height));
-    enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
-    enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
-    // Logic to prevent enemies from overlapping the player by moving them apart by 50 units
-    if (abs(enemy.position.x - player.x) <= 50 && abs(enemy.position.y - player.y) <= 50)
-    {
-        // Calculate the new enemy position 50 units away from the player
-        float newX = enemy.position.x;
-        float newY = enemy.position.y;
-
-        if (enemy.position.x < player.x)
-            newX -= 50;
-        else
-            newX += 50;
-
-        if (enemy.position.y < player.y)
-            newY -= 50;
-        else
-            newY += 50;
-
-        // Check if the new position is within the window boundaries
-        if (newX < boundary.x)
-            newX = boundary.x;
-        else if (newX > boundary.x + boundary.width)
-            newX = boundary.x + boundary.width;
-
-        if (newY < boundary.y)
-            newY = boundary.y;
-        else if (newY > boundary.y + boundary.height)
-            newY = boundary.y + boundary.height;
-
-        // Update the enemy position
-        enemy.position.x = newX;
-        enemy.position.y = newY;
-    }
-    enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
-
     // Load the boss enemy sfx
     Sound sfx1 = LoadSound("resources/sfx1edited.wav");
     Sound sfx2 = LoadSound("resources/poinkwav.wav");
+    char* texture;
     // BOSS HAVE TO SPAWN ONCE LOGIC
+    bool boss;
     if (flag == 0)
     {
         flag = 1;
         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
-        enemy.texture = LoadTexture("media/enemy3.1.png");
+        texture = "media/enemy3.1.png";
         PlaySound(sfx1);
-        enemy.speed = 3.0f; // Set boss enemy speed to 3.0 which is max an enemy can have
+        boss==true; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
     // Randomly choose between enemy1 and enemy2 textures
     else if (GetRandomValue(0, 1) == 0)
     {
-        enemy.texture = LoadTexture("media/enemy1.png");
+        texture = "media/enemy1.png";
         PlaySound(sfx2);
+        boss=false;
     }
     else
     {
-        enemy.texture = LoadTexture("media/enemy3.png");
+        texture = "media/enemy3.png";
         PlaySound(sfx2);
+        boss=false;
     }
+    Enemy enemy(p.getx(), p.gety(), texture,boss);
     return enemy;
 }
