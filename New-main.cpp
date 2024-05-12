@@ -273,6 +273,10 @@ public:
     float get_y() const { return player.y; }
     //  Return Speed of Enemy
     float get_speed() const { return speed; }
+    // Return Texture width of Enemy
+    float get_textureWidth() const { return textureobject.width; }
+    // Return Texture height of Enemy
+    float get_textureHeight() const { return textureobject.height; }
 };
 class DefaultValues
 {
@@ -609,11 +613,11 @@ void RunGame()
                 // enemies[i].position.y += (direction.y) * enemies[i].get_speed();
 
                 // Check for collision with player
-                Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
-                Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
+                Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.get_width() - 35, player.get_height() + 30};
+                Rectangle enemyRect = {enemies[i].get_x(), enemies[i].get_y() + 20, static_cast<float>(enemies[i].get_textureWidth()) - 25, static_cast<float>(enemies[i].get_textureHeight()) - 10};
                 if (CheckCollisionRecs(playerRect, enemyRect))
                 {
-                    PlaySound(gameover);
+                    PlaySound(default.gameover);
 
                     gameOver = true; // Game over if collision detected
                     SaveToFile(score);
@@ -684,8 +688,6 @@ void ShowMainMenu()
     Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 100), 100, 50};
     Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 100), 140, 50};
     Rectangle aboutButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 + -20), 100, 50};
-    
-
 
     SetTargetFPS(60);
 
@@ -709,13 +711,12 @@ void ShowMainMenu()
         // Draw about button
         DrawRectangleRec(aboutButton, RED);
         DrawText("About", (int)aboutButton.x + 25, (int)aboutButton.y + 15, 20, WHITE);
-        
 
         // Draw game name
         DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
         DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
 
-        //Check if the mouse is hovering over the play button
+        // Check if the mouse is hovering over the play button
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
         {
             DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
