@@ -118,7 +118,7 @@ public:
         score += increase;
     }
 
-    // For Bullets
+    //For Bullets
     void FireLaser()
     {
         if (GetTime() - lastFireTime_ >= 0.35)
