@@ -157,7 +157,6 @@ public:
         gameTime_ += GetFrameTime();
         player.x += x;
         player.y += y;
-        
     }
     void Gameover()
     {
@@ -467,7 +466,7 @@ void ShowHighScore()
     }
 
     CloseWindow(); // Close the window after the loop
-    //Unload the background image
+    // Unload the background image
     UnloadTexture(spaceBackground);
 }
 void RunGame()
@@ -481,7 +480,6 @@ void RunGame()
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
-    float gameTime = 0.0f;         // Variable to track elapsed game time.
 
     return;
 }
