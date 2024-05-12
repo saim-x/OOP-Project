@@ -462,12 +462,7 @@ void RunGame()
                 SetSoundVolume(sfx7, 1.0f);
             }
         }
-<<<<<<< HEAD
-
-        // Draw draw
-=======
         // Draw
->>>>>>> a798a3145bf7e531d5ec0630e4875eed5f4b84c0
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
