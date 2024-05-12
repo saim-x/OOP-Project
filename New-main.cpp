@@ -4,6 +4,9 @@
 #include <ctime>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <algorithm>
 
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
@@ -352,4 +355,118 @@ Enemy InitEnemy(Player p)
     }
     Enemy enemy(p.getx(), p.gety(), texture, boss);
     return enemy;
+}
+void SaveToFile(float score)
+{
+    std::ofstream outputFile("scores.txt", std::ios::app); // Open the file in append mode
+
+    if (outputFile.is_open())
+    {
+        outputFile << score << std::endl; // Write the score to the file on a new line
+        outputFile.close();               // Close the file
+    }
+    else
+    {
+        std::cout << "Failed to open the file for writing." << std::endl;
+    }
+}
+
+void ShowHighScore()
+{
+    // Initialization
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
+
+    InitWindow(screenWidth, screenHeight, "2D Space Game");
+    Camera2D camera = {0};
+    camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+    SetTargetFPS(60);                      // Set our game to run at 60 frames-per-second
+    std::ifstream inputFile("scores.txt"); // Open the file for reading
+    std::vector<int> topScores;            // Vector to store the top scores
+    std::string highScores;                // String to store all the high scores
+    int topScore = 0;                      // Variable to store the top score
+    InitAudioDevice();
+    Sound bgmusicforhighscorescreen = LoadSound("resources/highscore.wav");
+    PlaySound(bgmusicforhighscorescreen);
+    SetSoundVolume(bgmusicforhighscorescreen, 2.6f);
+    if (inputFile.is_open())
+    {
+
+        std::string score;
+        while (std::getline(inputFile, score)) // Read each line from the file
+        {
+            // Convert the score to an integer
+            int scoreValue = std::stoi(score);
+            topScores.push_back(scoreValue);
+        }
+        inputFile.close(); // Close the file
+
+        // Sort the scores in descending order
+        sort(topScores.begin(), topScores.end(), std::greater<int>());
+
+        // Resize the vector to contain only the top 5 scores
+        int NumberOfScores = 5;
+
+        if (topScores.size() > NumberOfScores)
+        {
+            topScores.resize(NumberOfScores);
+        }
+    }
+    else
+    {
+        std::cout << "Failed to open the file for reading." << std::endl;
+    }
+
+    // Load the background image
+
+    Texture2D spaceBackground = LoadTexture("saim's related vault/leaderboardtemp.png");
+
+    while (!WindowShouldClose())
+    {
+
+        // Close window by pressing ESC key
+        if (IsKeyDown(KEY_ESCAPE))
+        {
+            StopSound(bgmusicforhighscorescreen);
+            break;
+        }
+
+        BeginDrawing();
+
+        // Draw the background image
+        DrawTexture(spaceBackground, 0, 0, WHITE);
+
+        ClearBackground(RAYWHITE);
+
+        /*-----------------------------------------Printing the complete file.-----------------------------------------*/
+        // // Display the high scores on the screen
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        // // Drawing the topscore
+        // DrawText(TextFormat("Top Score: %d", topScore), screenWidth / 2 - MeasureText(TextFormat("Top Score: %d", topScore), 66) / 2, 120, 66, WHITE);
+        // // Draw the high scores below the heading
+        // DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
+        // EndDrawing();
+        // Display the high scores on the screen
+        // FILHAL K LIYE
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+
+        // Draw the top 5 scores with gaps
+        for (size_t i = 0; i < topScores.size(); ++i)
+        {
+            DrawText(TextFormat("%1d. %1d\n\n\n", i + 1, topScores[i]), screenWidth / 2 - 180, 220 + i * 124, 36, WHITE);
+        }
+        EndDrawing();
+    }
+    /*-------------------------------------------------------------------------------------------------------------*/
+
+    CloseWindow(); // Close the window after the loop
+    // Unload the background image
+    UnloadTexture(spaceBackground);
+}
+
+int main()
+{
+    return 0;
 }
