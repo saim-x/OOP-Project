@@ -442,7 +442,7 @@ void RunGame()
                 playerVelocity.y *= deceleration;
             }
 
-            // Update player position based on velocity
+            // Update player position based on velocityy
             player.x += playerVelocity.x;
             player.y += playerVelocity.y;
 
@@ -632,8 +632,8 @@ void ShowMainMenu()
     // Adjust the background image rectangle to cover the entire window
     Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
 
-    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 100), 100, 50};
-    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 100), 140, 50};
+    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 100), 250, 50};
+    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 20), 140, 50};
     Rectangle aboutButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 + -20), 100, 50};
 
     SetTargetFPS(60);
@@ -649,7 +649,7 @@ void ShowMainMenu()
 
         // Draw play button
         DrawRectangleRec(playButton, BLUE);
-        DrawText("Play", (int)playButton.x + 30, (int)playButton.y + 15, 20, WHITE);
+        DrawText("Play", (int)playButton.x + 100, (int)playButton.y + 15, 20, WHITE);
 
         // Draw high score button
         DrawRectangleRec(highScoreButton, GREEN);
@@ -658,10 +658,10 @@ void ShowMainMenu()
         // Draw about button
         DrawRectangleRec(aboutButton, RED);
         DrawText("About", (int)aboutButton.x + 25, (int)aboutButton.y + 15, 20, WHITE);
-
+        //YE text ab print nhi krwana hai kyoke mene bg image me hi krdia hai
         // Draw game name
-        DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
-        DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
+        // DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
+        // DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
 
         // Check if the mouse is hovering over the play button
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
