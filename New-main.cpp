@@ -591,7 +591,6 @@ void RunGame()
                 //-----------------------SAIM WALI LINE-----------------------------
                 enemies.push_back(Enemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
             }
-
             // Update enemy positions
             for (size_t i = 0; i < enemies.size(); i++)
             {
