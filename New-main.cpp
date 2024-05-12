@@ -21,6 +21,93 @@ const float boundaryRight = 715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 332.0f;
 
+<<<<<<< HEAD
+class Bullet
+{
+private:
+    Rectangle bullet;
+    // Attributes
+    Vector2 position_;
+    const float speed_;
+    Texture2D bullettexture;
+    bool moving;
+    char key;
+
+public:
+    // Attribute
+    bool active_; // Variable to check if bullet is still within the game window.
+
+    //  Constructors
+    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
+    {
+        bullettexture = LoadTexture("media/bulletbySufyan2");
+        moving = false;
+    }
+
+    // Methods
+    // Function to update the bullet's position
+    void Update(Player p)
+    {
+        if (IsKeyPressed(KEY_W))
+        {
+            moving = true;
+            key = 'W';
+        }
+        else if (IsKeyPressed(KEY_A))
+        {
+            moving = true;
+            key = 'A';
+        }
+        else if (IsKeyPressed(KEY_D))
+        {
+            moving = true;
+            key = 'D';
+        }
+        else if (IsKeyPressed(KEY_S))
+        {
+            moving = true;
+            key = 'S';
+        }
+        if (active_)
+        {
+            if (moving)
+            {
+                if (key == 'W')
+                {
+                    position_.y -= speed_;
+                }
+                else if (key == 'A')
+                {
+                    position_.x -= speed_;
+                }
+                else if (key == 'D')
+                {
+                    position_.x += speed_;
+                }
+                else if (key == 'S')
+                {
+                    position_.y += speed_;
+                }
+            }
+            if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
+            {
+                active_ = false;
+                moving = false;
+            }
+            DrawTextureEx(bullettexture, position_, 0.0f, 1.0f, WHITE);
+        }
+        else
+        {
+            position_.x = p.player.x;
+            position_.y = p.player.y;
+            moving = false;
+        }
+    }
+    // Function to draw the bullet.
+    Rectangle getbullet() { return bullet; }
+};
+=======
+>>>>>>> 4eda5ce561fa89292cc96bc4effb397dc0743404
 class Game
 {
 protected:
