@@ -87,9 +87,10 @@ protected:
     float speed;
     char *music;
     Sound bgMusic;
+    float gameTime_;
 
 public:
-    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
+    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
     { // for player
         speed = 3.0f;
         gameover = false;
@@ -133,6 +134,7 @@ public:
     float getheight() { return player.width; }
     bool GetGameover() { return gameover; }
     Rectangle getrect() { return player; }
+    float get_gameTime() const { return gameTime_; }
 };
 class Player : public Game
 {
@@ -152,12 +154,14 @@ public:
     void setpos(float x, float y)
     {
         // We can try operator overloading here.
+        gameTime_ += GetFrameTime();
         player.x += x;
         player.y += y;
         
     }
-    void gameover()
+    void Gameover()
     {
+        gameover = true;
         player.x = 0;
         player.y = 0;
     }
@@ -468,93 +472,7 @@ void ShowHighScore()
 }
 void RunGame()
 {
-    
-}
-
-void ShowMainMenu()
-{
-    const int screenWidth = 1600;
-    const int screenHeight = 900;
-
-    InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
-
-    // Load the background image
-    Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
-
-    // Adjust the background image rectangle to cover the entire window
-    Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
-
-    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 25), 100, 50};
-    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 25), 140, 50};
-
-    SetTargetFPS(60);
-
-    while (!WindowShouldClose())
-    {
-        BeginDrawing();
-
-        ClearBackground(RAYWHITE);
-
-        // Draw the background image
-        DrawTexturePro(backgroundImage, Rectangle({0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}), bgRec, Vector2({0, 0}), 0.0f, WHITE);
-
-        // Draw play button
-        DrawRectangleRec(playButton, BLUE);
-        DrawText("Play", (int)playButton.x + 30, (int)playButton.y + 15, 20, WHITE);
-
-        // Draw high score button
-        DrawRectangleRec(highScoreButton, GREEN);
-        DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
-
-        // Draw game name
-        DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
-        DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
-
-        // Check if the mouse is hovering over the play button
-        if (CheckCollisionPointRec(GetMousePosition(), playButton))
-        {
-            DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
-
-            // Check if the left mouse button is clicked
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-            {
-                // Start the game
-                CloseWindow(); // Close the main screen window
-                RunGame();     // Start the game loop
-            }
-        }
-        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
-        {
-            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
-
-            // Check if the left mouse button is clicked
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-            {
-                // Display high score (for now, just print a message)
-                CloseWindow();
-                // Close the main screen window
-                ShowHighScore(); // Show the high score screen
-            }
-        }
-        // Check if the mouse is hovering over the high score button
-        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
-        {
-            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
-
-            // Check if the left mouse button is clicked
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-            {
-                // Display high score (for now, just print a message)
-                cout << "High Score button clicked!" << endl;
-            }
-        }
-
-        EndDrawing();
-    }
- // Unload the background image
-    UnloadTexture(backgroundImage);
-
-    CloseWindow();
+    return;
 }
 
 int main()
