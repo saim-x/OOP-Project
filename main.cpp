@@ -170,6 +170,7 @@ void ShowHighScore()
     // Initialization
     const int screenWidth = 1600;
     const int screenHeight = 850;
+    Sound bgmusicforhighscorescreen = LoadSound("resources/MusicForHighScore.wav");
 
     InitWindow(screenWidth, screenHeight, "2D Space Game");
     Camera2D camera = {0};
@@ -177,7 +178,6 @@ void ShowHighScore()
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-
     ifstream inputFile("scores.txt"); // Open the file for reading
 
     string highScores; // String to store all the high scores
@@ -212,6 +212,7 @@ void ShowHighScore()
     // Load the background image
 
     Texture2D spaceBackground = LoadTexture("media/bgforhighscoretrue.png");
+    PlaySound(bgmusicforhighscorescreen);
 
     while (!WindowShouldClose())
     {
@@ -234,7 +235,7 @@ void ShowHighScore()
         DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
         EndDrawing();
     }
-
+    StopSound(bgmusicforhighscorescreen);
     CloseWindow(); // Close the window after the loop
 
     // Unload the background image

@@ -1,1 +1,4 @@
-OOP project per kaam jaari hai
+People in this project:
+Saim
+Sufyan
+Talha
