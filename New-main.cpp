@@ -112,7 +112,7 @@ public:
         DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     Game(float x, float y, char *texture) : texture(texture)
-    { // for enemy
+    { //for enemy
         player.x = x;
         player.y = y;
         textureobject = LoadTexture(texture);
