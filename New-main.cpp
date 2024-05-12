@@ -26,10 +26,10 @@ class Game
 protected:
     bool gameover;
     Camera2D camera = {0};
-    char *background;
+    const char *background;
     Texture2D backgroundtexture;
     Rectangle player;
-    char *texture;
+    const char *texture;
     Texture2D textureobject;
     Vector2 playervelocity;
     float speed;
@@ -38,7 +38,7 @@ protected:
     float gameTime_;
 
 public:
-    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
+    Game(char *texture, char *music,const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
     { // for player
         speed = 3.0f;
         gameover = false;
@@ -57,7 +57,7 @@ public:
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
     }
-    Game(float x, float y, char *texture) : texture(texture)
+    Game(float x, float y,const char *texture) : texture(texture)
     { // for enemy
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
