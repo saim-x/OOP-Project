@@ -112,7 +112,7 @@ public:
         DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     Game(float x, float y, char *texture) : texture(texture)
-    { // for enemy
+    { //for enemy
         player.x = x;
         player.y = y;
         textureobject = LoadTexture(texture);
@@ -157,7 +157,6 @@ public:
         gameTime_ += GetFrameTime();
         player.x += x;
         player.y += y;
-        
     }
     void Gameover()
     {
@@ -467,7 +466,7 @@ void ShowHighScore()
     }
 
     CloseWindow(); // Close the window after the loop
-    //Unload the background image
+    // Unload the background image
     UnloadTexture(spaceBackground);
 }
 void RunGame()
@@ -481,9 +480,50 @@ void RunGame()
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
-    float gameTime = 0.0f;         // Variable to track elapsed game time.
 
     return;
+}
+
+void ShowAboutDevInfo()
+{
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
+
+    InitWindow(screenWidth, screenHeight, "About Developers");
+
+    // Load the background image
+    Texture2D AboutBackground = LoadTexture("saim's related vault/aboutthedev.png");
+
+    // Play background music
+    InitAudioDevice();
+    Sound bgmusicforaboutscreen = LoadSound("saim's related vault/motivationalmusic.wav");
+    PlaySound(bgmusicforaboutscreen);
+    SetSoundVolume(bgmusicforaboutscreen, 1.0f);
+
+    while (!WindowShouldClose())
+    {
+        // Close window by pressing ESC key
+        if (IsKeyDown(KEY_ESCAPE))
+        {
+            StopSound(bgmusicforaboutscreen);
+            break;
+        }
+
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        // Draw the background image
+        DrawTexture(AboutBackground, 0, 0, WHITE);
+
+        EndDrawing();
+    }
+
+    // Unload the background image
+    UnloadTexture(AboutBackground);
+
+    // Close the window after the loop
+    CloseWindow();
 }
 
 void ShowMainMenu()
@@ -499,8 +539,11 @@ void ShowMainMenu()
     // Adjust the background image rectangle to cover the entire window
     Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
 
-    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 25), 100, 50};
-    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 25), 140, 50};
+    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 100), 100, 50};
+    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 100), 140, 50};
+    Rectangle aboutButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 + -20), 100, 50};
+    
+
 
     SetTargetFPS(60);
 
@@ -521,11 +564,16 @@ void ShowMainMenu()
         DrawRectangleRec(highScoreButton, GREEN);
         DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
 
+        // Draw about button
+        DrawRectangleRec(aboutButton, RED);
+        DrawText("About", (int)aboutButton.x + 25, (int)aboutButton.y + 15, 20, WHITE);
+        
+
         // Draw game name
         DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
         DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
 
-        // Check if the mouse is hovering over the play button
+        //Check if the mouse is hovering over the play button
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
         {
             DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
@@ -551,19 +599,19 @@ void ShowMainMenu()
                 ShowHighScore(); // Show the high score screen
             }
         }
-        // Check if the mouse is hovering over the high score button
-        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+        if (CheckCollisionPointRec(GetMousePosition(), aboutButton))
         {
-            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+            DrawRectangleLinesEx(aboutButton, 3, BLACK); // Highlight the button if the mouse is over it
 
             // Check if the left mouse button is clicked
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
                 // Display high score (for now, just print a message)
-                std::cout << "High Score button clicked!" << std::endl;
+                CloseWindow();
+                // Close the main screen window
+                ShowAboutDevInfo(); // Show the high score screen
             }
         }
-
         EndDrawing();
     }
     // Unload the background image
