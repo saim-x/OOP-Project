@@ -135,7 +135,7 @@ public:
     float get_y() const { return player.y; }
     // Return Width of Player
     float get_width() const { return player.width; }
-    //Return Height of Player
+    // Return Height of Player
     float get_height() const { return player.height; }
 
     Rectangle getbulletrect() { return bullet.getbullet(); }
@@ -177,6 +177,7 @@ public:
         else if (newX > boundaryLeft)
             newX = boundaryLeft;
 
+<<<<<<< HEAD
         if (newY < boundaryBottom)
             newY = boundaryBottom;
         else if (newY > boundaryTop)
@@ -185,6 +186,25 @@ public:
         // Update the enemy position
         player.x = newX;
         player.y = newY;
+=======
+            // Check if the new position is within the window boundaries.
+            if (newX < boundaryRight)
+                newX = boundaryRight;
+            else if (newX > boundaryLeft)
+                newX = boundaryLeft;
+
+            if (newY < boundaryBottom)
+                newY = boundaryBottom;
+            else if (newY > boundaryTop)
+                newY = boundaryTop;
+
+            // Update the enemy position
+            player.x = newX;
+            player.y = newY;
+            // Vector2 playingPosition_ = {player.x, player.y};
+            DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
+        }
+>>>>>>> fd7d71d5af13eb39c067ffe65617ed12fba6495f
     }
 }
 
@@ -206,7 +226,7 @@ public:
         }
     }
     bool getstatus() { return alive; }
-    void setstatus(){alive=false;}
+    void setstatus() { alive = false; }
 
     // Return x-coordinate of Enemy
     float get_x() const { return player.x; }
@@ -308,7 +328,7 @@ public:
 class dValues
 {
 public:
-    dValues(){}
+    dValues() {}
     // Attributes
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
