@@ -34,9 +34,15 @@ protected:
 public:
     Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
+<<<<<<< HEAD
         speed = 3.0f;
         gameover = false;
         camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
+=======
+        gameover = false;
+        Vector2 offSet_Camera = {screenWidth / 2.0f, screenHeight / 2.0f};
+        camera.offset = offSet_Camera;
+>>>>>>> 82007d3af0c458c9d25662ffbd44260048112909
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
