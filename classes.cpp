@@ -28,8 +28,9 @@ protected:
 public:
     Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background)
     { // for player
-        gameover=false;
-        camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+        gameover = false;
+        Vector2 offSet_Camera = {screenWidth / 2.0f, screenHeight / 2.0f};
+        camera.offset = offSet_Camera;
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
@@ -43,7 +44,8 @@ public:
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     Game(float x, float y, char *texture) : texture(texture)
     { // for enemy
@@ -52,17 +54,20 @@ public:
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
         player.width = textureobject.width;
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     void drawplayer()
     {
         BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     void drawenemy()
     {
-        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+        Vector2 playingPosition_ = {player.x, player.y};
+        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
     ~Game()
     {
@@ -72,9 +77,9 @@ public:
     virtual void setpos(float x, float y) = 0;
     float getx() { return player.x; }
     float gety() { return player.y; }
-    float getwidth(){return player.height;}
-    float getheight(){return player.width;}
-    bool gameover(){return gameover;}
+    float getwidth() { return player.height; }
+    float getheight() { return player.width; }
+    bool gameover() { return gameover; }
     Rectangle getrect() { return player; }
 };
 
@@ -121,7 +126,7 @@ class Enemy : public Game
     float speed;
 
 public:
-    Enemy(float x, float y, char *texture) : Game(x,y,texture)
+    Enemy(float x, float y, char *texture) : Game(x, y, texture)
     {
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
     }
