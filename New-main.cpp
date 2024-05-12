@@ -17,6 +17,7 @@ const float boundaryRight = 715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 332.0f;
 
+class Bullet;
 class Game
 {
 protected:
@@ -75,7 +76,7 @@ public:
     float gety() { return player.y; }
     float getwidth() { return player.height; }
     float getheight() { return player.width; }
-    bool gameover() { return gameover; }
+    bool GetGameover() { return gameover; }
     Rectangle getrect() { return player; }
 };
 class Player : public Game
@@ -118,15 +119,15 @@ public:
     }
 
     // For Bullets
+    std::vector<Bullet> bullets;
     void FireLaser()
     {
         if (GetTime() - lastFireTime_ >= 0.35)
         {
-            bullets.push_back(Bullet({player.x, player.y}, -6));
+            bullets.push_back(Bullet({player.x, player.y}, -6.0));
             lastFireTime_ = GetTime();
         }
     }
-    std::vector<Bullet> bullets;
 };
 class Enemy : public Game
 {
@@ -218,14 +219,14 @@ class Bullet
 private:
     // Attributes
     Vector2 position_;
-    const int speed_;
+    const float speed_;
 
 public:
     // Attribute
     bool active_; // Variable to check if bullet is still within the game window.
 
     //  Constructors
-    Bullet(const Vector2 position, const int speed) : position_(position), speed_(speed), active_(true) {}
+    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {}
 
     // Methods
     // Function to update the bullet's position.
