@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>
 
+class Bullet;
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
 int maxHealth = 100; // Maximum health of the player
@@ -20,83 +21,7 @@ const float boundaryRight = 715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 332.0f;
 
-class Bullet
-{
-private:
-    Rectangle bullet;
-    // Attributes
-    Vector2 position_;
-    const float speed_;
-    Texture2D bullettexture;
-    bool moving;
-    char key;
-public:
-    // Attribute
-    bool active_; // Variable to check if bullet is still within the game window.
 
-    //  Constructors
-    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {
-        bullettexture=LoadTexture("media/bulletbySufyan2");
-        moving=false;
-    }
-
-    // Methods
-    // Function to update the bullet's position.
-    void Update(Player p)
-    {
-        if (IsKeyPressed(KEY_W))
-        {
-            moving=true;
-            key='W';
-        }
-        else if (IsKeyPressed(KEY_A))
-        {
-            moving=true;
-            key='A';
-        }
-        else if (IsKeyPressed(KEY_D))
-        {
-            moving=true;
-            key='D';
-        }
-        else if (IsKeyPressed(KEY_S))
-        {
-            moving=true;
-            key='S';
-        }
-        if (active_)
-        {
-            if(moving){
-                if(key=='W')
-                {
-                    position_.y-= speed_;
-                }
-                else if(key=='A'){
-                    position_.x -= speed_;
-                }
-                else if(key=='D'){
-                    position_.x += speed_;
-                }
-                else if(key=='S'){
-                    position_.y += speed_;
-                }   
-            }
-            if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
-            {
-                active_ = false;
-                moving = false;
-            }
-            DrawTextureEx(bullettexture,position_,0.0f, 1.0f, WHITE);
-        }
-        else{
-            position_.x=p.player.x;
-            position_.y=p.player.y;
-            moving=false;
-        }
-    }
-    // Function to draw the bullet.
-    Rectangle getbullet(){return bullet;}
-};
 class Game
 {
 protected:
@@ -156,6 +81,7 @@ public:
     Rectangle getrect() { return player; }
     float get_gameTime() const { return gameTime_; }
 };
+
 class Player : public Game
 {
 protected:
@@ -164,9 +90,10 @@ protected:
     // For Bullets
     double lastFireTime_;
     Bullet bullet;
+
 public:
     friend class Bullet;
-    Player(char *texture, char *music, char *background) : Game(texture, music, background), bullet(Vector2{0,0}, 0.6)
+    Player(char *texture, char *music, char *background) : Game(texture, music, background), bullet(Vector2{0, 0}, 0.6)
     {
         score = 0;
         lastFireTime_ = 0.0;
@@ -175,7 +102,7 @@ public:
     {
         // We can try operator overloading here.
         gameTime_ += GetFrameTime();
-        score += 2 * GetFrameTime();
+        scoreinc(2 * GetFrameTime());
         player.x += x;
         player.y += y;
     }
@@ -212,58 +139,56 @@ public:
     // Return Height of Player
     float get_height() const { return player.height; }
 
-    Rectangle getbulletrect(){return bullet.getbullet();}
-
+    Rectangle getbulletrect() { return bullet.getbullet(); }
 };
-class Enemy : public Game
+
+class Enemy :public Game
 {
 protected:
     bool alive;
 
 public:
     Enemy(float x, float y, char *texture, bool boss) : Game(x, y, texture)
+{
+    alive = true;
+    player.x = GetRandomValue(boundaryLeft, boundaryRight);
+    player.y = GetRandomValue(boundaryTop, boundaryBottom);
+    if (boss)
+        speed = 3.0f;
+    else
+        speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
+    if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
     {
-        alive = true;
-        player.x = GetRandomValue(boundaryLeft, boundaryRight);
-        player.y = GetRandomValue(boundaryTop, boundaryBottom);
-        if (boss)
-            speed = 3.0f;
+        //Calculate the new enemy position 50 units away from the player
+        float newX = player.x;
+        float newY = player.y;
+
+        if (player.x < x)
+            newX -= 50;
         else
-            speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
-        if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
-        {
-            // Calculate the new enemy position 50 units away from the player
-            float newX = player.x;
-            float newY = player.y;
+            newX += 50;
 
-            if (player.x < x)
-                newX -= 50;
-            else
-                newX += 50;
+        if (player.y < y)
+            newY -= 50;
+        else
+            newY += 50;
 
-            if (player.y < y)
-                newY -= 50;
-            else
-                newY += 50;
+        // Check if the new position is within the window boundaries
+        if (newX < boundaryRight)
+            newX = boundaryRight;
+        else if (newX > boundaryLeft)
+            newX = boundaryLeft;
 
-            // Check if the new position is within the window boundaries
-            if (newX < boundaryRight)
-                newX = boundaryRight;
-            else if (newX > boundaryLeft)
-                newX = boundaryLeft;
+        if (newY < boundaryBottom)
+            newY = boundaryBottom;
+        else if (newY > boundaryTop)
+            newY = boundaryTop;
 
-            if (newY < boundaryBottom)
-                newY = boundaryBottom;
-            else if (newY > boundaryTop)
-                newY = boundaryTop;
-
-            // Update the enemy position
-            player.x = newX;
-            player.y = newY;
-            Vector2 playingPosition_ = {player.x, player.y};
-            DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
-        }
+        // Update the enemy position
+        player.x = newX;
+        player.y = newY;
     }
+}
     void setpos(float x, float y)
     {
         player.x += x * speed;
@@ -282,6 +207,7 @@ public:
         }
     }
     bool getstatus() { return alive; }
+    void setstatus() { alive = false; }
 
     // Return x-coordinate of Enemy
     float get_x() const { return player.x; }
@@ -294,10 +220,97 @@ public:
     // Return Texture height of Enemy
     float get_textureHeight() const { return textureobject.height; }
 };
-class DefaultValues
+
+class Bullet
 {
 private:
+    Rectangle bullet;
+    // Attributes
+    Vector2 position_;
+    float speed_;
+    Texture2D bullettexture;
+    bool moving;
+    char key;
+
 public:
+    // Attribute
+    bool active_; // Variable to check if bullet is still within the game window.
+
+    //  Constructors
+    Bullet(){}
+    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
+    {
+        bullettexture = LoadTexture("media/bulletbySufyan2");
+        moving = false;
+    }
+
+    // Methods
+    // Function to update the bullet's position.
+    void Update(Player pobj)
+    {
+        if (IsKeyPressed(KEY_W))
+        {
+            moving = true;
+            key = 'W';
+        }
+        else if (IsKeyPressed(KEY_A))
+        {
+            moving = true;
+            key = 'A';
+        }
+        else if (IsKeyPressed(KEY_D))
+        {
+            moving = true;
+            key = 'D';
+        }
+        else if (IsKeyPressed(KEY_S))
+        {
+            moving = true;
+            key = 'S';
+        }
+        if (active_)
+        {
+            if (moving)
+            {
+                if (key == 'W')
+                {
+                    position_.y -= speed_;
+                }
+                else if (key == 'A')
+                {
+                    position_.x -= speed_;
+                }
+                else if (key == 'D')
+                {
+                    position_.x += speed_;
+                }
+                else if (key == 'S')
+                {
+                    position_.y += speed_;
+                }
+            }
+            if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
+            {
+                active_ = false;
+                moving = false;
+            }
+            DrawTextureEx(bullettexture, position_, 0.0f, 1.0f, WHITE);
+        }
+        else
+        {
+            position_.x = pobj.player.x;
+            position_.y = pobj.player.y;
+            moving = false;
+        }
+    }
+    // Function to draw the bullet.
+    Rectangle getbullet() { return bullet; }
+};
+
+class dValues
+{
+public:
+    dValues() {}
     // Attributes
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
@@ -311,6 +324,8 @@ public:
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
 
     Sound gameover = LoadSound("resources/GameOver.wav");
+
+    Sound killSound = LoadSound("resources/killSound.wav");
 };
 
 class HealthBar
@@ -524,7 +539,7 @@ void RunGame()
     SetSoundVolume(player.get_bgMusic(), 0.6f);
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
 
-    DefaultValues default; // Object to call the default values.
+    dValues d; // Object to call the d values.
 
     while (!WindowShouldClose())
     {
@@ -537,20 +552,20 @@ void RunGame()
 
             if (IsKeyDown(KEY_RIGHT) && player.get_x() < boundaryRight)
             {
-                targetSpeedX += default.acceleration;
+                targetSpeedX += d.acceleration;
             }
             else if (IsKeyDown(KEY_LEFT) && player.get_x() > boundaryLeft)
             {
-                targetSpeedX -= default.acceleration;
+                targetSpeedX -= d.acceleration;
             }
 
             if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
             {
-                targetSpeedY += default.acceleration;
+                targetSpeedY += d.acceleration;
             }
             else if (IsKeyDown(KEY_UP) && player.get_y() > boundaryTop)
             {
-                targetSpeedY -= default.acceleration;
+                targetSpeedY -= d.acceleration;
             }
 
             if (IsKeyDown(KEY_F))
@@ -567,28 +582,28 @@ void RunGame()
             // Smoothly accelerate/decelerate towards target speed
             if (targetSpeedX > playerVelocity.x)
             {
-                playerVelocity.x = fminf(playerVelocity.x + default.acceleration, default.maxSpeed);
+                playerVelocity.x = fminf(playerVelocity.x + d.acceleration, d.maxSpeed);
             }
             else if (targetSpeedX < playerVelocity.x)
             {
-                playerVelocity.x = fmaxf(playerVelocity.x - default.acceleration, -default.maxSpeed);
+                playerVelocity.x = fmaxf(playerVelocity.x - d.acceleration, -d.maxSpeed);
             }
             else
             {
-                playerVelocity.x *= default.deceleration;
+                playerVelocity.x *= d.deceleration;
             }
 
             if (targetSpeedY > playerVelocity.y)
             {
-                playerVelocity.y = fminf(playerVelocity.y + default.acceleration, default.maxSpeed);
+                playerVelocity.y = fminf(playerVelocity.y + d.acceleration, d.maxSpeed);
             }
             else if (targetSpeedY < playerVelocity.y)
             {
-                playerVelocity.y = fmaxf(playerVelocity.y - default.acceleration, -default.maxSpeed);
+                playerVelocity.y = fmaxf(playerVelocity.y - d.acceleration, -d.maxSpeed);
             }
             else
             {
-                playerVelocity.y *= default.deceleration;
+                playerVelocity.y *= d.deceleration;
             }
 
             // Update player position based on velocityy
@@ -627,14 +642,18 @@ void RunGame()
                 //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
                 {
-                    PlaySound(default.gameover);
+                    PlaySound(d.gameover);
 
                     player.Gameover(); // Game over if collision detected
                     SaveToFile(player.getscore());
                     break;
                 }
-                if(CheckCollisionRecs(player.getbulletrect(),enemies[i].getrect())){
-                    
+                if (CheckCollisionRecs(player.getbulletrect(), enemies[i].getrect()))
+                {
+                    PlaySound(d.killSound);
+                    enemies[i].setstatus();
+                    enemies.erase(enemies.begin() + i);
+                    player.scoreinc(10);
                 }
             }
         }
@@ -778,5 +797,6 @@ void ShowMainMenu()
 
 int main()
 {
+    ShowMainMenu();
     return 0;
 }
