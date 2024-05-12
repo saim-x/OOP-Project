@@ -69,7 +69,7 @@ public:
         UnloadSound(bgMusic);
     }
     virtual void setpos(float x, float y) = 0;
-    void draw() {}
+    virtual void draw() {}
     float getx() { return player.x; }
     float gety() { return player.y; }
     float getwidth() { return player.height; }
