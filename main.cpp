@@ -442,7 +442,7 @@ void RunGame()
                 playerVelocity.y *= deceleration;
             }
 
-            // Update player position based on velocity
+            // Update player position based on velocityy
             player.x += playerVelocity.x;
             player.y += playerVelocity.y;
 
