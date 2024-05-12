@@ -236,7 +236,7 @@ public:
     Bullet(){}
     Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
     {
-        bullettexture = LoadTexture("media/bulletbySufyan2");
+        bullettexture = LoadTexture("media/bulletbySuyan2.png");
         moving = false;
     }
 
