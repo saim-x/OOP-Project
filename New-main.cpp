@@ -597,11 +597,6 @@ void RunGame()
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
             {
-                //------------------------------------------------TALHA WALA CODE LINE--------------------------------------------------
-                // /* ! Need to resolve this ! */
-                // enemies.push_back(InitEnemy({boundaryLeft, boundaryTop, boundaryRight - boundaryLeft, boundaryBottom - boundaryTop}, player));
-                /* Fix: Initialize enemy object with correct constructor */
-                //-----------------------SAIM WALI LINE-----------------------------
                 enemies.push_back(Enemy(InitEnemy(player)));
             }
             // Update enemy positions
@@ -625,9 +620,7 @@ void RunGame()
                 //     }
                 // }
 
-                // enemies[i].position.x += (direction.x) * enemies[i].get_speed();
                 enemies[i].setpos(direction.x, direction.y);
-                // enemies[i].position.y += (direction.y) * enemies[i].get_speed();
 
                 // Check for collision with player
                 //   Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
