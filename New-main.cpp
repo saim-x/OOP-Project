@@ -30,14 +30,16 @@ private:
     Texture2D bullettexture;
     bool moving;
     char key;
+
 public:
     // Attribute
     bool active_; // Variable to check if bullet is still within the game window.
 
     //  Constructors
-    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {
-        bullettexture=LoadTexture("media/bulletbySufyan2");
-        moving=false;
+    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
+    {
+        bullettexture = LoadTexture("media/bulletbySufyan2");
+        moving = false;
     }
 
     // Methods
@@ -46,56 +48,61 @@ public:
     {
         if (IsKeyPressed(KEY_W))
         {
-            moving=true;
-            key='W';
+            moving = true;
+            key = 'W';
         }
         else if (IsKeyPressed(KEY_A))
         {
-            moving=true;
-            key='A';
+            moving = true;
+            key = 'A';
         }
         else if (IsKeyPressed(KEY_D))
         {
-            moving=true;
-            key='D';
+            moving = true;
+            key = 'D';
         }
         else if (IsKeyPressed(KEY_S))
         {
-            moving=true;
-            key='S';
+            moving = true;
+            key = 'S';
         }
         if (active_)
         {
-            if(moving){
-                if(key=='W')
+            if (moving)
+            {
+                if (key == 'W')
                 {
-                    position_.y-= speed_;
+                    position_.y -= speed_;
                 }
-                else if(key=='A'){
+                else if (key == 'A')
+                {
                     position_.x -= speed_;
                 }
-                else if(key=='D'){
+                else if (key == 'D')
+                {
                     position_.x += speed_;
                 }
-                else if(key=='S'){
+                else if (key == 'S')
+                {
                     position_.y += speed_;
-                }   
+                }
             }
             if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
             {
                 active_ = false;
                 moving = false;
             }
-            DrawTextureEx(bullettexture,position_,0.0f, 1.0f, WHITE);
+            DrawTextureEx(bullettexture, position_, 0.0f, 1.0f, WHITE);
         }
-        else{
-            position_.x=p.player.x;
-            position_.y=p.player.y;
-            moving=false;
+        else
+        {
+            position_.x = p.player.x;
+            position_.y = p.player.y;
+            moving = false;
         }
     }
     // Function to draw the bullet.
-    Rectangle getbullet(){return bullet;}
+    Rectangle getbullet() { return bullet; }
 };
 class Game
 {
@@ -164,9 +171,10 @@ protected:
     // For Bullets
     double lastFireTime_;
     Bullet bullet;
+
 public:
     friend class Bullet;
-    Player(char *texture, char *music, char *background) : Game(texture, music, background), bullet(Vector2{0,0}, 0.6)
+    Player(char *texture, char *music, char *background) : Game(texture, music, background), bullet(Vector2{0, 0}, 0.6)
     {
         score = 0;
         lastFireTime_ = 0.0;
@@ -212,8 +220,7 @@ public:
     //Return Height of Player
     float get_height() const { return player.height; }
 
-    Rectangle getbulletrect(){return bullet.getbullet();}
-
+    Rectangle getbulletrect() { return bullet.getbullet(); }
 };
 class Enemy : public Game
 {
@@ -311,6 +318,8 @@ public:
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
 
     Sound gameover = LoadSound("resources/GameOver.wav");
+
+    Sound killSound = LoadSound("resources/killSound.wav");
 };
 
 class HealthBar
@@ -633,8 +642,15 @@ void RunGame()
                     SaveToFile(player.getscore());
                     break;
                 }
-                if(CheckCollisionRecs(player.getbulletrect(),enemies[i].getrect())){
-
+                if (CheckCollisionRecs(player.getbulletrect(), enemies[i].getrect()))
+                {
+                    PlaySound(default.killSound);
+                    auto it = std::find(enemies.begin(), enemies.end(), i);
+                    if (it != enemies.end())
+                    {
+                        enemies.erase(it);
+                    }
+                    player.scoreinc(10);
                 }
             }
         }
