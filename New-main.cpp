@@ -26,19 +26,19 @@ class Game
 protected:
     bool gameover;
     Camera2D camera = {0};
-    char *background;
+    const char *background;
     Texture2D backgroundtexture;
     Rectangle player;
-    char *texture;
+    const char *texture;
     Texture2D textureobject;
     Vector2 playervelocity;
     float speed;
-    char *music;
+    const char *music;
     Sound bgMusic;
     float gameTime_;
 
 public:
-    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
+    Game(const char *texture,const char *music,const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
     { // for player
         speed = 3.0f;
         gameover = false;
@@ -46,18 +46,17 @@ public:
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
-        playervelocity.x = 0.0f;
-        playervelocity.y = 0.0f;
-        player.x = 0;
-        player.y = 0;
+        playervelocity.x = 0;
+        playervelocity.y = 0;
+        player.x = screenWidth/2;
+        player.y = screenHeight/2;
         player.width = 40;
         player.height = 40;
         textureobject = LoadTexture(texture);
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
-        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
     }
-    Game(float x, float y, char *texture) : texture(texture)
+    Game(float x, float y,const char *texture) : texture(texture)
     { // for enemy
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
@@ -69,6 +68,7 @@ public:
         UnloadTexture(backgroundtexture);
         UnloadSound(bgMusic);
     }
+    void setgameover(bool val){gameover=val;}
     virtual void setpos(float x, float y) = 0;
     virtual void draw() {}
     float getx() { return player.x; }
@@ -90,7 +90,7 @@ protected:
 
 public:
     friend class Bullet;
-    Player(char *texture, char *music, char *background) : Game(texture, music, background)
+    Player(const char *texture,const char *music,const char *background) : Game(texture, music, background)
     {
         score = 0;
         lastFireTime_ = 0.0;
@@ -111,6 +111,7 @@ public:
     }
     void draw()
     {
+        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
     }
 
@@ -526,9 +527,10 @@ void RunGame()
     HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
     InitAudioDevice();
     Vector2 playerVelocity = {0.0f, 0.0f};
-    Player player("media/space23.png", "resources/bgmusicwav.wav", "media/space2.png");
+    char *obj="media/spacecraft23.png", *music="resources/bgmusicwav.wav", *bg="media/space2.png";
+    Player player(obj,music ,bg );
+    player.draw();
     Bullet bullet(player.getpos(),0.6);
-
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
@@ -642,6 +644,7 @@ void RunGame()
                     PlaySound(d.gameover);
 
                     player.Gameover(); // Game over if collision detected
+                    PlaySound(d.gameover);
                     SaveToFile(player.getscore());
                     break;
                 }
@@ -686,6 +689,33 @@ void RunGame()
             DrawHealthBar(healthBar);
             EndDrawing();
 
+        }
+        if (player.get_gameover())
+        {
+            if (IsKeyDown(KEY_SPACE))
+            {
+                // Reset game variables for restart
+                flag = 0;
+                playerVelocity = {0.0f, 0.0f};
+                enemies.clear();
+                restartRequested = true;
+                player.setgameover(true);// Reset game time
+                PlaySound(player.get_bgMusic()); // Play background music again
+                player.scoreinc(-player.getscore());
+                Sound sfx3 = LoadSound("resources/gamerestart.mp3");
+                PlaySound(sfx3);
+                healthBar.currentHealth = 0;
+            }
+        }
+
+        if (restartRequested && !IsKeyDown(KEY_SPACE))
+        {
+            restartRequested = false;
+        }
+
+        if (player.get_gameover() && IsKeyDown(KEY_ESCAPE))
+        {
+            break; // Exit game loop if game over and ESC key pressed
         }
     }
 
