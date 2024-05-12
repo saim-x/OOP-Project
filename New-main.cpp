@@ -10,6 +10,8 @@ int flag = 0;        // flag to check if boss enemy is spawned or not
 int maxHealth = 100; // Maximum health of the player
 const int screenWidth = 1600;
 const int screenHeight = 850;
+
+class DefaultValues;
 class Game
 {
 protected:
@@ -319,69 +321,153 @@ void DrawHealthBar(HealthBar bar)
                         bar.outerRect.y + (bar.outerRect.height - bar.heartTexture.height) / 2};
     DrawTexture(bar.heartTexture, (int)heartPos.x, (int)heartPos.y, WHITE);
 }
-
 // Function to initialize an enemy character at a random position within the boundaries
-Enemy InitEnemy(const Rectangle &boundary, const Rectangle &player)
-{
-    Enemy enemy(GetRandomValue(boundary.x, boundary.x + boundary.width), GetRandomValue(boundary.y, boundary.y + boundary.height));
-    enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
-    enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
-    // Logic to prevent enemies from overlapping the player by moving them apart by 50 units
-    if (abs(enemy.position.x - player.x) <= 50 && abs(enemy.position.y - player.y) <= 50)
-    {
-        // Calculate the new enemy position 50 units away from the player
-        float newX = enemy.position.x;
-        float newY = enemy.position.y;
+// Enemy InitEnemy(const Rectangle &boundary, const Rectangle &player)
+// {
+//     Enemy enemy(GetRandomValue(boundary.x, boundary.x + boundary.width), GetRandomValue(boundary.y, boundary.y + boundary.height));
+//     enemy.position.x = GetRandomValue(boundary.x, boundary.x + boundary.width);
+//     enemy.position.y = GetRandomValue(boundary.y, boundary.y + boundary.height);
+//     // Logic to prevent enemies from overlapping the player by moving them apart by 50 units
+//     if (abs(enemy.position.x - player.x) <= 50 && abs(enemy.position.y - player.y) <= 50)
+//     {
+//         // Calculate the new enemy position 50 units away from the player
+//         float newX = enemy.position.x;
+//         float newY = enemy.position.y;
 
-        if (enemy.position.x < player.x)
-            newX -= 50;
-        else
-            newX += 50;
+//         if (enemy.position.x < player.x)
+//             newX -= 50;
+//         else
+//             newX += 50;
 
-        if (enemy.position.y < player.y)
-            newY -= 50;
-        else
-            newY += 50;
+//         if (enemy.position.y < player.y)
+//             newY -= 50;
+//         else
+//             newY += 50;
 
-        // Check if the new position is within the window boundaries
-        if (newX < boundary.x)
-            newX = boundary.x;
-        else if (newX > boundary.x + boundary.width)
-            newX = boundary.x + boundary.width;
+//         // Check if the new position is within the window boundaries
+//         if (newX < boundary.x)
+//             newX = boundary.x;
+//         else if (newX > boundary.x + boundary.width)
+//             newX = boundary.x + boundary.width;
 
-        if (newY < boundary.y)
-            newY = boundary.y;
-        else if (newY > boundary.y + boundary.height)
-            newY = boundary.y + boundary.height;
+//         if (newY < boundary.y)
+//             newY = boundary.y;
+//         else if (newY > boundary.y + boundary.height)
+//             newY = boundary.y + boundary.height;
 
-        // Update the enemy position
-        enemy.position.x = newX;
-        enemy.position.y = newY;
-    }
-    enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
+//         // Update the enemy position
+//         enemy.position.x = newX;
+//         enemy.position.y = newY;
+//     }
+//     enemy.speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
 
-    // Load the boss enemy sfx
-    Sound sfx1 = LoadSound("resources/sfx1edited.wav");
-    Sound sfx2 = LoadSound("resources/poinkwav.wav");
-    // BOSS HAVE TO SPAWN ONCE LOGIC
-    if (flag == 0)
-    {
-        flag = 1;
-        // BOSS ENEMY WILL SPAWN ONLY ONCE :D
-        enemy.texture = LoadTexture("media/enemy3.1.png");
-        PlaySound(sfx1);
-        enemy.speed = 3.0f; // Set boss enemy speed to 3.0 which is max an enemy can have
-    }
-    // Randomly choose between enemy1 and enemy2 textures
-    else if (GetRandomValue(0, 1) == 0)
-    {
-        enemy.texture = LoadTexture("media/enemy1.png");
-        PlaySound(sfx2);
-    }
-    else
-    {
-        enemy.texture = LoadTexture("media/enemy3.png");
-        PlaySound(sfx2);
-    }
-    return enemy;
-}
+//     // Load the boss enemy sfx
+//     Sound sfx1 = LoadSound("resources/sfx1edited.wav");
+//     Sound sfx2 = LoadSound("resources/poinkwav.wav");
+//     // BOSS HAVE TO SPAWN ONCE LOGIC
+//     if (flag == 0)
+//     {
+//         flag = 1;
+//         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
+//         enemy.texture = LoadTexture("media/enemy3.1.png");
+//         PlaySound(sfx1);
+//         enemy.speed = 3.0f; // Set boss enemy speed to 3.0 which is max an enemy can have
+//     }
+//     // Randomly choose between enemy1 and enemy2 textures
+//     else if (GetRandomValue(0, 1) == 0)
+//     {
+//         enemy.texture = LoadTexture("media/enemy1.png");
+//         PlaySound(sfx2);
+//     }
+//     else
+//     {
+//         enemy.texture = LoadTexture("media/enemy3.png");
+//         PlaySound(sfx2);
+//     }
+//     return enemy;
+// }
+
+// int main()
+// {
+//     Player player("media/spacecraft23.png", "resources/bgmusicwav.wav", "media/space2.png");
+//     const int screenWidth = 1600;
+//     const int screenHeight = 900;
+
+//     InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
+
+//     // Load the background image
+//     Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
+
+//     // Adjust the background image rectangle to cover the entire window
+//     Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
+
+//     Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 25), 100, 50};
+//     Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 25), 140, 50};
+
+//     SetTargetFPS(60);
+
+//     while (!WindowShouldClose())
+//     {
+//         BeginDrawing();
+
+//         ClearBackground(RAYWHITE);
+
+//         // Draw the background image
+//         DrawTexturePro(backgroundImage, Rectangle({0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}), bgRec, Vector2({0, 0}), 0.0f, WHITE);
+
+//         // Draw play button
+//         DrawRectangleRec(playButton, BLUE);
+//         DrawText("Play", (int)playButton.x + 30, (int)playButton.y + 15, 20, WHITE);
+
+//         // Draw high score button
+//         DrawRectangleRec(highScoreButton, GREEN);
+//         DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
+
+//         // Draw game name
+//         DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
+//         DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
+
+//         // Check if the mouse is hovering over the play button
+//         if (CheckCollisionPointRec(GetMousePosition(), playButton))
+//         {
+//             DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+//             // Check if the left mouse button is clicked
+//             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+//             {
+//                 // Start the game
+//                 CloseWindow(); // Close the main screen window
+//             }
+//         }
+//         if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+//         {
+//             DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+//             // Check if the left mouse button is clicked
+//             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+//             {
+//                 // Display high score (for now, just print a message)
+//                 CloseWindow(); // Close the main screen window
+//             }
+//         }
+//         // Check if the mouse is hovering over the high score button
+//         if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+//         {
+//             DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+//             // Check if the left mouse button is clicked
+//             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+//             {
+//                 // Display high score (for now, just print a message)
+//             }
+//         }
+
+//         EndDrawing();
+//     }
+
+//     // Unload the background image
+//     UnloadTexture(backgroundImage);
+
+//     CloseWindow();
+//     return 0;
+// }
