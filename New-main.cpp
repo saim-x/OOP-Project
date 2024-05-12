@@ -90,6 +90,7 @@ public:
         score = 0;
         lastFireTime_ = 0.0;
     }
+    Player(){}
     void setpos(float x, float y)
     {
         // We can try operator overloading here.
@@ -97,6 +98,11 @@ public:
         scoreinc(2 * GetFrameTime());
         player.x += x;
         player.y += y;
+    }
+    Player operator+(Vector2 pos){
+        Player p;
+        p.player.x=player.x+pos.x;
+        p.player.y=player.y+pos.y;
     }
     void Gameover()
     {
@@ -265,19 +271,6 @@ HealthBar CreateHealthBar(float x, float y, float width, float height, Color out
 }
 void DrawHealthBar(HealthBar bar)
 {
-    /*-----------------------------------------Basic Health Bar-----------------------------------------*/
-    // SIMPLE DRAWING OF HEALTH BAR
-    //  // Draw outer rectangle
-    //  DrawRectangleRec(bar.outerRect, bar.outerColor);
-
-    // // Calculate inner rectangle width based on current health
-    // float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
-    // bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
-
-    // // Draw inner rectangle
-    // DrawRectangleRec(bar.innerRect, bar.innerColor);
-    /*---------------------------------------------------------------------------------------------*/
-
     DrawRectangleRounded(bar.outerRect, 0.5, 1, bar.outerColor);
 
     // Calculate inner rectangle width based on current health
@@ -516,7 +509,7 @@ void RunGame()
             }
 
             // Update player position based on velocityy
-            player.setpos(playerVelocity.x, playerVelocity.y);
+            player+=Vector2(playerVelocity.x,playerVelocity.y);
 
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
@@ -548,11 +541,14 @@ void RunGame()
                 if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
                 {
                     PlaySound(d.gameover);
-
                     player.Gameover(); // Game over if collision detected
+<<<<<<< HEAD
+=======
                     PlaySound(d.gameover);
                     std::cout << "File Saved" << std::endl;
+>>>>>>> 75a0c93d56a4001020f7b7c0e881b80972c917de
                     SaveToFile(player.getscore());
+                    PlaySound(d.gameover);
                     break;
                 }
             }
