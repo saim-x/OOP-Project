@@ -504,7 +504,6 @@ void RunGame()
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
-                                   // Play background music
     PlaySound(player.get_bgMusic());
     SetSoundVolume(player.get_bgMusic(), 0.6f);
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
