@@ -91,6 +91,8 @@ class DefaultValues
 {
 private:
 public:
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
     Rectangle player = {0, 0, 40, 40};
     Vector2 playerVelocity = {0.0f, 0.0f};
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
@@ -110,4 +112,27 @@ public:
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
 
     Sound gameover = LoadSound("resources/GameOver.wav");
+};
+
+class Bullet
+{
+private:
+    // Attributes
+    Vector2 position_;
+    int speed_;
+
+public:
+    // Attributes
+    bool active; // Variable to check if bullet is still within the game window.
+
+    //  Constructors
+    Bullet(const Vector2 position, const int speed) : position_(position), speed_(speed) {}
+
+    // Methods
+
+    // Function to update the bullet's position.
+    void Update();
+
+    // Function to draw the bullet.
+    void Draw();
 };
