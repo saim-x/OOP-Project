@@ -295,7 +295,7 @@ HealthBar CreateHealthBar(float x, float y, float width, float height, Color out
 }
 void DrawHealthBar(HealthBar bar)
 {
-    /*----------------------------------------- Health Bar-----------------------------------------*/
+    /*-----------------------------------------Basic Health Bar-----------------------------------------*/
     // SIMPLE DRAWING OF HEALTH BAR
     //  // Draw outer rectangle
     //  DrawRectangleRec(bar.outerRect, bar.outerColor);
