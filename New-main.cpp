@@ -17,7 +17,59 @@ const float boundaryRight = 715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 332.0f;
 
-class Bullet;
+class Bullet
+{
+private:
+    // Attributes
+    Vector2 position_;
+    const float speed_;
+
+public:
+    // Attribute
+    bool active_; // Variable to check if bullet is still within the game window.
+
+    //  Constructors
+    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {}
+
+    // Methods
+    // Function to update the bullet's position.
+    void Update()
+    {
+        if (IsKeyPressed(KEY_W))
+        {
+            position_.y += speed_;
+        }
+        else if (IsKeyPressed(KEY_A))
+        {
+            position_.x -= speed_;
+        }
+        else if (IsKeyPressed(KEY_D))
+        {
+            position_.x += speed_;
+        }
+        else if (IsKeyPressed(KEY_S))
+        {
+            position_.y -= speed_;
+        }
+
+        if (active_)
+        {
+            if (position_.y > GetScreenHeight() - 100 || position_.y < 25 || position_.x > GetScreenWidth() - 100 || position_.x < 25)
+            {
+                active_ = false;
+            }
+        }
+    }
+    // Function to draw the bullet.
+    void Draw()
+    {
+        if (active_)
+        {
+            DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
+        }
+        return;
+    }
+};
 class Game
 {
 protected:
@@ -124,7 +176,7 @@ public:
     {
         if (GetTime() - lastFireTime_ >= 0.35)
         {
-            bullets.push_back(Bullet({player.x, player.y}, -6.0));
+            bullets.push_back(Bullet(Vector2({player.x, player.y}), -6.0));
             lastFireTime_ = GetTime();
         }
     }
@@ -214,59 +266,6 @@ public:
     Sound gameover = LoadSound("resources/GameOver.wav");
 };
 
-class Bullet
-{
-private:
-    // Attributes
-    Vector2 position_;
-    const float speed_;
-
-public:
-    // Attribute
-    bool active_; // Variable to check if bullet is still within the game window.
-
-    //  Constructors
-    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true) {}
-
-    // Methods
-    // Function to update the bullet's position.
-    void Update()
-    {
-        if (IsKeyPressed(KEY_W))
-        {
-            position_.y += speed_;
-        }
-        else if (IsKeyPressed(KEY_A))
-        {
-            position_.x -= speed_;
-        }
-        else if (IsKeyPressed(KEY_D))
-        {
-            position_.x += speed_;
-        }
-        else if (IsKeyPressed(KEY_S))
-        {
-            position_.y -= speed_;
-        }
-
-        if (active_)
-        {
-            if (position_.y > GetScreenHeight() - 100 || position_.y < 25 || position_.x > GetScreenWidth() - 100 || position_.x < 25)
-            {
-                active_ = false;
-            }
-        }
-    }
-    // Function to draw the bullet.
-    void Draw()
-    {
-        if (active_)
-        {
-            DrawRectangle(position_.x, position_.y, 4, 15, {243, 216, 63, 255});
-        }
-        return;
-    }
-};
 class HealthBar
 {
 private:
