@@ -206,15 +206,12 @@ public:
 
     Sound gameover = LoadSound("resources/GameOver.wav");
 };
-<<<<<<< HEAD
 
 const float DefaultValues::boundaryLeft=-815.0f;
 const float DefaultValues::boundaryRight=715.0f;
 const float DefaultValues::boundaryTop=-429.0f;
 const float DefaultValues::boundaryBottom=332.0f;
 
-=======
->>>>>>> b479bbbca531209fed9299220116ca04fbd74bd4
 class Bullet
 {
 private:
