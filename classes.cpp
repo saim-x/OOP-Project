@@ -12,6 +12,9 @@ class Game
 {
     // We can add boundary class here to show aggregation.
 protected:
+    Camera2D camera = {0};
+    char* background;
+    Texture2D backgroundtexture;
     Rectangle player;
     char *texture;
     Texture2D textureobject;
@@ -23,8 +26,12 @@ protected:
     Sound bgMusic;
 
 public:
-    Game(char *texture, char *music) : texture(texture), music(music)
+    Game(char *texture, char *music, char* background) : texture(texture), music(music), background(background)
     { // for player
+        camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+        camera.rotation = 0.0f;
+        camera.zoom = 1.0f;
+        backgroundtexture= LoadTexture(background);
         playervelocity.x = 0.0f;
         playervelocity.y = 0.0f;
         player.x = 0;
@@ -33,14 +40,26 @@ public:
         player.height = 40;
         textureobject = LoadTexture(texture);
         bgMusic = LoadSound(music);
+        BeginMode2D(camera);
+        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
+        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
     }
-    Game(float x, float y, char *texture, char *music) : texture(texture), music(music)
+    Game(float x, float y, char *texture) : texture(texture)
     { // for enemy
         player.x = x;
         player.y = y;
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
         player.width = textureobject.width;
+        DrawTextureEx(textureobject, (Vector2){player.x,player.y}, 0.0f, 1.0f, WHITE);
+    }
+    void drawplayer(){
+        BeginMode2D(camera);
+        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
+        DrawTextureEx(textureobject, (Vector2){player.x, player.y}, 0.0f, 1.0f, WHITE);
+    }
+    void drawenemy(){
+        DrawTextureEx(textureobject, (Vector2){player.x,player.y}, 0.0f, 1.0f, WHITE);
     }
     ~Game()
     {
@@ -50,6 +69,8 @@ public:
     virtual void setpos(float x, float y) = 0;
     float getx() { return player.x; }
     float gety() { return player.y; }
+    float getwidth(){return player.height;}
+    float getheight(){return player.width;}
     Rectangle getrect() { return player; }
 };
 
@@ -59,7 +80,7 @@ protected:
     float score;
 
 public:
-    Player(char *texture, char *music) : Game(texture, music)
+    Player(char *texture, char *music, char* background) : Game(texture, music, background)
     {
         score = 0;
     }
@@ -69,6 +90,10 @@ public:
         player.x += x;
         player.y += y;
     }
+    void gameover(){
+        player.x=0;
+        player.y=0;
+    }
 };
 
 class Enemy : public Game
@@ -76,7 +101,7 @@ class Enemy : public Game
     float speed;
 
 public:
-    Enemy(float x, float y, char *texture, char *music) : Game(texture, music)
+    Enemy(float x, float y, char *texture) : Game(texture)
     {
         speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
     }
