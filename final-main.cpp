@@ -372,7 +372,7 @@ void RunGame()
             BeginDrawing();
             ClearBackground(RAYWHITE);
             player.draw();
-            for (int i = 0; i < spobj.size(); i++)
+            for (int i = 0; i < 5; i++)
             {
                 spobj[i].draw();
             }
