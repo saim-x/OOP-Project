@@ -38,16 +38,14 @@ public:
     // Constructors
     SpaceObjects()
     {
-        image_ = LoadTexture("media/icon8-star-16.png");
+        image_ = LoadTexture("media/icons8-star-16.png");
         numofobjects++;
         // Seed the random number generator
-        srand(static_cast<unsigned int>(time(nullptr)));
 
         // Generate random x and y coordinates within the specified boundaries
-        float position_X = randomFloat(boundaryLeft, boundaryRight);
-        float position_Y = randomFloat(boundaryTop, boundaryBottom);
+        position_.x = GetRandomValue(boundaryLeft,boundaryRight);
+        position_.y = GetRandomValue(boundaryTop, boundaryBottom);
 
-        position_ = {position_X, position_Y};
     }
 
     // Destructor
@@ -63,7 +61,7 @@ public:
     static int get_numofobjects() { return numofobjects; }
 
     // Methods
-    void draw() { DrawTextureEx(image_, position_, 0.0f, 1.0f, WHITE); }
+    void draw() { DrawTexture(image_, position_.x,position_.y, WHITE); }
 };
 int SpaceObjects::numofobjects = 0;
 
@@ -117,12 +115,30 @@ public:
     Rectangle getrect() { return player; }
     float get_gameTime() const { return gameTime_; }
 };
+class dValues
+{
+    // Attributes
+    const float maxSpeed = 26.0f;    // Adjusted maximum speed
+    const float acceleration = 3.0f; // Adjusted acceleration
+    const float deceleration = 1.0f;
+    Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
+    Sound sfx4 = LoadSound("resources/StopIt.wav");
+    Sound sfx5 = LoadSound("resources/woosh.wav");
+    Sound sfx6 = LoadSound("resources/randomsfx1.wav");
+    Sound sfx7 = LoadSound("resources/randomsfx2.wav");
+    Sound gameover = LoadSound("resources/GameOver.wav");
+    Sound killSound = LoadSound("resources/killSound.wav");
+
+public:
+    dValues() {}
+    friend class Player;
+};
 class Player : public Game
 {
 protected:
     float score;
     double lastFireTime_;
-
+    dValues d;
 public:
     Player(const char *texture, const char *music, const char *background) : Game(texture, music, background)
     {
@@ -181,35 +197,17 @@ public:
         return Vector2{player.x, player.y};
     }
     // Getter functions for dValues class
-    float get_maxSpeed(dValues d) { return d.maxSpeed; }
-    float get_acceleration(dValues d) { return d.acceleration; }
-    float get_deceleration(dValues d) { return d.deceleration; }
-    Sound get_bgMusic(dValues d) const { return d.bgMusic; }
-    Sound get_sfx4(dValues d) const { return d.sfx4; }
-    Sound get_sfx5(dValues d) const { return d.sfx5; }
-    Sound get_sfx6(dValues d) const { return d.sfx6; }
-    Sound get_sfx7(dValues d) const { return d.sfx7; }
-    Sound get_gameover(dValues d) const { return d.gameover; }
-    Sound get_killSound(dValues d) const { return d.killSound; }
+    float get_maxSpeed() { return d.maxSpeed; }
+    float get_acceleration() { return d.acceleration; }
+    float get_deceleration() { return d.deceleration; }
+    Sound get_sfx4() const { return d.sfx4; }
+    Sound get_sfx5() const { return d.sfx5; }
+    Sound get_sfx6() const { return d.sfx6; }
+    Sound get_sfx7() const { return d.sfx7; }
+    Sound get_gameoversound() const { return d.gameover; }
+    Sound get_killSound() const { return d.killSound; }
 };
-class dValues
-{
-    // Attributes
-    const float maxSpeed = 26.0f;    // Adjusted maximum speed
-    const float acceleration = 3.0f; // Adjusted acceleration
-    const float deceleration = 1.0f;
-    Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
-    Sound sfx4 = LoadSound("resources/StopIt.wav");
-    Sound sfx5 = LoadSound("resources/woosh.wav");
-    Sound sfx6 = LoadSound("resources/randomsfx1.wav");
-    Sound sfx7 = LoadSound("resources/randomsfx2.wav");
-    Sound gameover = LoadSound("resources/GameOver.wav");
-    Sound killSound = LoadSound("resources/killSound.wav");
 
-public:
-    dValues() {}
-    friend class Player;
-};
 
 void SaveToFile(float score)
 {
@@ -300,13 +298,14 @@ void RunGame()
     char *music = const_cast<char *>("resources/bgmusicwav.wav");
     char *bg = const_cast<char *>("media/space2.png");
     Player player(obj, music, bg);
-    std::array<SpaceObjects, 5> spobj;
+    std::array<SpaceObjects, 30> spobj;
     srand(time(NULL));
     bool restartRequested = false; // Flag to track if restart has been requested.
     PlaySound(player.get_bgMusic());
     SetSoundVolume(player.get_bgMusic(), 0.6f);
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     dValues d;        // Object to call the d values.
+    
     while (!WindowShouldClose())
     {
         if (!player.get_gameover()) // Only update the game if it's not over
@@ -317,53 +316,53 @@ void RunGame()
             float targetSpeedY = 0.0f;
             if (IsKeyDown(KEY_RIGHT) && player.get_x() < boundaryRight)
             {
-                targetSpeedX += player.get_acceleration(d);
+                targetSpeedX += player.get_acceleration();
             }
             else if (IsKeyDown(KEY_LEFT) && player.get_x() > boundaryLeft)
             {
-                targetSpeedX -= player.get_acceleration(d);
+                targetSpeedX -= player.get_acceleration();
             }
             if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
             {
-                targetSpeedY += player.get_acceleration(d);
+                targetSpeedY += player.get_acceleration();
             }
             else if (IsKeyDown(KEY_UP) && player.get_y() > boundaryTop)
             {
-                targetSpeedY -= player.get_acceleration(d);
+                targetSpeedY -= player.get_acceleration();
             }
             if (IsKeyDown(KEY_F))
             {
                 // Toggle BOOSTERS
                 // boostersActivated = true;
-                PlaySound(player.get_sfx5(d));
+                PlaySound(player.get_sfx5());
                 targetSpeedX *= 25.0f;
                 targetSpeedY *= 25.0f;
-                SetSoundVolume(player.get_sfx5(d), 3.9f);
+                SetSoundVolume(player.get_sfx5(), 3.9f);
             }
             // Smoothly accelerate/decelerate towards target speed
             if (targetSpeedX > playerVelocity.x)
             {
-                playerVelocity.x = fminf(playerVelocity.x + player.get_acceleration(d), player.get_maxSpeed(d));
+                playerVelocity.x = fminf(playerVelocity.x + player.get_acceleration(), player.get_maxSpeed());
             }
             else if (targetSpeedX < playerVelocity.x)
             {
-                playerVelocity.x = fmaxf(playerVelocity.x - player.get_acceleration(d), -player.get_maxSpeed(d));
+                playerVelocity.x = fmaxf(playerVelocity.x - player.get_acceleration(), -player.get_maxSpeed());
             }
             else
             {
-                playerVelocity.x *= player.get_deceleration(d);
+                playerVelocity.x *= player.get_deceleration();
             }
             if (targetSpeedY > playerVelocity.y)
             {
-                playerVelocity.y = fminf(playerVelocity.y + player.get_acceleration(d), player.get_maxSpeed(d));
+                playerVelocity.y = fminf(playerVelocity.y + player.get_acceleration(), player.get_maxSpeed());
             }
             else if (targetSpeedY < playerVelocity.y)
             {
-                playerVelocity.y = fmaxf(playerVelocity.y - player.get_acceleration(d), -player.get_maxSpeed(d));
+                playerVelocity.y = fmaxf(playerVelocity.y - player.get_acceleration(), -player.get_maxSpeed());
             }
             else
             {
-                playerVelocity.y *= player.get_deceleration(d);
+                playerVelocity.y *= player.get_deceleration();
             }
 
             // Update player position based on velocityy
@@ -372,7 +371,7 @@ void RunGame()
             BeginDrawing();
             ClearBackground(RAYWHITE);
             player.draw();
-            for (int i = 0; i < spobj.size(); i++)
+            for (int i = 0; i < 30; i++)
             {
                 spobj[i].draw();
             }
