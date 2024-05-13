@@ -132,78 +132,6 @@ public:
         return Vector2{player.x, player.y};
     }
 };
-class Enemy : public Game
-{
-protected:
-    bool alive;
-
-public:
-    Enemy(float x, float y, char *texture, bool boss) : Game(x, y, texture)
-    {
-        alive = true;
-        player.x = GetRandomValue(boundaryLeft, boundaryRight);
-        player.y = GetRandomValue(boundaryTop, boundaryBottom);
-        if (boss)
-            speed = 3.0f;
-        else
-            speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
-        if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
-        {
-            // Calculate the new enemy position 50 units away from the player
-            float newX = player.x;
-            float newY = player.y;
-            if (player.x < x)
-                newX -= 50;
-            else
-                newX += 50;
-            if (player.y < y)
-                newY -= 50;
-            else
-                newY += 50;
-            // Check if the new position is within the window boundaries
-            if (newX < boundaryRight)
-                newX = boundaryRight;
-            else if (newX > boundaryLeft)
-                newX = boundaryLeft;
-            if (newY < boundaryBottom)
-                newY = boundaryBottom;
-            else if (newY > boundaryTop)
-                newY = boundaryTop;
-            // Update the enemy position
-            player.x = newX;
-            player.y = newY;
-        }
-    }
-    void setpos(float x, float y)
-    {
-        player.x += x * speed;
-        player.y += y * speed;
-    }
-    void draw()
-    {
-        if (alive)
-        {
-            DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
-        }
-        else
-        {
-            player.x = 2000.0f;
-            player.y = 2000.0f;
-        }
-    }
-    bool getstatus() { return alive; }
-    void setstatus() { alive = false; }
-    // Return x-coordinate of Enemy
-    float get_x() const { return player.x; }
-    // Return y-coordinate of Enemy
-    float get_y() const { return player.y; }
-    //  Return Speed of Enemy
-    float get_speed() const { return speed; }
-    // Return Texture width of Enemy
-    float get_textureWidth() const { return textureobject.width; }
-    // Return Texture height of Enemy
-    float get_textureHeight() const { return textureobject.height; }
-};
 class dValues
 {
 public:
@@ -220,90 +148,7 @@ public:
     Sound gameover = LoadSound("resources/GameOver.wav");
     Sound killSound = LoadSound("resources/killSound.wav");
 };
-class HealthBar
-{
-private:
-public:
-    // Attributes
-    Rectangle outerRect;
-    Rectangle innerRect;
-    Color outerColor;
-    Color innerColor;
-    int currentHealth;
-    Texture2D heartTexture;
-};
-// Global Functions
-HealthBar CreateHealthBar(float x, float y, float width, float height, Color outerColor, Color innerColor, int startingHealth)
-{
-    HealthBar bar;
-    bar.outerRect = {x, y, width, height};
-    bar.innerRect = {x + 2, y + 2, width - 4, height - 4};
-    bar.outerColor = outerColor;
-    bar.innerColor = innerColor;
-    bar.currentHealth = startingHealth;
-    bar.heartTexture = LoadTexture("media/heart.png");
-    return bar;
-}
-void DrawHealthBar(HealthBar bar)
-{
-    /*-----------------------------------------Basic Health Bar-----------------------------------------*/
-    // SIMPLE DRAWING OF HEALTH BAR
-    //  // Draw outer rectangle
-    //  DrawRectangleRec(bar.outerRect, bar.outerColor);
 
-    // // Calculate inner rectangle width based on current health
-    // float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
-    // bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
-
-    // // Draw inner rectangle
-    // DrawRectangleRec(bar.innerRect, bar.innerColor);
-    /*---------------------------------------------------------------------------------------------*/
-
-    DrawRectangleRounded(bar.outerRect, 0.5, 1, bar.outerColor);
-
-    // Calculate inner rectangle width based on current health
-    float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
-    bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
-    // Draw inner rectangle with rounded corners
-    DrawRectangleRounded(bar.innerRect, 0.2, 1, bar.innerColor);
-    // Draw heart texture at the center of the health bar
-    Vector2 heartPos = {bar.outerRect.x + (bar.outerRect.width - bar.heartTexture.width) / 2,
-                        bar.outerRect.y + (bar.outerRect.height - bar.heartTexture.height) / 2};
-    DrawTexture(bar.heartTexture, (int)heartPos.x, (int)heartPos.y, WHITE);
-}
-// Function to initialize an enemy character at a random position within the boundaries
-Enemy InitEnemy(Player p)
-{
-    // Load the boss enemy sfx
-    Sound sfx1 = LoadSound("resources/sfx1edited.wav");
-    Sound sfx2 = LoadSound("resources/poinkwav.wav");
-    char *texture;
-    // BOSS HAVE TO SPAWN ONCE LOGIC
-    bool boss;
-    if (flag == 0)
-    {
-        flag = 1;
-        // BOSS ENEMY WILL SPAWN ONLY ONCE :D
-        texture = const_cast<char *>("media/enemy3.1.png");
-        PlaySound(sfx1);
-        boss = true; // Set boss enemy speed to 3.0 which is max an enemy can have
-    }
-    // Randomly choose between enemy1 and enemy2 textures
-    else if (GetRandomValue(0, 1) == 0)
-    {
-        texture = const_cast<char *>("media/enemy1.png");
-        PlaySound(sfx2);
-        boss = false;
-    }
-    else
-    {
-        texture = const_cast<char *>("media/enemy3.png");
-        PlaySound(sfx2);
-        boss = false;
-    }
-    Enemy enemy(p.getx(), p.gety(), texture, boss);
-    return enemy;
-}
 void SaveToFile(float score)
 {
     std::ofstream outputFile("scores.txt", std::ios::app); // Open the file in append mode
@@ -373,18 +218,6 @@ void ShowHighScore()
         // Draw the background image
         DrawTexture(spaceBackground, 0, 0, WHITE);
         ClearBackground(RAYWHITE);
-        /*-----------------------------------------Printing the complete file.-----------------------------------------*/
-        // // Display the high scores on the screen
-        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
-        // // Drawing the topscore
-        // DrawText(TextFormat("Top Score: %d", topScore), screenWidth / 2 - MeasureText(TextFormat("Top Score: %d", topScore), 66) / 2, 120, 66, WHITE);
-        // // Draw the high scores below the heading
-        // DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
-        // EndDrawing();
-        // Display the high scores on the screen
-        // FILHAL K LIYE
-        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
-        /*-------------------------------------------------------------------------------------------------------------*/
         // Draw the top 5 scores with gaps
         for (size_t i = 0; i < topScores.size(); ++i)
         {
@@ -399,7 +232,6 @@ void ShowHighScore()
 void RunGame()
 {
     InitWindow(screenWidth, screenHeight, "2D Space Game");
-    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
     InitAudioDevice();
     Vector2 playerVelocity = {0.0f, 0.0f};
     char *obj = const_cast<char *>("media/spacecraft23.png");
@@ -407,7 +239,6 @@ void RunGame()
     char *bg = const_cast<char *>("media/space2.png");
     Player player(obj, music, bg);
     srand(time(NULL));
-    std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
     PlaySound(player.get_bgMusic());
     SetSoundVolume(player.get_bgMusic(), 0.6f);
@@ -487,8 +318,6 @@ void RunGame()
                 DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
             
             // Update and draw health bar or enemy counterr
-            healthBar.currentHealth = enemies.size() * 20;
-            DrawHealthBar(healthBar);
             EndDrawing();
         }
     }
@@ -565,11 +394,6 @@ void ShowMainMenu()
         // Draw about button
         DrawRectangleRec(aboutButton, RED);
         DrawText("About", (int)aboutButton.x + 25, (int)aboutButton.y + 15, 20, WHITE);
-        //YE text ab print nhi krwana hai kyoke mene bg image me hi krdia hai
-        // Draw game name
-        // DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
-        // DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
-
         // Check if the mouse is hovering over the play button
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
         {
