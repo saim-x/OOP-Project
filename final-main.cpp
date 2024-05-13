@@ -283,6 +283,7 @@ void RunGame()
     char *music = const_cast<char *>("resources/bgmusicwav.wav");
     char *bg = const_cast<char *>("media/space2.png");
     Player player(obj, music, bg);
+    std::vector <SpaceObjects> spobj;
     srand(time(NULL));
     bool restartRequested = false; // Flag to track if restart has been requested.
     PlaySound(player.get_bgMusic());
