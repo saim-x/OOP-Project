@@ -35,8 +35,9 @@ private:
 
 public:
     // Constructors
-    SpaceObjects(const Texture2D image) : image_(image)
+    SpaceObjects()
     {
+        image_ = LoadTexture("media/icon8-star-16.png");
         numofobjects++;
         // Seed the random number generator
         srand(static_cast<unsigned int>(time(nullptr)));
@@ -58,9 +59,9 @@ public:
     // Getters
     Texture2D get_image() const { return image_; }
     Vector2 get_position() const { return position_; }
+    static int get_numofobjects() { return numofobjects; }
 };
-
-int SpaceObjects::numofobjects=0;
+int SpaceObjects::numofobjects = 0;
 
 class Game
 {
