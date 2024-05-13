@@ -31,11 +31,13 @@ private:
     // Attributes
     Texture2D image_;
     Vector2 position_;
+    static int numofobjects;
 
 public:
     // Constructors
     SpaceObjects(const Texture2D image) : image_(image)
     {
+        numofobjects++;
         // Seed the random number generator
         srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -57,6 +59,8 @@ public:
     Texture2D get_image() const { return image_; }
     Vector2 get_position() const { return position_; }
 };
+
+int SpaceObjects::numofobjects=0;
 
 class Game
 {
