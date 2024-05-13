@@ -160,11 +160,20 @@ public:
     {
         return Vector2{player.x, player.y};
     }
+    // Getter functions for dValues class
+    float get_maxSpeed(dValues d) { return d.maxSpeed; }
+    float get_acceleration(dValues d) { return d.acceleration; }
+    float get_deceleration(dValues d) { return d.deceleration; }
+    Sound get_bgMusic(dValues d) const { return d.bgMusic; }
+    Sound get_sfx4(dValues d) const { return d.sfx4; }
+    Sound get_sfx5(dValues d) const { return d.sfx5; }
+    Sound get_sfx6(dValues d) const { return d.sfx6; }
+    Sound get_sfx7(dValues d) const { return d.sfx7; }
+    Sound get_gameover(dValues d) const { return d.gameover; }
+    Sound get_killSound(dValues d) const { return d.killSound; }
 };
 class dValues
 {
-public:
-    dValues() {}
     // Attributes
     const float maxSpeed = 26.0f;    // Adjusted maximum speed
     const float acceleration = 3.0f; // Adjusted acceleration
@@ -176,6 +185,9 @@ public:
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
     Sound gameover = LoadSound("resources/GameOver.wav");
     Sound killSound = LoadSound("resources/killSound.wav");
+public:
+    dValues() {}
+    friend class Player;
 };
 
 void SaveToFile(float score)
@@ -283,53 +295,53 @@ void RunGame()
             float targetSpeedY = 0.0f;
             if (IsKeyDown(KEY_RIGHT) && player.get_x() < boundaryRight)
             {
-                targetSpeedX += d.acceleration;
+                targetSpeedX += player.get_acceleration(d);
             }
             else if (IsKeyDown(KEY_LEFT) && player.get_x() > boundaryLeft)
             {
-                targetSpeedX -= d.acceleration;
+                targetSpeedX -= player.get_acceleration(d);
             }
             if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
             {
-                targetSpeedY += d.acceleration;
+                targetSpeedY += player.get_acceleration(d);
             }
             else if (IsKeyDown(KEY_UP) && player.get_y() > boundaryTop)
             {
-                targetSpeedY -= d.acceleration;
+                targetSpeedY -= player.get_acceleration(d);
             }
             if (IsKeyDown(KEY_F))
             {
                 // Toggle BOOSTERS
                 // boostersActivated = true;
-                PlaySound(d.sfx5);
+                PlaySound(player.get_sfx5(d));
                 targetSpeedX *= 25.0f;
                 targetSpeedY *= 25.0f;
-                SetSoundVolume(d.sfx5, 3.9f);
+                SetSoundVolume(player.get_sfx5(d), 3.9f);
             }
             // Smoothly accelerate/decelerate towards target speed
             if (targetSpeedX > playerVelocity.x)
             {
-                playerVelocity.x = fminf(playerVelocity.x + d.acceleration, d.maxSpeed);
+                playerVelocity.x = fminf(playerVelocity.x + player.get_acceleration(d), player.get_maxSpeed(d));
             }
             else if (targetSpeedX < playerVelocity.x)
             {
-                playerVelocity.x = fmaxf(playerVelocity.x - d.acceleration, -d.maxSpeed);
+                playerVelocity.x = fmaxf(playerVelocity.x - player.get_acceleration(d), -player.get_maxSpeed(d));
             }
             else
             {
-                playerVelocity.x *= d.deceleration;
+                playerVelocity.x *= player.get_deceleration(d);
             }
             if (targetSpeedY > playerVelocity.y)
             {
-                playerVelocity.y = fminf(playerVelocity.y + d.acceleration, d.maxSpeed);
+                playerVelocity.y = fminf(playerVelocity.y + player.get_acceleration(d), player.get_maxSpeed(d));
             }
             else if (targetSpeedY < playerVelocity.y)
             {
-                playerVelocity.y = fmaxf(playerVelocity.y - d.acceleration, -d.maxSpeed);
+                playerVelocity.y = fmaxf(playerVelocity.y - player.get_acceleration(d), -player.get_maxSpeed(d));
             }
             else
             {
-                playerVelocity.y *= d.deceleration;
+                playerVelocity.y *= player.get_deceleration(d);
             }
 
             // Update player position based on velocityy
