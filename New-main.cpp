@@ -7,6 +7,7 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
 int maxHealth = 100; // Maximum health of the player
@@ -16,11 +17,12 @@ const float boundaryLeft = -815.0f;
 const float boundaryRight = 1715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 664.0f;
+
 class Game
 {
 protected:
     bool gameover;
-    Camera2D camera = {0};
+    Camera2D camera;
     const char *background;
     Texture2D backgroundtexture;
     Rectangle player;
@@ -33,7 +35,7 @@ protected:
     float gameTime_;
 
 public:
-    Game(const char *texture, const char *music, const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
+    Game(const char *texture, const char *music, const char *background) : texture(texture), music(music), background(background), gameTime_(0.0), camera({0})
     { // for player
         speed = 3.0f;
         gameover = false;
@@ -406,7 +408,9 @@ void RunGame()
     HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
     InitAudioDevice();
     Vector2 playerVelocity = {0.0f, 0.0f};
-    char *obj = "media/spacecraft23.png", *music = "resources/bgmusicwav.wav", *bg = "media/space2.png";
+    char *obj = const_cast<char *>("media/spacecraft23.png");
+    char *music = const_cast<char *>("resources/bgmusicwav.wav");
+    char *bg = const_cast<char *>("media/space2.png");
     Player player(obj, music, bg);
     srand(time(NULL));
     std::vector<Enemy> enemies;
@@ -607,7 +611,8 @@ void ShowAboutDevInfo()
 void ShowMainMenu()
 {
     const int screenWidth = 1600;
-    const int screenHeight = 850;
+    const int screenHeight = 900;
+
     InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
     // Load the background image
     Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
@@ -625,17 +630,14 @@ void ShowMainMenu()
         DrawTexturePro(backgroundImage, Rectangle({0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}), bgRec, Vector2({0, 0}), 0.0f, WHITE);
         // Draw play button
         DrawRectangleRec(playButton, BLUE);
-        DrawText("Play", (int)playButton.x + 30, (int)playButton.y + 15, 20, WHITE);
+        DrawText("Play", (int)playButton.x + 100, (int)playButton.y + 15, 20, WHITE);
         // Draw high score button
         DrawRectangleRec(highScoreButton, GREEN);
         DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
         // Draw about button
         DrawRectangleRec(aboutButton, RED);
         DrawText("About", (int)aboutButton.x + 25, (int)aboutButton.y + 15, 20, WHITE);
-        // Draw game name
-        // DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
-        // DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
-        // Check if the mouse is hovering over the play button
+
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
         {
             DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
