@@ -48,6 +48,10 @@ public:
     // Setters
     void set_image(const Texture2D image) { this->image_ = image; }
     void set_position(const Vector2 position) { this->position_ = position; }
+
+    // Getters
+    Texture2D get_image() const { return image_; }
+    Vector2 get_position() const { return position_; }
 };
 
 int main()
