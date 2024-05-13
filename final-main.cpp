@@ -210,8 +210,8 @@ public:
     // Set player position to (0, 0) if player goes out of bounds.
     void restartPosition()
     {
-        player.x = 0.0;
-        player.y = 0.0;
+        player.x = screenWidth / 2.0f;
+        player.y = screenHeight / 2.0f;
     }
 };
 
@@ -373,9 +373,10 @@ void RunGame()
 
             // Update player position based on velocityy
             player.setpos(playerVelocity.x, playerVelocity.y);
+            /*------------------------------------------------- Exception Handling -------------------------------------------------*/
             try
             {
-                if ((player.get_x() < boundaryLeft || player.get_x() > boundaryRight) || (player.get_y() < boundaryTop || player.get_y() > boundaryBottom))
+                if ((player.get_x() < boundaryLeft || player.get_x() > boundaryRight) || (player.get_y() < boundaryTop || player.get_y() > (boundaryBottom + 100)))
                 {
                     throw "Out of bounds";
                 }
@@ -385,6 +386,7 @@ void RunGame()
                 std::cout << error << std::endl;
                 player.restartPosition();
             }
+            /*----------------------------------------------------------------------------------------------------------------------*/
             // Update enemy positions
             BeginDrawing();
             ClearBackground(RAYWHITE);
