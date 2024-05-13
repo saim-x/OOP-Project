@@ -45,6 +45,17 @@ public:
 
         position_ = {position_X, position_Y};
     }
+
+    // Destructor
+    ~SpaceObjects() { UnloadTexture(image_); }
+
+    // Setters
+    void set_image(const Texture2D image) { this->image_ = image; }
+    void set_position(const Vector2 position) { this->position_ = position; }
+
+    // Getters
+    Texture2D get_image() const { return image_; }
+    Vector2 get_position() const { return position_; }
 };
 
 class Game
@@ -185,6 +196,7 @@ class dValues
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
     Sound gameover = LoadSound("resources/GameOver.wav");
     Sound killSound = LoadSound("resources/killSound.wav");
+
 public:
     dValues() {}
     friend class Player;
