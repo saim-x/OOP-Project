@@ -7,6 +7,7 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <array> //To create standard array of Space Objects.
 
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
@@ -53,7 +54,6 @@ public:
     ~SpaceObjects() { UnloadTexture(image_); }
 
     // Setters
-    void draw(){DrawTextureEx(image_, position_, 0.0f, 1.0f, WHITE);}
     void set_image(const Texture2D image) { this->image_ = image; }
     void set_position(const Vector2 position) { this->position_ = position; }
 
@@ -61,6 +61,9 @@ public:
     Texture2D get_image() const { return image_; }
     Vector2 get_position() const { return position_; }
     static int get_numofobjects() { return numofobjects; }
+
+    // Methods
+    void draw() { DrawTextureEx(image_, position_, 0.0f, 1.0f, WHITE); }
 };
 int SpaceObjects::numofobjects = 0;
 
@@ -297,7 +300,7 @@ void RunGame()
     char *music = const_cast<char *>("resources/bgmusicwav.wav");
     char *bg = const_cast<char *>("media/space2.png");
     Player player(obj, music, bg);
-    std::vector <SpaceObjects> spobj;
+    std::array<SpaceObjects, 5> spobj;
     srand(time(NULL));
     bool restartRequested = false; // Flag to track if restart has been requested.
     PlaySound(player.get_bgMusic());
@@ -369,7 +372,8 @@ void RunGame()
             BeginDrawing();
             ClearBackground(RAYWHITE);
             player.draw();
-            for(int i=0;i<spobj.size();i++){
+            for (int i = 0; i < spobj.size(); i++)
+            {
                 spobj[i].draw();
             }
             EndMode2D();
