@@ -89,7 +89,6 @@ public:
         score = 0;
         lastFireTime_ = 0.0;
     }
-    Player() {}
     void setpos(float x, float y)
     {
         // We can try operator overloading here.
@@ -97,12 +96,6 @@ public:
         scoreinc(2 * GetFrameTime());
         player.x += x;
         player.y += y;
-    }
-    Player operator+(Vector2 pos)
-    {
-        Player p;
-        p.player.x = player.x + pos.x;
-        p.player.y = player.y + pos.y;
     }
     void Gameover()
     {
@@ -510,8 +503,8 @@ void RunGame()
                 playerVelocity.y *= d.deceleration;
             }
 
-            // Update player position based on velocityy
-            player += Vector2(playerVelocity.x, playerVelocity.y);
+            // // Update player position based on velocity
+            // player += Vector2(playerVelocity.x, playerVelocity.y);
 
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
