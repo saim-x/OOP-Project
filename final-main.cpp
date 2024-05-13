@@ -140,6 +140,14 @@ protected:
     dValues d;
 
 public:
+    // Operator overloading for addition with Vector2
+    void operator+=(const Vector2 &pos)
+    {
+        player.x += pos.x;
+        player.y += pos.y;
+        gameTime_ += GetFrameTime();
+        scoreinc(2 * GetFrameTime());
+    }
     Player(const char *texture, const char *music, const char *background) : Game(texture, music, background)
     {
         score = 0;
@@ -372,7 +380,12 @@ void RunGame()
             }
 
             // Update player position based on velocityy
-            player.setpos(playerVelocity.x, playerVelocity.y);
+            // player.setpos(playerVelocity.x, playerVelocity.y);
+            /*----------------------------------- Operator Overloading -----------------------------------*/
+            Vector2 newPosition = {playerVelocity.x, playerVelocity.y};
+            player += newPosition;
+            /*--------------------------------------------------------------------------------------------*/
+
             /*------------------------------------------------- Exception Handling -------------------------------------------------*/
             try
             {
