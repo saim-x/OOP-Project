@@ -371,7 +371,11 @@ void RunGame()
             BeginDrawing();
             ClearBackground(RAYWHITE);
             player.draw();
+<<<<<<< HEAD
             for (int i = 0; i < 30; i++)
+=======
+            for (int i = 0; i < 5; i++)
+>>>>>>> f465043f443f91c567f222eafffd38e3c6354d60
             {
                 spobj[i].draw();
             }
