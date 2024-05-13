@@ -53,6 +53,7 @@ public:
     ~SpaceObjects() { UnloadTexture(image_); }
 
     // Setters
+    void draw(){DrawTextureEx(image_, position_, 0.0f, 1.0f, WHITE);}
     void set_image(const Texture2D image) { this->image_ = image; }
     void set_position(const Vector2 position) { this->position_ = position; }
 
@@ -368,6 +369,9 @@ void RunGame()
             BeginDrawing();
             ClearBackground(RAYWHITE);
             player.draw();
+            for(int i=0;i<spobj.size();i++){
+                spobj[i].draw();
+            }
             EndMode2D();
             DrawText("Space Shooter", 10, 10, 20, RED);
             DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
