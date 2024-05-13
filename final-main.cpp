@@ -35,8 +35,9 @@ private:
 
 public:
     // Constructors
-    SpaceObjects(const Texture2D image) : image_(image)
+    SpaceObjects()
     {
+        image_ = LoadTexture("media/icon8-star-16.png");
         numofobjects++;
         // Seed the random number generator
         srand(static_cast<unsigned int>(time(nullptr)));
@@ -47,9 +48,20 @@ public:
 
         position_ = {position_X, position_Y};
     }
-};
 
-int SpaceObjects::numofobjects=0;
+    // Destructor
+    ~SpaceObjects() { UnloadTexture(image_); }
+
+    // Setters
+    void set_image(const Texture2D image) { this->image_ = image; }
+    void set_position(const Vector2 position) { this->position_ = position; }
+
+    // Getters
+    Texture2D get_image() const { return image_; }
+    Vector2 get_position() const { return position_; }
+    static int get_numofobjects() { return numofobjects; }
+};
+int SpaceObjects::numofobjects = 0;
 
 class Game
 {
@@ -189,6 +201,7 @@ class dValues
     Sound sfx7 = LoadSound("resources/randomsfx2.wav");
     Sound gameover = LoadSound("resources/GameOver.wav");
     Sound killSound = LoadSound("resources/killSound.wav");
+
 public:
     dValues() {}
     friend class Player;
