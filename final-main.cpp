@@ -53,12 +53,6 @@ public:
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
     }
-    Game(float x, float y, const char *texture) : texture(texture)
-    { // for enemy
-        textureobject = LoadTexture(texture);
-        player.height = textureobject.height;
-        player.width = textureobject.width;
-    }
     ~Game()
     {
         UnloadTexture(textureobject);
