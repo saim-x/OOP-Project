@@ -8,7 +8,6 @@
 #include <string>
 #include <algorithm>
 
-class Bullet;
 // Global Variables
 int flag = 0;        // flag to check if boss enemy is spawned or not
 int maxHealth = 100; // Maximum health of the player
@@ -17,28 +16,28 @@ const int screenWidth = 1600;
 const int screenHeight = 850;
 
 const float boundaryLeft = -815.0f;
-const float boundaryRight = 715.0f;
+const float boundaryRight = 1715.0f;
 const float boundaryTop = -429.0f;
-const float boundaryBottom = 332.0f;
+const float boundaryBottom = 664.0f;
 
 class Game
 {
 protected:
     bool gameover;
     Camera2D camera = {0};
-    char *background;
+    const char *background;
     Texture2D backgroundtexture;
     Rectangle player;
-    char *texture;
+    const char *texture;
     Texture2D textureobject;
     Vector2 playervelocity;
     float speed;
-    char *music;
+    const char *music;
     Sound bgMusic;
     float gameTime_;
 
 public:
-    Game(char *texture, char *music, char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
+    Game(const char *texture, const char *music, const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
     { // for player
         speed = 3.0f;
         gameover = false;
@@ -46,20 +45,17 @@ public:
         camera.rotation = 0.0f;
         camera.zoom = 1.0f;
         backgroundtexture = LoadTexture(background);
-        playervelocity.x = 0.0f;
-        playervelocity.y = 0.0f;
-        player.x = 0;
-        player.y = 0;
+        playervelocity.x = 0;
+        playervelocity.y = 0;
+        player.x = screenWidth / 2;
+        player.y = screenHeight / 2;
         player.width = 40;
         player.height = 40;
         textureobject = LoadTexture(texture);
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
-        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
-        Vector2 playingPosition_ = {player.x, player.y};
-        DrawTextureEx(textureobject, playingPosition_, 0.0f, 1.0f, WHITE);
     }
-    Game(float x, float y, char *texture) : texture(texture)
+    Game(float x, float y, const char *texture) : texture(texture)
     { // for enemy
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
@@ -68,8 +64,8 @@ public:
     ~Game()
     {
         UnloadTexture(textureobject);
-        UnloadSound(bgMusic);
     }
+    void setgameover(bool val) { gameover = val; }
     virtual void setpos(float x, float y) = 0;
     virtual void draw() {}
     float getx() { return player.x; }
@@ -85,18 +81,15 @@ class Player : public Game
 {
 protected:
     float score;
-
-    // For Bullets
     double lastFireTime_;
-    Bullet bullet;
 
 public:
-    friend class Bullet;
-    Player(char *texture, char *music, char *background) : Game(texture, music, background), bullet(Vector2{0, 0}, 0.6)
+    Player(const char *texture, const char *music, const char *background) : Game(texture, music, background)
     {
         score = 0;
         lastFireTime_ = 0.0;
     }
+    Player() {}
     void setpos(float x, float y)
     {
         // We can try operator overloading here.
@@ -104,6 +97,12 @@ public:
         scoreinc(2 * GetFrameTime());
         player.x += x;
         player.y += y;
+    }
+    Player operator+(Vector2 pos)
+    {
+        Player p;
+        p.player.x = player.x + pos.x;
+        p.player.y = player.y + pos.y;
     }
     void Gameover()
     {
@@ -113,9 +112,13 @@ public:
     }
     void draw()
     {
-        BeginMode2D(camera);
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
+    }
+    ~Player()
+    {
+        UnloadTexture(backgroundtexture);
+        UnloadSound(bgMusic);
     }
 
     template <typename T>
@@ -137,8 +140,10 @@ public:
     float get_width() const { return player.width; }
     // Return Height of Player
     float get_height() const { return player.height; }
-
-    Rectangle getbulletrect() { return bullet.getbullet(); }
+    Vector2 getpos()
+    {
+        return Vector2{player.x, player.y};
+    }
 };
 
 class Enemy : public Game
@@ -158,7 +163,7 @@ public:
             speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
         if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
         {
-            // Calculate the new enemy position 50 units away from the player
+            // Calculate the new enemy position 50 units away from the playerr
             float newX = player.x;
             float newY = player.y;
 
@@ -220,92 +225,6 @@ public:
     float get_textureHeight() const { return textureobject.height; }
 };
 
-class Bullet
-{
-private:
-    Rectangle bullet;
-    // Attributes
-    Vector2 position_;
-    float speed_;
-    Texture2D bullettexture;
-    bool moving;
-    char key;
-
-public:
-    // Attribute
-    bool active_; // Variable to check if bullet is still within the game window.
-
-    //  Constructors
-    Bullet() {}
-    Bullet(const Vector2 position, const float speed) : position_(position), speed_(speed), active_(true)
-    {
-        bullettexture = LoadTexture("media/bulletbySufyan2");
-        moving = false;
-    }
-
-    // Methods
-    // Function to update the bullet's position.
-    void Update(Player pobj)
-    {
-        if (IsKeyPressed(KEY_W))
-        {
-            moving = true;
-            key = 'W';
-        }
-        else if (IsKeyPressed(KEY_A))
-        {
-            moving = true;
-            key = 'A';
-        }
-        else if (IsKeyPressed(KEY_D))
-        {
-            moving = true;
-            key = 'D';
-        }
-        else if (IsKeyPressed(KEY_S))
-        {
-            moving = true;
-            key = 'S';
-        }
-        if (active_)
-        {
-            if (moving)
-            {
-                if (key == 'W')
-                {
-                    position_.y -= speed_;
-                }
-                else if (key == 'A')
-                {
-                    position_.x -= speed_;
-                }
-                else if (key == 'D')
-                {
-                    position_.x += speed_;
-                }
-                else if (key == 'S')
-                {
-                    position_.y += speed_;
-                }
-            }
-            if (position_.y > 332.0f || position_.y < -429.0f || position_.x < -815.0f || position_.x > 715.0f)
-            {
-                active_ = false;
-                moving = false;
-            }
-            DrawTextureEx(bullettexture, position_, 0.0f, 1.0f, WHITE);
-        }
-        else
-        {
-            position_.x = pobj.player.x;
-            position_.y = pobj.player.y;
-            moving = false;
-        }
-    }
-    // Function to draw the bullet.
-    Rectangle getbullet() { return bullet; }
-};
-
 class dValues
 {
 public:
@@ -354,19 +273,6 @@ HealthBar CreateHealthBar(float x, float y, float width, float height, Color out
 }
 void DrawHealthBar(HealthBar bar)
 {
-    /*-----------------------------------------Basic Health Bar-----------------------------------------*/
-    // SIMPLE DRAWING OF HEALTH BAR
-    //  // Draw outer rectangle
-    //  DrawRectangleRec(bar.outerRect, bar.outerColor);
-
-    // // Calculate inner rectangle width based on current health
-    // float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
-    // bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
-
-    // // Draw inner rectangle
-    // DrawRectangleRec(bar.innerRect, bar.innerColor);
-    /*---------------------------------------------------------------------------------------------*/
-
     DrawRectangleRounded(bar.outerRect, 0.5, 1, bar.outerColor);
 
     // Calculate inner rectangle width based on current health
@@ -396,7 +302,7 @@ Enemy InitEnemy(Player p)
         // BOSS ENEMY WILL SPAWN ONLY ONCE :D
         texture = const_cast<char *>("media/enemy3.1.png");
         PlaySound(sfx1);
-        boss == true; // Set boss enemy speed to 3.0 which is max an enemy can have
+        boss = true; // Set boss enemy speed to 3.0 which is max an enemy can have
     }
     // Randomly choose between enemy1 and enemy2 textures
     else if (GetRandomValue(0, 1) == 0)
@@ -414,7 +320,7 @@ Enemy InitEnemy(Player p)
     Enemy enemy(p.getx(), p.gety(), texture, boss);
     return enemy;
 }
-void SaveToFile(float score)
+static void SaveToFile(float score)
 {
     std::ofstream outputFile("scores.txt", std::ios::app); // Open the file in append mode
 
@@ -529,8 +435,8 @@ void RunGame()
     HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
     InitAudioDevice();
     Vector2 playerVelocity = {0.0f, 0.0f};
-    Player player("media/space23.png", "resources/bgmusicwav.wav", "media/space2.png");
-
+    char *obj = "media/spacecraft23.png", *music = "resources/bgmusicwav.wav", *bg = "media/space2.png";
+    Player player(obj, music, bg);
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
@@ -542,7 +448,7 @@ void RunGame()
 
     while (!WindowShouldClose())
     {
-        if (!player.get_gameover()) // Only update the game if it's not over
+        if (!player.get_gameover()) // Only update the game if it's not overr
         {
             player.scoreinc(2 * GetFrameTime());
             // Update player movement
@@ -557,7 +463,6 @@ void RunGame()
             {
                 targetSpeedX -= d.acceleration;
             }
-
             if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
             {
                 targetSpeedY += d.acceleration;
@@ -606,7 +511,7 @@ void RunGame()
             }
 
             // Update player position based on velocityy
-            player.setpos(playerVelocity.x, playerVelocity.y);
+            player += Vector2(playerVelocity.x, playerVelocity.y);
 
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
@@ -635,26 +540,79 @@ void RunGame()
                 // }
 
                 enemies[i].setpos(direction.x, direction.y);
-
-                // Check for collision with player
-                //   Rectangle playerRect = {player.get_x() + 40, player.get_y() + 30, player.width - 35, player.height + 30};
-                //   Rectangle enemyRect = {enemies[i].position.x, enemies[i].position.y + 20, static_cast<float>(enemies[i].texture.width) - 25, static_cast<float>(enemies[i].texture.height) - 10};
                 if (CheckCollisionRecs(player.getrect(), enemies[i].getrect()))
                 {
                     PlaySound(d.gameover);
-
                     player.Gameover(); // Game over if collision detected
+<<<<<<< HEAD
+                    == == == =
+                                 PlaySound(d.gameover);
+                    std::cout << "File Saved" << std::endl;
+>>>>>>> 75a0c93d56a4001020f7b7c0e881b80972c917de
                     SaveToFile(player.getscore());
+                    PlaySound(d.gameover);
                     break;
                 }
-                if (CheckCollisionRecs(player.getbulletrect(), enemies[i].getrect()))
-                {
-                    PlaySound(d.killSound);
-                    enemies[i].setstatus();
-                    enemies.erase(enemies.begin() + i);
-                    player.scoreinc(10);
-                }
             }
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+            player.draw();
+            for (int i = 0; i < enemies.size(); i++)
+            {
+                enemies[i].draw();
+            }
+            EndMode2D();
+
+            DrawText("Space Shooter", 10, 10, 20, RED);
+            if (player.GetGameover())
+            {
+                StopSound(player.get_bgMusic());
+                DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
+                DrawText(TextFormat("Your Score: %.2f", player.getscore()), screenWidth / 2 - MeasureText("Your Score: xxxxxx", 20) / 2, (screenHeight / 2) + 55, 26, WHITE);
+                DrawText(TextFormat("Time: %.2f seconds", player.get_gameTime()), screenWidth / 2 - MeasureText(TextFormat("Time: %.2f seconds", player.get_gameTime()), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
+                DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 40, 20, WHITE);
+                DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart xxx", 20) / 2, (screenHeight / 2) + 120, 26, WHITE);
+            }
+            else
+            {
+                DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
+                // Draw legend
+                DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
+                DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
+                DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
+            }
+
+            // Update and draw health bar or enemy counterr
+            healthBar.currentHealth = enemies.size() * 20;
+            DrawHealthBar(healthBar);
+            EndDrawing();
+        }
+        if (player.get_gameover())
+        {
+            if (IsKeyDown(KEY_SPACE))
+            {
+                // Reset game variables for restart
+                flag = 0;
+                playerVelocity = {0.0f, 0.0f};
+                enemies.clear();
+                restartRequested = true;
+                player.setgameover(true);        // Reset game time
+                PlaySound(player.get_bgMusic()); // Play background music again
+                player.scoreinc(-player.getscore());
+                Sound sfx3 = LoadSound("resources/gamerestart.mp3");
+                PlaySound(sfx3);
+                healthBar.currentHealth = 0;
+            }
+        }
+        if (restartRequested && !IsKeyDown(KEY_SPACE))
+        {
+            restartRequested = false;
+        }
+
+        if (player.get_gameover() && IsKeyDown(KEY_ESCAPE))
+        {
+            restartRequested = true; // Exit game loop if game over and ESC key pressed
+            continue;
         }
     }
 
@@ -706,7 +664,7 @@ void ShowAboutDevInfo()
 void ShowMainMenu()
 {
     const int screenWidth = 1600;
-    const int screenHeight = 900;
+    const int screenHeight = 850;
 
     InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
 
@@ -744,8 +702,8 @@ void ShowMainMenu()
         DrawText("About", (int)aboutButton.x + 25, (int)aboutButton.y + 15, 20, WHITE);
 
         // Draw game name
-        DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
-        DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
+        // DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
+        // DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
 
         // Check if the mouse is hovering over the play button
         if (CheckCollisionPointRec(GetMousePosition(), playButton))
