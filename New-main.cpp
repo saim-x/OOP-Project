@@ -19,15 +19,10 @@ const float boundaryLeft = -815.0f;
 const float boundaryRight = 1715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 664.0f;
-<<<<<<< HEAD
-=======
-
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
 
 class Game
 {
 protected:
-<<<<<<< HEAD
     bool gameover;
     Camera2D camera = {0};
     const char *background;
@@ -43,23 +38,6 @@ protected:
 
 public:
     Game(const char *texture, const char *music, const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
-=======
-    bool      gameover;
-    Camera2D  camera = {0};
-    const     char *background;
-    Texture2D backgroundtexture;
-    Rectangle player;
-    const     char *texture;
-    Texture2D textureobject;
-    Vector2   playervelocity;
-    float     speed;
-    const     char *music;
-    Sound     bgMusic;
-    float     gameTime_;
-
-public:
-    Game(const char *texture,const char *music,const char *background) : texture(texture), music(music), background(background), gameTime_(0.0)
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     { // for player
         speed = 3.0f;
         gameover = false;
@@ -69,24 +47,15 @@ public:
         backgroundtexture = LoadTexture(background);
         playervelocity.x = 0;
         playervelocity.y = 0;
-<<<<<<< HEAD
         player.x = screenWidth / 2;
         player.y = screenHeight / 2;
-=======
-        player.x = screenWidth/2;
-        player.y = screenHeight/2;
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
         player.width = 40;
         player.height = 40;
         textureobject = LoadTexture(texture);
         bgMusic = LoadSound(music);
         BeginMode2D(camera);
     }
-<<<<<<< HEAD
     Game(float x, float y, const char *texture) : texture(texture)
-=======
-    Game(float x, float y,const char *texture) : texture(texture)
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     { // for enemy
         textureobject = LoadTexture(texture);
         player.height = textureobject.height;
@@ -96,11 +65,7 @@ public:
     {
         UnloadTexture(textureobject);
     }
-<<<<<<< HEAD
     void setgameover(bool val) { gameover = val; }
-=======
-    void setgameover(bool val){gameover=val;}
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     virtual void setpos(float x, float y) = 0;
     virtual void draw() {}
     float getx() { return player.x; }
@@ -119,20 +84,12 @@ protected:
     double lastFireTime_;
 
 public:
-<<<<<<< HEAD
     Player(const char *texture, const char *music, const char *background) : Game(texture, music, background)
-=======
-    Player(const char *texture,const char *music,const char *background) : Game(texture, music, background)
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     {
         score = 0;
         lastFireTime_ = 0.0;
     }
-<<<<<<< HEAD
     Player() {}
-=======
-    Player(){}
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     void setpos(float x, float y)
     {
         // We can try operator overloading here.
@@ -141,18 +98,11 @@ public:
         player.x += x;
         player.y += y;
     }
-<<<<<<< HEAD
     Player operator+(Vector2 pos)
     {
         Player p;
         p.player.x = player.x + pos.x;
         p.player.y = player.y + pos.y;
-=======
-    Player operator+(Vector2 pos){
-        Player p;
-        p.player.x=player.x+pos.x;
-        p.player.y=player.y+pos.y;
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     }
     void Gameover()
     {
@@ -165,12 +115,8 @@ public:
         DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
         DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
     }
-<<<<<<< HEAD
     ~Player()
     {
-=======
-    ~Player(){
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
         UnloadTexture(backgroundtexture);
         UnloadSound(bgMusic);
     }
@@ -194,14 +140,9 @@ public:
     float get_width() const { return player.width; }
     // Return Height of Player
     float get_height() const { return player.height; }
-<<<<<<< HEAD
     Vector2 getpos()
     {
         return Vector2{player.x, player.y};
-=======
-    Vector2 getpos(){
-        return Vector2{player.x,player.y};
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     }
 };
 
@@ -213,20 +154,11 @@ protected:
 public:
     Enemy(float x, float y, char *texture, bool boss) : Game(x, y, texture)
     {
-<<<<<<< HEAD
         alive = true;
         player.x = GetRandomValue(boundaryLeft, boundaryRight);
         player.y = GetRandomValue(boundaryTop, boundaryBottom);
         if (boss)
             speed = 3.0f;
-=======
-        //Calculate the new enemy position 50 units away from the playerr
-        float newX = player.x;
-        float newY = player.y;
-
-        if (player.x < x)
-            newX -= 50;
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
         else
             speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
         if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
@@ -503,13 +435,8 @@ void RunGame()
     HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
     InitAudioDevice();
     Vector2 playerVelocity = {0.0f, 0.0f};
-<<<<<<< HEAD
     char *obj = "media/spacecraft23.png", *music = "resources/bgmusicwav.wav", *bg = "media/space2.png";
     Player player(obj, music, bg);
-=======
-    char *obj="media/spacecraft23.png", *music="resources/bgmusicwav.wav", *bg="media/space2.png";
-    Player player(obj,music ,bg );
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
     srand(time(NULL));
     std::vector<Enemy> enemies;
     bool restartRequested = false; // Flag to track if restart has been requested.
@@ -584,11 +511,7 @@ void RunGame()
             }
 
             // Update player position based on velocityy
-<<<<<<< HEAD
             player += Vector2(playerVelocity.x, playerVelocity.y);
-=======
-            player+=Vector2(playerVelocity.x,playerVelocity.y);
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
 
             // Spawn enemies randomly and limit the number of enemies
             if (GetRandomValue(0, 100) < 1 && enemies.size() < 5) // Adjust spawn rate and max enemies as needed
@@ -621,16 +544,8 @@ void RunGame()
                 {
                     PlaySound(d.gameover);
                     player.Gameover(); // Game over if collision detected
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    == == == =
-                                 PlaySound(d.gameover);
-=======
-=======
                     PlaySound(d.gameover);
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
                     std::cout << "File Saved" << std::endl;
->>>>>>> 75a0c93d56a4001020f7b7c0e881b80972c917de
                     SaveToFile(player.getscore());
                     PlaySound(d.gameover);
                     break;
@@ -639,20 +554,13 @@ void RunGame()
             BeginDrawing();
             ClearBackground(RAYWHITE);
             player.draw();
-<<<<<<< HEAD
             for (int i = 0; i < enemies.size(); i++)
             {
                 enemies[i].draw();
-=======
-            for (int i=0;i<enemies.size();i++)
-            {
-            enemies[i].draw();
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
             }
             EndMode2D();
 
             DrawText("Space Shooter", 10, 10, 20, RED);
-<<<<<<< HEAD
             if (player.GetGameover())
             {
                 StopSound(player.get_bgMusic());
@@ -670,34 +578,11 @@ void RunGame()
                 DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
                 DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
             }
-=======
-        if (player.GetGameover())
-        {
-            StopSound(player.get_bgMusic());
-            DrawText("Game Over!", screenWidth / 2 - MeasureText("Game Over!", 40) / 2, screenHeight / 2 - 20, 40, RED);
-            DrawText(TextFormat("Your Score: %.2f", player.getscore()), screenWidth / 2 - MeasureText("Your Score: xxxxxx", 20) / 2, (screenHeight / 2) + 55, 26, WHITE);
-            DrawText(TextFormat("Time: %.2f seconds", player.get_gameTime()), screenWidth / 2 - MeasureText(TextFormat("Time: %.2f seconds", player.get_gameTime()), 20) / 2, (screenHeight / 2) + 80, 20, WHITE);
-            DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 40, 20, WHITE);
-            DrawText("Press SPACE to Restart", screenWidth / 2 - MeasureText("Press SPACE to Restart xxx", 20) / 2, (screenHeight / 2) + 120, 26, WHITE);
-        }
-        else
-        {
-            DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
-            // Draw legend
-            DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
-            DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
-            DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
-        }
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
 
             // Update and draw health bar or enemy counterr
             healthBar.currentHealth = enemies.size() * 20;
             DrawHealthBar(healthBar);
             EndDrawing();
-<<<<<<< HEAD
-=======
-
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
         }
         if (player.get_gameover())
         {
@@ -708,11 +593,7 @@ void RunGame()
                 playerVelocity = {0.0f, 0.0f};
                 enemies.clear();
                 restartRequested = true;
-<<<<<<< HEAD
                 player.setgameover(true);        // Reset game time
-=======
-                player.setgameover(true);// Reset game time
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
                 PlaySound(player.get_bgMusic()); // Play background music again
                 player.scoreinc(-player.getscore());
                 Sound sfx3 = LoadSound("resources/gamerestart.mp3");
@@ -727,11 +608,7 @@ void RunGame()
 
         if (player.get_gameover() && IsKeyDown(KEY_ESCAPE))
         {
-<<<<<<< HEAD
             restartRequested = true; // Exit game loop if game over and ESC key pressed
-=======
-            restartRequested=true; // Exit game loop if game over and ESC key pressed
->>>>>>> de72f3d14af883bb59d8fa7bd6172f9064535eb5
             continue;
         }
     }
