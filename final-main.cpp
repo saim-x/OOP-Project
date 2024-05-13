@@ -371,11 +371,7 @@ void RunGame()
             BeginDrawing();
             ClearBackground(RAYWHITE);
             player.draw();
-<<<<<<< HEAD
             for (int i = 0; i < 30; i++)
-=======
-            for (int i = 0; i < 5; i++)
->>>>>>> f465043f443f91c567f222eafffd38e3c6354d60
             {
                 spobj[i].draw();
             }
@@ -383,6 +379,7 @@ void RunGame()
             DrawText("Space Shooter", 10, 10, 20, RED);
             DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
             // Draw legend
+            DrawText(TextFormat("Number of Stars: %2d ", SpaceObjects::get_numofobjects()),screenWidth - MeasureText("Arrows: Move", 20) - 80, screenHeight - 120, 20, WHITE);
             DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
             DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
             DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
