@@ -43,9 +43,8 @@ public:
         // Seed the random number generator
 
         // Generate random x and y coordinates within the specified boundaries
-        position_.x = GetRandomValue(boundaryLeft,boundaryRight);
+        position_.x = GetRandomValue(boundaryLeft, boundaryRight);
         position_.y = GetRandomValue(boundaryTop, boundaryBottom);
-
     }
 
     // Destructor
@@ -61,7 +60,7 @@ public:
     static int get_numofobjects() { return numofobjects; }
 
     // Methods
-    void draw() { DrawTexture(image_, position_.x,position_.y, WHITE); }
+    void draw() { DrawTexture(image_, position_.x, position_.y, WHITE); }
 };
 int SpaceObjects::numofobjects = 0;
 
@@ -139,6 +138,7 @@ protected:
     float score;
     double lastFireTime_;
     dValues d;
+
 public:
     Player(const char *texture, const char *music, const char *background) : Game(texture, music, background)
     {
@@ -206,8 +206,14 @@ public:
     Sound get_sfx7() const { return d.sfx7; }
     Sound get_gameoversound() const { return d.gameover; }
     Sound get_killSound() const { return d.killSound; }
-};
 
+    // Set player position to (0, 0) if player goes out of bounds.
+    void restartPosition()
+    {
+        player.x = 0.0;
+        player.y = 0.0;
+    }
+};
 
 void SaveToFile(float score)
 {
@@ -305,7 +311,7 @@ void RunGame()
     SetSoundVolume(player.get_bgMusic(), 0.6f);
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     dValues d;        // Object to call the d values.
-    
+
     while (!WindowShouldClose())
     {
         if (!player.get_gameover()) // Only update the game if it's not over
@@ -367,6 +373,18 @@ void RunGame()
 
             // Update player position based on velocityy
             player.setpos(playerVelocity.x, playerVelocity.y);
+            try
+            {
+                if ((player.get_x() < boundaryLeft || player.get_x() > boundaryRight) || (player.get_y() < boundaryTop || player.get_y() > boundaryBottom))
+                {
+                    throw "Out of bounds";
+                }
+            }
+            catch (const char *error)
+            {
+                std::cout << error << std::endl;
+                player.restartPosition();
+            }
             // Update enemy positions
             BeginDrawing();
             ClearBackground(RAYWHITE);
@@ -379,7 +397,7 @@ void RunGame()
             DrawText("Space Shooter", 10, 10, 20, RED);
             DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
             // Draw legend
-            DrawText(TextFormat("Number of Stars: %2d ", SpaceObjects::get_numofobjects()),screenWidth - MeasureText("Arrows: Move", 20) - 80, screenHeight - 120, 20, WHITE);
+            DrawText(TextFormat("Number of Stars: %2d ", SpaceObjects::get_numofobjects()), screenWidth - MeasureText("Arrows: Move", 20) - 80, screenHeight - 120, 20, WHITE);
             DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
             DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
             DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
