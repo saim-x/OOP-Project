@@ -18,6 +18,35 @@ const float boundaryRight = 1715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 664.0f;
 
+// Global Functions
+//  Function to generate a random float within a given range
+float randomFloat(float min, float max)
+{
+    return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
+}
+
+class SpaceObjects
+{
+private:
+    // Attributes
+    Texture2D image_;
+    Vector2 position_;
+
+public:
+    // Constructors
+    SpaceObjects(const Texture2D image) : image_(image)
+    {
+        // Seed the random number generator
+        srand(static_cast<unsigned int>(time(nullptr)));
+
+        // Generate random x and y coordinates within the specified boundaries
+        float position_X = randomFloat(boundaryLeft, boundaryRight);
+        float position_Y = randomFloat(boundaryTop, boundaryBottom);
+
+        position_ = {position_X, position_Y};
+    }
+};
+
 class Game
 {
 protected:
@@ -311,12 +340,12 @@ void RunGame()
             player.draw();
             EndMode2D();
             DrawText("Space Shooter", 10, 10, 20, RED);
-                DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
-                // Draw legend
-                DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
-                DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
-                DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
-            
+            DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
+            // Draw legend
+            DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
+            DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
+            DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
+
             // Update and draw health bar or enemy counterr
             EndDrawing();
         }
