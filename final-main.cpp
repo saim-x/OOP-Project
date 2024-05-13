@@ -8,7 +8,9 @@
 #include <string>
 #include <algorithm>
 
-// Global Values
+// Global Variables
+int flag = 0;        // flag to check if boss enemy is spawned or not
+int maxHealth = 100; // Maximum health of the player
 const int screenWidth = 1600;
 const int screenHeight = 850;
 const float boundaryLeft = -815.0f;
@@ -16,32 +18,601 @@ const float boundaryRight = 1715.0f;
 const float boundaryTop = -429.0f;
 const float boundaryBottom = 664.0f;
 
-// Global Functions
-//  Function to generate a random float within a given range
-float randomFloat(float min, float max)
+class Game
 {
-    return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
-}
-
-class SpaceObjects
-{
-private:
-    // Attributes
-    Texture2D image_;
-    Vector2 position_;
+protected:
+    bool gameover;
+    Camera2D camera;
+    const char *background;
+    Texture2D backgroundtexture;
+    Rectangle player;
+    const char *texture;
+    Texture2D textureobject;
+    Vector2 playervelocity;
+    float speed;
+    const char *music;
+    Sound bgMusic;
+    float gameTime_;
 
 public:
-    // Constructors
-    SpaceObjects(const Texture2D image) : image_(image)
+    Game(const char *texture, const char *music, const char *background) : texture(texture), music(music), background(background), gameTime_(0.0), camera({0})
+    { // for player
+        speed = 3.0f;
+        gameover = false;
+        camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
+        camera.rotation = 0.0f;
+        camera.zoom = 1.0f;
+        backgroundtexture = LoadTexture(background);
+        playervelocity.x = 0;
+        playervelocity.y = 0;
+        player.x = screenWidth / 2;
+        player.y = screenHeight / 2;
+        player.width = 40;
+        player.height = 40;
+        textureobject = LoadTexture(texture);
+        bgMusic = LoadSound(music);
+        BeginMode2D(camera);
+    }
+    ~Game()
     {
-        // Seed the random number generator
-        srand(static_cast<unsigned int>(time(nullptr)));
-        // Generate random x and y coordinates within the specified boundaries
-        float position_X = randomFloat(boundaryLeft, boundaryRight);
-        float position_Y = randomFloat(boundaryTop, boundaryBottom);
-        position_ = {position_X, position_Y};
+        UnloadTexture(textureobject);
+    }
+    void setgameover(bool val) { gameover = val; }
+    virtual void setpos(float x, float y) = 0;
+    virtual void draw() {}
+    float getx() { return player.x; }
+    float gety() { return player.y; }
+    float getwidth() { return player.height; }
+    float getheight() { return player.width; }
+    bool GetGameover() { return gameover; }
+    Rectangle getrect() { return player; }
+    float get_gameTime() const { return gameTime_; }
+};
+class Player : public Game
+{
+protected:
+    float score;
+    double lastFireTime_;
+
+public:
+    Player(const char *texture, const char *music, const char *background) : Game(texture, music, background)
+    {
+        score = 0;
+        lastFireTime_ = 0.0;
+    }
+    void setpos(float x, float y)
+    {
+        // We can try operator overloading here.
+        gameTime_ += GetFrameTime();
+        scoreinc(2 * GetFrameTime());
+        player.x += x;
+        player.y += y;
+    }
+    // Player operator+(Vector2 pos){
+    //     Player p;
+    //     p.player.x=player.x+pos.x;
+    //     p.player.y=player.y+pos.y;
+    // }
+    void Gameover()
+    {
+        gameover = true;
+        player.x = 0;
+        player.y = 0;
+    }
+    void draw()
+    {
+        DrawTexture(backgroundtexture, -static_cast<float>(screenWidth) / 2 - camera.target.x, -static_cast<float>(screenHeight) / 2 - camera.target.y, WHITE);
+        DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
+    }
+    ~Player()
+    {
+        UnloadTexture(backgroundtexture);
+        UnloadSound(bgMusic);
+    }
+    template <typename T>
+    void scoreinc(T increase)
+    {
+        score += increase;
+    }
+    float getscore() { return score; }
+    // Return Music from Game Class
+    Sound get_bgMusic() const { return bgMusic; }
+    // Return GameOver from Game Class
+    bool get_gameover() const { return gameover; }
+    // Return x-coordinate of Player
+    float get_x() const { return player.x; }
+    // Return y-coordinate of Player
+    float get_y() const { return player.y; }
+    // Return Width of Player
+    float get_width() const { return player.width; }
+    // Return Height of Player
+    float get_height() const { return player.height; }
+    Vector2 getpos()
+    {
+        return Vector2{player.x, player.y};
+    }
+};
+class Enemy : public Game
+{
+protected:
+    bool alive;
+
+public:
+    Enemy(float x, float y, char *texture, bool boss) : Game(x, y, texture)
+    {
+        alive = true;
+        player.x = GetRandomValue(boundaryLeft, boundaryRight);
+        player.y = GetRandomValue(boundaryTop, boundaryBottom);
+        if (boss)
+            speed = 3.0f;
+        else
+            speed = GetRandomValue(15, 30) / 10.0f; // Set enemy speed randomly from 1.5 to 3.0
+        if (abs(player.x - x) <= 50 && abs(player.y - y) <= 50)
+        {
+            // Calculate the new enemy position 50 units away from the player
+            float newX = player.x;
+            float newY = player.y;
+            if (player.x < x)
+                newX -= 50;
+            else
+                newX += 50;
+            if (player.y < y)
+                newY -= 50;
+            else
+                newY += 50;
+            // Check if the new position is within the window boundaries
+            if (newX < boundaryRight)
+                newX = boundaryRight;
+            else if (newX > boundaryLeft)
+                newX = boundaryLeft;
+            if (newY < boundaryBottom)
+                newY = boundaryBottom;
+            else if (newY > boundaryTop)
+                newY = boundaryTop;
+            // Update the enemy position
+            player.x = newX;
+            player.y = newY;
+        }
+    }
+    void setpos(float x, float y)
+    {
+        player.x += x * speed;
+        player.y += y * speed;
+    }
+    void draw()
+    {
+        if (alive)
+        {
+            DrawTextureEx(textureobject, Vector2({player.x, player.y}), 0.0f, 1.0f, WHITE);
+        }
+        else
+        {
+            player.x = 2000.0f;
+            player.y = 2000.0f;
+        }
+    }
+    bool getstatus() { return alive; }
+    void setstatus() { alive = false; }
+    // Return x-coordinate of Enemy
+    float get_x() const { return player.x; }
+    // Return y-coordinate of Enemy
+    float get_y() const { return player.y; }
+    //  Return Speed of Enemy
+    float get_speed() const { return speed; }
+    // Return Texture width of Enemy
+    float get_textureWidth() const { return textureobject.width; }
+    // Return Texture height of Enemy
+    float get_textureHeight() const { return textureobject.height; }
+};
+class dValues
+{
+public:
+    dValues() {}
+    // Attributes
+    const float maxSpeed = 26.0f;    // Adjusted maximum speed
+    const float acceleration = 3.0f; // Adjusted acceleration
+    const float deceleration = 1.0f;
+    Sound bgMusic = LoadSound("resources/bgmusicwav.wav"); // SUFYAN WALA MUSIC
+    Sound sfx4 = LoadSound("resources/StopIt.wav");
+    Sound sfx5 = LoadSound("resources/woosh.wav");
+    Sound sfx6 = LoadSound("resources/randomsfx1.wav");
+    Sound sfx7 = LoadSound("resources/randomsfx2.wav");
+    Sound gameover = LoadSound("resources/GameOver.wav");
+    Sound killSound = LoadSound("resources/killSound.wav");
+};
+class HealthBar
+{
+private:
+public:
+    // Attributes
+    Rectangle outerRect;
+    Rectangle innerRect;
+    Color outerColor;
+    Color innerColor;
+    int currentHealth;
+    Texture2D heartTexture;
+};
+// Global Functions
+HealthBar CreateHealthBar(float x, float y, float width, float height, Color outerColor, Color innerColor, int startingHealth)
+{
+    HealthBar bar;
+    bar.outerRect = {x, y, width, height};
+    bar.innerRect = {x + 2, y + 2, width - 4, height - 4};
+    bar.outerColor = outerColor;
+    bar.innerColor = innerColor;
+    bar.currentHealth = startingHealth;
+    bar.heartTexture = LoadTexture("media/heart.png");
+    return bar;
+}
+void DrawHealthBar(HealthBar bar)
+{
+    /*-----------------------------------------Basic Health Bar-----------------------------------------*/
+    // SIMPLE DRAWING OF HEALTH BAR
+    //  // Draw outer rectangle
+    //  DrawRectangleRec(bar.outerRect, bar.outerColor);
+
+    // // Calculate inner rectangle width based on current health
+    // float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
+    // bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
+
+    // // Draw inner rectangle
+    // DrawRectangleRec(bar.innerRect, bar.innerColor);
+    /*---------------------------------------------------------------------------------------------*/
+
+    DrawRectangleRounded(bar.outerRect, 0.5, 1, bar.outerColor);
+
+    // Calculate inner rectangle width based on current health
+    float innerWidth = (bar.currentHealth / (float)maxHealth) * bar.innerRect.width;
+    bar.innerRect.width = (innerWidth < 0) ? 0 : innerWidth;
+    // Draw inner rectangle with rounded corners
+    DrawRectangleRounded(bar.innerRect, 0.2, 1, bar.innerColor);
+    // Draw heart texture at the center of the health bar
+    Vector2 heartPos = {bar.outerRect.x + (bar.outerRect.width - bar.heartTexture.width) / 2,
+                        bar.outerRect.y + (bar.outerRect.height - bar.heartTexture.height) / 2};
+    DrawTexture(bar.heartTexture, (int)heartPos.x, (int)heartPos.y, WHITE);
+}
+// Function to initialize an enemy character at a random position within the boundaries
+Enemy InitEnemy(Player p)
+{
+    // Load the boss enemy sfx
+    Sound sfx1 = LoadSound("resources/sfx1edited.wav");
+    Sound sfx2 = LoadSound("resources/poinkwav.wav");
+    char *texture;
+    // BOSS HAVE TO SPAWN ONCE LOGIC
+    bool boss;
+    if (flag == 0)
+    {
+        flag = 1;
+        // BOSS ENEMY WILL SPAWN ONLY ONCE :D
+        texture = const_cast<char *>("media/enemy3.1.png");
+        PlaySound(sfx1);
+        boss = true; // Set boss enemy speed to 3.0 which is max an enemy can have
+    }
+    // Randomly choose between enemy1 and enemy2 textures
+    else if (GetRandomValue(0, 1) == 0)
+    {
+        texture = const_cast<char *>("media/enemy1.png");
+        PlaySound(sfx2);
+        boss = false;
+    }
+    else
+    {
+        texture = const_cast<char *>("media/enemy3.png");
+        PlaySound(sfx2);
+        boss = false;
+    }
+    Enemy enemy(p.getx(), p.gety(), texture, boss);
+    return enemy;
+}
+void SaveToFile(float score)
+{
+    std::ofstream outputFile("scores.txt", std::ios::app); // Open the file in append mode
+    if (outputFile.is_open())
+    {
+        outputFile << score << std::endl; // Write the score to the file on a new line
+        outputFile.close();               // Close the file
+    }
+    else
+    {
+        std::cout << "Failed to open the file for writing." << std::endl;
+    }
+}
+void ShowHighScore()
+{
+    // Initialization
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
+    InitWindow(screenWidth, screenHeight, "2D Space Game");
+    Camera2D camera = {0};
+    camera.offset = Vector2({screenWidth / 2.0f, screenHeight / 2.0f});
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+    SetTargetFPS(60);                      // Set our game to run at 60 frames-per-second
+    std::ifstream inputFile("scores.txt"); // Open the file for reading
+    std::vector<int> topScores;            // Vector to store the top scores
+    std::string highScores;                // String to store all the high scores
+    int topScore = 0;                      // Variable to store the top score
+    InitAudioDevice();
+    Sound bgmusicforhighscorescreen = LoadSound("resources/highscore.wav");
+    PlaySound(bgmusicforhighscorescreen);
+    SetSoundVolume(bgmusicforhighscorescreen, 2.6f);
+    if (inputFile.is_open())
+    {
+        std::string score;
+        while (std::getline(inputFile, score)) // Read each line from the file
+        {
+            // Convert the score to an integer
+            int scoreValue = std::stoi(score);
+            topScores.push_back(scoreValue);
+        }
+        inputFile.close(); // Close the file
+        // Sort the scores in descending order
+        sort(topScores.begin(), topScores.end(), std::greater<int>());
+        // Resize the vector to contain only the top 5 scores
+        int NumberOfScores = 5;
+        if (topScores.size() > NumberOfScores)
+        {
+            topScores.resize(NumberOfScores);
+        }
+    }
+    else
+    {
+        std::cout << "Failed to open the file for reading." << std::endl;
+    }
+    // Load the background image
+    Texture2D spaceBackground = LoadTexture("saim's related vault/leaderboardtemp.png");
+    while (!WindowShouldClose())
+    {
+        // Close window by pressing ESC key
+        if (IsKeyDown(KEY_ESCAPE))
+        {
+            StopSound(bgmusicforhighscorescreen);
+            break;
+        }
+        BeginDrawing();
+        // Draw the background image
+        DrawTexture(spaceBackground, 0, 0, WHITE);
+        ClearBackground(RAYWHITE);
+        /*-----------------------------------------Printing the complete file.-----------------------------------------*/
+        // // Display the high scores on the screen
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        // // Drawing the topscore
+        // DrawText(TextFormat("Top Score: %d", topScore), screenWidth / 2 - MeasureText(TextFormat("Top Score: %d", topScore), 66) / 2, 120, 66, WHITE);
+        // // Draw the high scores below the heading
+        // DrawText(highScores.c_str(), screenWidth / 2 - MeasureText(highScores.c_str(), 44) / 2, 200, 44, RED);
+        // EndDrawing();
+        // Display the high scores on the screen
+        // FILHAL K LIYE
+        // DrawText("High Scores", screenWidth / 2 - MeasureText("High Scores", 60) / 2, 50, 60, WHITE);
+        /*-------------------------------------------------------------------------------------------------------------*/
+        // Draw the top 5 scores with gaps
+        for (size_t i = 0; i < topScores.size(); ++i)
+        {
+            DrawText(TextFormat("%1d. %1d\n\n\n", i + 1, topScores[i]), screenWidth / 2 - 180, 220 + i * 124, 36, WHITE);
+        }
+        EndDrawing();
+    }
+    CloseWindow(); // Close the window after the loop
+    // Unload the background image
+    UnloadTexture(spaceBackground);
+}
+void RunGame()
+{
+    InitWindow(screenWidth, screenHeight, "2D Space Game");
+    HealthBar healthBar = CreateHealthBar(50, 50, 200, 30, WHITE, RED, maxHealth);
+    InitAudioDevice();
+    Vector2 playerVelocity = {0.0f, 0.0f};
+    char *obj = const_cast<char *>("media/spacecraft23.png");
+    char *music = const_cast<char *>("resources/bgmusicwav.wav");
+    char *bg = const_cast<char *>("media/space2.png");
+    Player player(obj, music, bg);
+    srand(time(NULL));
+    std::vector<Enemy> enemies;
+    bool restartRequested = false; // Flag to track if restart has been requested.
+    PlaySound(player.get_bgMusic());
+    SetSoundVolume(player.get_bgMusic(), 0.6f);
+    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
+    dValues d;        // Object to call the d values.
+    while (!WindowShouldClose())
+    {
+        if (!player.get_gameover()) // Only update the game if it's not over
+        {
+            player.scoreinc(2 * GetFrameTime());
+            // Update player movement
+            float targetSpeedX = 0.0f;
+            float targetSpeedY = 0.0f;
+            if (IsKeyDown(KEY_RIGHT) && player.get_x() < boundaryRight)
+            {
+                targetSpeedX += d.acceleration;
+            }
+            else if (IsKeyDown(KEY_LEFT) && player.get_x() > boundaryLeft)
+            {
+                targetSpeedX -= d.acceleration;
+            }
+            if (IsKeyDown(KEY_DOWN) && player.get_y() < boundaryBottom)
+            {
+                targetSpeedY += d.acceleration;
+            }
+            else if (IsKeyDown(KEY_UP) && player.get_y() > boundaryTop)
+            {
+                targetSpeedY -= d.acceleration;
+            }
+            if (IsKeyDown(KEY_F))
+            {
+                // Toggle BOOSTERS
+                // boostersActivated = true;
+                PlaySound(d.sfx5);
+                targetSpeedX *= 25.0f;
+                targetSpeedY *= 25.0f;
+                SetSoundVolume(d.sfx5, 3.9f);
+            }
+            // Smoothly accelerate/decelerate towards target speed
+            if (targetSpeedX > playerVelocity.x)
+            {
+                playerVelocity.x = fminf(playerVelocity.x + d.acceleration, d.maxSpeed);
+            }
+            else if (targetSpeedX < playerVelocity.x)
+            {
+                playerVelocity.x = fmaxf(playerVelocity.x - d.acceleration, -d.maxSpeed);
+            }
+            else
+            {
+                playerVelocity.x *= d.deceleration;
+            }
+            if (targetSpeedY > playerVelocity.y)
+            {
+                playerVelocity.y = fminf(playerVelocity.y + d.acceleration, d.maxSpeed);
+            }
+            else if (targetSpeedY < playerVelocity.y)
+            {
+                playerVelocity.y = fmaxf(playerVelocity.y - d.acceleration, -d.maxSpeed);
+            }
+            else
+            {
+                playerVelocity.y *= d.deceleration;
+            }
+
+            // Update player position based on velocityy
+            player.setpos(playerVelocity.x, playerVelocity.y);
+            // Update enemy positions
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+            player.draw();
+            EndMode2D();
+            DrawText("Space Shooter", 10, 10, 20, RED);
+                DrawText(TextFormat("Score: %.2f ", player.getscore()), screenWidth - MeasureText(TextFormat("%.2f seconds", player.getscore()), 20) - 10, 10, 20, WHITE);
+                // Draw legend
+                DrawText("Arrows: Move", screenWidth - MeasureText("Arrows: Move", 20) - 10, screenHeight - 60, 20, WHITE);
+                DrawText("F: Boost", screenWidth - MeasureText("F: Boost", 20) - 10, screenHeight - 30, 20, WHITE);
+                DrawText("Exit: Escape", screenWidth - MeasureText("Exit: Escape", 20) - 10, screenHeight - 100, 20, WHITE);
+            
+            // Update and draw health bar or enemy counterr
+            healthBar.currentHealth = enemies.size() * 20;
+            DrawHealthBar(healthBar);
+            EndDrawing();
+        }
+    }
+    SaveToFile(player.getscore());
+    return;
+}
+void ShowAboutDevInfo()
+{
+    const int screenWidth = 1600;
+    const int screenHeight = 850;
+    InitWindow(screenWidth, screenHeight, "About Developers");
+    // Load the background image
+    Texture2D AboutBackground = LoadTexture("saim's related vault/aboutthedev.png");
+    // Play background music
+    InitAudioDevice();
+    Sound bgmusicforaboutscreen = LoadSound("saim's related vault/motivationalmusic.wav");
+    PlaySound(bgmusicforaboutscreen);
+    SetSoundVolume(bgmusicforaboutscreen, 1.0f);
+    while (!WindowShouldClose())
+    {
+        // Close window by pressing ESC key
+        if (IsKeyDown(KEY_ESCAPE))
+        {
+            StopSound(bgmusicforaboutscreen);
+            break;
+        }
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        // Draw the background image
+        DrawTexture(AboutBackground, 0, 0, WHITE);
+        EndDrawing();
+    }
+    // Unload the background image
+    UnloadTexture(AboutBackground);
+    // Close the window after the loop
+    CloseWindow();
+}
+void ShowMainMenu()
+{
+    const int screenWidth = 1600;
+    const int screenHeight = 900;
+
+    InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
+
+    // Load the background image
+    Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
+
+    // Adjust the background image rectangle to cover the entire window
+    Rectangle bgRec = {0, 0, (float)screenWidth, (float)screenHeight};
+
+    Rectangle playButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 - 100), 250, 50};
+    Rectangle highScoreButton = {(float)(screenWidth / 2 + 10), (float)(screenHeight / 2 - 20), 140, 50};
+    Rectangle aboutButton = {(float)(screenWidth / 2 - 100), (float)(screenHeight / 2 + -20), 100, 50};
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        // Draw the background image
+        DrawTexturePro(backgroundImage, Rectangle({0.0f, 0.0f, (float)backgroundImage.width, (float)backgroundImage.height}), bgRec, Vector2({0, 0}), 0.0f, WHITE);
+
+        // Draw play button
+        DrawRectangleRec(playButton, BLUE);
+        DrawText("Play", (int)playButton.x + 100, (int)playButton.y + 15, 20, WHITE);
+
+        // Draw high score button
+        DrawRectangleRec(highScoreButton, GREEN);
+        DrawText("High Score", (int)highScoreButton.x + 10, (int)highScoreButton.y + 15, 20, WHITE);
+
+        // Draw about button
+        DrawRectangleRec(aboutButton, RED);
+        DrawText("About", (int)aboutButton.x + 25, (int)aboutButton.y + 15, 20, WHITE);
+        //YE text ab print nhi krwana hai kyoke mene bg image me hi krdia hai
+        // Draw game name
+        // DrawText("SPACE SHOOTER GAME", screenWidth / 2 - MeasureText("SPACE SHOOTER GAME", 32) / 2, (screenHeight / 2) + 55, 32, WHITE);
+        // DrawText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", screenWidth / 2 - MeasureText("Developed By:\n\nSaim\n\nSufyan\n\nTalha", 26) / 2, (screenHeight / 2) + 100, 26, RED);
+
+        // Check if the mouse is hovering over the play button
+        if (CheckCollisionPointRec(GetMousePosition(), playButton))
+        {
+            DrawRectangleLinesEx(playButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Start the game
+                CloseWindow(); // Close the main screen window
+                RunGame();     // Start the game loop
+            }
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), highScoreButton))
+        {
+            DrawRectangleLinesEx(highScoreButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Display high score (for now, just print a message)
+                CloseWindow();
+                // Close the main screen window
+                ShowHighScore(); // Show the high score screen
+            }
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), aboutButton))
+        {
+            DrawRectangleLinesEx(aboutButton, 3, BLACK); // Highlight the button if the mouse is over it
+
+            // Check if the left mouse button is clicked
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                // Display high score (for now, just print a message)
+                CloseWindow();
+                // Close the main screen window
+                ShowAboutDevInfo(); // Show the high score screen
+            }
+        }
+        EndDrawing();
     }
 
+<<<<<<< HEAD
     // Destructor
     ~SpaceObjects() { UnloadTexture(image_); }
 
@@ -714,6 +1285,11 @@ void ShowMainMenu()
     }
     // Unload the background image
     UnloadTexture(backgroundImage);
+=======
+    // Unload the background image
+    UnloadTexture(backgroundImage);
+
+>>>>>>> f014f85d9a7b14857fa17e019ffa1cf76fd4349d
     CloseWindow();
 }
 int main()
