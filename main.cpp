@@ -626,7 +626,7 @@ void ShowMainMenu()
 
     InitWindow(screenWidth, screenHeight, "Space Shooter - Main Menu");
 
-    // Load the background image
+    // Load the backgroundd image
     Texture2D backgroundImage = LoadTexture("media\\bgimage1600main.png");
 
     // Adjust the background image rectangle to cover the entire window
